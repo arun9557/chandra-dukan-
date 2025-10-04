@@ -1,5 +1,4 @@
-// CheckoutModal Component - Checkout modal का component
-// Order placement with customer details and payment options
+// CheckoutModal Component - Premium order placement with customer details and payment options
 
 class CheckoutModal {
   constructor() {
@@ -7,41 +6,45 @@ class CheckoutModal {
     this.cart = [];
   }
 
-  // Initialize checkout modal - Checkout modal initialize करना
+  // Initialize checkout modal
   init() {
     this.render();
     this.setupEventListeners();
   }
 
-  // Render checkout modal HTML - Checkout modal का HTML render करना
+  // Render checkout modal HTML
   render() {
     const checkoutHTML = `
       <div class="modal hidden" id="checkoutModal">
-        <div class="modal-backdrop" id="checkoutModalBackdrop"></div>
         <div class="modal-content">
           <div class="modal-header">
-            <h3>Order Details - Order की जानकारी</h3>
-            <button class="modal-close" id="closeCheckoutModal">×</button>
+            <h3>Order Details</h3>
+            <button class="modal-close" id="closeCheckoutModal" aria-label="Close checkout">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M6 6L18 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </button>
           </div>
           <div class="modal-body">
             <form id="checkoutForm">
               <div class="form-group">
-                <label class="form-label">आपका नाम * (Your Name)</label>
+                <label class="form-label">Your Name *</label>
                 <input type="text" class="form-control" id="customerName" required>
               </div>
               <div class="form-group">
-                <label class="form-label">फोन नंबर * (Phone Number)</label>
+                <label class="form-label">Phone Number *</label>
                 <input type="tel" class="form-control" id="customerPhone" 
                        pattern="[0-9]{10}" required>
               </div>
               <div class="form-group">
-                <label class="form-label">पूरा पता * (Full Address)</label>
+                <label class="form-label">Full Address *</label>
                 <textarea class="form-control" id="customerAddress" rows="3" required></textarea>
               </div>
               <div class="form-group">
                 <label class="form-label">Delivery Area *</label>
                 <select class="form-control" id="deliveryArea" required>
-                  <option value="">Area चुनें (Select Area)</option>
+                  <option value="">Select Area</option>
                   <option value="Main Market Area">Main Market Area</option>
                   <option value="Station Road">Station Road</option>
                   <option value="School Para">School Para</option>
@@ -72,7 +75,7 @@ class CheckoutModal {
                 </div>
               </div>
               <div class="order-summary">
-                <h4>Order Summary - Order का सारांश</h4>
+                <h4>Order Summary</h4>
                 <div id="checkoutItemsList"></div>
                 <div class="summary-row">
                   <span>Subtotal:</span>
@@ -91,10 +94,10 @@ class CheckoutModal {
           </div>
           <div class="modal-footer">
             <button class="btn btn--secondary" id="backToCartBtn">
-              Cart में वापस
+              Back to Cart
             </button>
             <button class="btn btn--primary" id="placeOrderBtn">
-              Order Place करें
+              Place Order
             </button>
           </div>
         </div>
@@ -104,10 +107,9 @@ class CheckoutModal {
     document.body.insertAdjacentHTML('beforeend', checkoutHTML);
   }
 
-  // Setup event listeners - Event listeners setup करना
+  // Setup event listeners
   setupEventListeners() {
     const closeBtn = document.getElementById('closeCheckoutModal');
-    const backdrop = document.getElementById('checkoutModalBackdrop');
     const backBtn = document.getElementById('backToCartBtn');
     const placeOrderBtn = document.getElementById('placeOrderBtn');
 
@@ -115,9 +117,20 @@ class CheckoutModal {
       closeBtn.addEventListener('click', () => this.close());
     }
 
-    if (backdrop) {
-      backdrop.addEventListener('click', () => this.close());
-    }
+    // Close modal when clicking outside
+    document.addEventListener('click', (e) => {
+      const modal = document.getElementById('checkoutModal');
+      if (this.isOpen && modal && e.target === modal) {
+        this.close();
+      }
+    });
+
+    // Close modal with Escape key
+    document.addEventListener('keydown', (e) => {
+      if (this.isOpen && e.key === 'Escape') {
+        this.close();
+      }
+    });
 
     if (backBtn) {
       backBtn.addEventListener('click', () => this.backToCart());
@@ -131,7 +144,7 @@ class CheckoutModal {
     }
   }
 
-  // Open checkout modal - Checkout modal open करना
+  // Open checkout modal
   open() {
     const modal = document.getElementById('checkoutModal');
     if (modal) {
@@ -143,7 +156,7 @@ class CheckoutModal {
     }
   }
 
-  // Close checkout modal - Checkout modal close करना
+  // Close checkout modal
   close() {
     const modal = document.getElementById('checkoutModal');
     if (modal) {
@@ -153,7 +166,7 @@ class CheckoutModal {
     }
   }
 
-  // Back to cart - Cart में वापस जाना
+  // Back to cart
   backToCart() {
     this.close();
     if (window.CartModal) {
@@ -161,7 +174,7 @@ class CheckoutModal {
     }
   }
 
-  // Render checkout items - Checkout items render करना
+  // Render checkout items
   renderCheckoutItems() {
     const checkoutItemsList = document.getElementById('checkoutItemsList');
     if (!checkoutItemsList) return;
@@ -182,7 +195,7 @@ class CheckoutModal {
     });
   }
 
-  // Update checkout totals - Checkout totals update करना
+  // Update checkout totals
   updateCheckoutTotals() {
     const subtotal = this.cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
     const deliveryCharges = subtotal >= 200 ? 0 : 30;
@@ -197,7 +210,7 @@ class CheckoutModal {
     if (totalEl) totalEl.textContent = total;
   }
 
-  // Place order - Order place करना
+  // Place order
   placeOrder() {
     const form = document.getElementById('checkoutForm');
     if (!form || !form.checkValidity()) {
@@ -211,14 +224,14 @@ class CheckoutModal {
     const deliveryArea = document.getElementById('deliveryArea');
 
     if (!customerName.value || !customerPhone.value || !customerAddress.value || !deliveryArea.value) {
-      alert('कृपया सभी जरूरी जानकारी भरें। (Please fill all required information)');
+      alert('Please fill all required information.');
       return;
     }
 
     // Validate phone number
     const phoneRegex = /^[0-9]{10}$/;
     if (!phoneRegex.test(customerPhone.value)) {
-      alert('कृपया सही 10-digit phone number दर्ज करें।');
+      alert('Please enter a valid 10-digit phone number.');
       return;
     }
 
@@ -248,7 +261,7 @@ class CheckoutModal {
     }, 2000);
   }
 
-  // Show order processing - Order processing show करना
+  // Show order processing
   showOrderProcessing() {
     const placeOrderBtn = document.getElementById('placeOrderBtn');
     if (placeOrderBtn) {
@@ -257,7 +270,7 @@ class CheckoutModal {
     }
   }
 
-  // Process order - Order process करना
+  // Process order
   processOrder(orderData) {
     // Send notification
     this.sendOrderNotification(orderData);
@@ -278,12 +291,12 @@ class CheckoutModal {
     if (form) form.reset();
   }
 
-  // Generate order ID - Order ID generate करना
+  // Generate order ID
   generateOrderId() {
     return 'CD' + Date.now().toString().slice(-6);
   }
 
-  // Check delivery radius - Delivery radius check करना
+  // Check delivery radius
   checkDeliveryRadius(area) {
     const deliveryAreas = [
       'Main Market Area', 'Station Road', 'School Para', 
@@ -292,7 +305,7 @@ class CheckoutModal {
     return deliveryAreas.includes(area);
   }
 
-  // Send order notification - Order notification भेजना
+  // Send order notification
   sendOrderNotification(orderData) {
     // WhatsApp notification
     const message = `🎉 New Order Received!

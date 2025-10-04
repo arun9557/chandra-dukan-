@@ -1,5 +1,4 @@
-// ProductCard Component - Product card का component
-// Individual product display with cart functionality
+// ProductCard Component - Premium product card with cart functionality
 
 class ProductCard {
   constructor(product) {
@@ -7,30 +6,27 @@ class ProductCard {
     this.cartQuantity = 0;
   }
 
-  // Create product card HTML - Product card का HTML create करना
+  // Create product card HTML
   create() {
     const stockStatus = this.getStockStatus();
     const stockClass = this.getStockClass();
     
     return `
-      <div class="card product-card fade-in" data-product-id="${this.product.id}">
+      <div class="product-card fade-in" data-product-id="${this.product.id}">
         <div class="product-image-container">
           <div class="product-badge-container">
             ${this.product.stock <= 5 && this.product.stock > 0 ? 
-              '<div class="stock-badge stock-low-badge"><span>कम Stock</span></div>' : ''}
+              '<div class="stock-badge stock-low-badge">Low Stock</div>' : ''}
             ${this.product.stock === 0 ? 
-              '<div class="stock-badge stock-out-badge"><span>Out of Stock</span></div>' : ''}
+              '<div class="stock-badge stock-out-badge">Out of Stock</div>' : ''}
           </div>
-          <img src="${this.product.image}" alt="${this.product.name}" 
-               class="product-image" 
-               onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-          <div class="product-image-placeholder" style="display:none;">
+          <div class="product-image" aria-label="${this.product.name}">
             📦
           </div>
         </div>
         <div class="product-info">
           <div class="product-header">
-            <h4 class="product-name">${this.product.name}</h4>
+            <h3 class="product-name">${this.product.name}</h3>
             <div class="product-price">₹${this.product.price}</div>
           </div>
           <div class="product-stock ${stockClass}">
@@ -44,13 +40,17 @@ class ProductCard {
     `;
   }
 
-  // Render cart controls - Cart controls render करना
+  // Render cart controls
   renderCartControls() {
     return `
       <div class="quantity-controls">
-        <button class="quantity-btn" onclick="ProductCard.updateQuantity(${this.product.id}, -1)">−</button>
+        <button class="quantity-btn" onclick="ProductCard.updateQuantity(${this.product.id}, -1)" aria-label="Decrease quantity">
+          −
+        </button>
         <span class="quantity-display" id="quantity-${this.product.id}">${this.cartQuantity}</span>
-        <button class="quantity-btn" onclick="ProductCard.updateQuantity(${this.product.id}, 1)">+</button>
+        <button class="quantity-btn" onclick="ProductCard.updateQuantity(${this.product.id}, 1)" aria-label="Increase quantity">
+          +
+        </button>
       </div>
       <button class="btn btn--primary add-to-cart-btn" 
               onclick="ProductCard.addToCart(${this.product.id})">
@@ -58,35 +58,35 @@ class ProductCard {
           <path d="M8 12L8 8C8 5.79086 9.79086 4 12 4V4C14.2091 4 16 5.79086 16 8L16 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
           <path d="M3.69435 12.6678C3.83942 10.9269 3.91196 10.0565 4.48605 9.52824C5.06013 9 5.9336 9 7.68053 9H16.3195C18.0664 9 18.9399 9 19.514 9.52824C20.088 10.0565 20.1606 10.9269 20.3057 12.6678L20.8195 18.8339C20.904 19.8474 20.9462 20.3542 20.6491 20.6771C20.352 21 19.8435 21 18.8264 21H5.1736C4.15655 21 3.64802 21 3.35092 20.6771C3.05382 20.3542 3.09605 19.8474 3.18051 18.8339L3.69435 12.6678Z" stroke="currentColor" stroke-width="2"/>
         </svg>
-        Cart में Add करें
+        Add to Cart
       </button>
     `;
   }
 
-  // Render out of stock - Out of stock render करना
+  // Render out of stock
   renderOutOfStock() {
     return `
       <button class="btn btn--secondary" disabled>
-        Stock खत्म
+        Out of Stock
       </button>
     `;
   }
 
-  // Get stock status text - Stock status text get करना
+  // Get stock status text
   getStockStatus() {
-    if (this.product.stock === 0) return 'Stock खत्म';
-    if (this.product.stock <= 5) return `कम Stock (${this.product.stock} बचे)`;
-    return `Stock में उपलब्ध (${this.product.stock})`;
+    if (this.product.stock === 0) return 'Out of Stock';
+    if (this.product.stock <= 5) return `Low Stock (${this.product.stock} left)`;
+    return `In Stock (${this.product.stock} available)`;
   }
 
-  // Get stock class - Stock class get करना
+  // Get stock class
   getStockClass() {
     if (this.product.stock === 0) return 'stock-out';
     if (this.product.stock <= 5) return 'stock-low';
     return 'stock-available';
   }
 
-  // Update quantity display - Quantity display update करना
+  // Update quantity display
   updateQuantityDisplay(quantity) {
     const quantityDisplay = document.getElementById(`quantity-${this.product.id}`);
     if (quantityDisplay) {
@@ -95,14 +95,14 @@ class ProductCard {
     this.cartQuantity = quantity;
   }
 
-  // Static method to add to cart - Cart में add करने का static method
+  // Static method to add to cart
   static addToCart(productId) {
     if (window.CartService) {
       window.CartService.addItem(productId);
     }
   }
 
-  // Static method to update quantity - Quantity update करने का static method
+  // Static method to update quantity
   static updateQuantity(productId, change) {
     if (window.CartService) {
       window.CartService.updateQuantity(productId, change);

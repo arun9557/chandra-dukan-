@@ -1,4 +1,4 @@
-// Dashboard Component - Store owner dashboard का component
+// Dashboard Component - Premium store owner dashboard
 // Order management, inventory, and analytics
 
 class Dashboard {
@@ -13,22 +13,26 @@ class Dashboard {
     };
   }
 
-  // Initialize dashboard - Dashboard initialize करना
+  // Initialize dashboard
   init() {
     this.render();
     this.setupEventListeners();
     this.loadDashboardData();
   }
 
-  // Render dashboard HTML - Dashboard का HTML render करना
+  // Render dashboard HTML
   render() {
     const dashboardHTML = `
       <div class="modal hidden" id="dashboardModal">
-        <div class="modal-backdrop" id="dashboardModalBackdrop"></div>
         <div class="modal-content dashboard-content">
           <div class="modal-header">
-            <h3>📊 Store Dashboard - दुकान का डैशबोर्ड</h3>
-            <button class="modal-close" id="closeDashboardModal">×</button>
+            <h3>📊 Store Dashboard</h3>
+            <button class="modal-close" id="closeDashboardModal" aria-label="Close dashboard">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M6 6L18 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </button>
           </div>
           <div class="modal-body">
             <div class="dashboard-tabs">
@@ -73,7 +77,7 @@ class Dashboard {
             
             <div class="tab-content hidden" id="ordersTab">
               <div class="orders-section">
-                <h4>Recent Orders - हाल के Orders</h4>
+                <h4>Recent Orders</h4>
                 <div class="orders-list" id="ordersList">
                   <!-- Orders will be loaded here -->
                 </div>
@@ -82,7 +86,7 @@ class Dashboard {
             
             <div class="tab-content hidden" id="inventoryTab">
               <div class="inventory-section">
-                <h4>Inventory Management - स्टॉक प्रबंधन</h4>
+                <h4>Inventory Management</h4>
                 <div class="inventory-controls">
                   <button class="btn btn--primary" id="updateInventoryBtn">
                     Update Inventory
@@ -99,7 +103,7 @@ class Dashboard {
             
             <div class="tab-content hidden" id="analyticsTab">
               <div class="analytics-section">
-                <h4>Sales Analytics - बिक्री विश्लेषण</h4>
+                <h4>Sales Analytics</h4>
                 <div class="analytics-charts">
                   <div class="chart-container">
                     <h5>Daily Sales</h5>
@@ -129,10 +133,9 @@ class Dashboard {
     document.body.insertAdjacentHTML('beforeend', dashboardHTML);
   }
 
-  // Setup event listeners - Event listeners setup करना
+  // Setup event listeners
   setupEventListeners() {
     const closeBtn = document.getElementById('closeDashboardModal');
-    const backdrop = document.getElementById('dashboardModalBackdrop');
     const closeDashboardBtn = document.getElementById('closeDashboardBtn');
     const tabBtns = document.querySelectorAll('.tab-btn');
     const updateInventoryBtn = document.getElementById('updateInventoryBtn');
@@ -142,9 +145,20 @@ class Dashboard {
       closeBtn.addEventListener('click', () => this.close());
     }
 
-    if (backdrop) {
-      backdrop.addEventListener('click', () => this.close());
-    }
+    // Close modal when clicking outside
+    document.addEventListener('click', (e) => {
+      const modal = document.getElementById('dashboardModal');
+      if (this.isOpen && modal && e.target === modal) {
+        this.close();
+      }
+    });
+
+    // Close modal with Escape key
+    document.addEventListener('keydown', (e) => {
+      if (this.isOpen && e.key === 'Escape') {
+        this.close();
+      }
+    });
 
     if (closeDashboardBtn) {
       closeDashboardBtn.addEventListener('click', () => this.close());
@@ -164,7 +178,7 @@ class Dashboard {
     }
   }
 
-  // Open dashboard - Dashboard open करना
+  // Open dashboard
   open() {
     const modal = document.getElementById('dashboardModal');
     if (modal) {
@@ -175,7 +189,7 @@ class Dashboard {
     }
   }
 
-  // Close dashboard - Dashboard close करना
+  // Close dashboard
   close() {
     const modal = document.getElementById('dashboardModal');
     if (modal) {
@@ -185,7 +199,7 @@ class Dashboard {
     }
   }
 
-  // Switch tab - Tab switch करना
+  // Switch tab
   switchTab(tabName) {
     // Update tab buttons
     document.querySelectorAll('.tab-btn').forEach(btn => {
@@ -213,7 +227,7 @@ class Dashboard {
     }
   }
 
-  // Load dashboard data - Dashboard data load करना
+  // Load dashboard data
   loadDashboardData() {
     // Load from localStorage or API
     const savedOrders = localStorage.getItem('chandraDukanOrders');
@@ -223,7 +237,7 @@ class Dashboard {
     this.updateOverviewCards();
   }
 
-  // Calculate analytics - Analytics calculate करना
+  // Calculate analytics
   calculateAnalytics() {
     const today = new Date().toDateString();
     
@@ -237,7 +251,7 @@ class Dashboard {
     ).reduce((sum, order) => sum + order.total, 0);
   }
 
-  // Update overview cards - Overview cards update करना
+  // Update overview cards
   updateOverviewCards() {
     document.getElementById('totalOrders').textContent = this.analytics.totalOrders;
     document.getElementById('totalRevenue').textContent = `₹${this.analytics.totalRevenue}`;
@@ -245,7 +259,7 @@ class Dashboard {
     document.getElementById('todayRevenue').textContent = `₹${this.analytics.todayRevenue}`;
   }
 
-  // Load orders - Orders load करना
+  // Load orders
   loadOrders() {
     const ordersList = document.getElementById('ordersList');
     if (!ordersList) return;
@@ -266,7 +280,7 @@ class Dashboard {
     });
   }
 
-  // Create order element - Order element create करना
+  // Create order element
   createOrderElement(order) {
     const orderElement = document.createElement('div');
     orderElement.className = 'order-item';
@@ -295,7 +309,7 @@ class Dashboard {
     return orderElement;
   }
 
-  // Load inventory - Inventory load करना
+  // Load inventory
   loadInventory() {
     const inventoryList = document.getElementById('inventoryList');
     if (!inventoryList) return;
@@ -309,7 +323,7 @@ class Dashboard {
     });
   }
 
-  // Create inventory element - Inventory element create करना
+  // Create inventory element
   createInventoryElement(product) {
     const inventoryElement = document.createElement('div');
     inventoryElement.className = 'inventory-item';
@@ -328,7 +342,7 @@ class Dashboard {
     return inventoryElement;
   }
 
-  // Load analytics - Analytics load करना
+  // Load analytics
   loadAnalytics() {
     // Simple analytics display
     const dailySalesChart = document.getElementById('dailySalesChart');
@@ -353,7 +367,7 @@ class Dashboard {
     }
   }
 
-  // Update order status - Order status update करना
+  // Update order status
   static updateOrderStatus(orderId, status) {
     const orders = JSON.parse(localStorage.getItem('chandraDukanOrders') || '[]');
     const orderIndex = orders.findIndex(order => order.id === orderId);
@@ -369,7 +383,7 @@ class Dashboard {
     }
   }
 
-  // Update stock - Stock update करना
+  // Update stock
   static updateStock(productId) {
     const newStock = prompt('Enter new stock quantity:');
     if (newStock && !isNaN(newStock)) {
@@ -390,12 +404,12 @@ class Dashboard {
     }
   }
 
-  // Update inventory - Inventory update करना
+  // Update inventory
   updateInventory() {
     alert('Inventory update feature coming soon!');
   }
 
-  // Add product - Product add करना
+  // Add product
   addProduct() {
     alert('Add product feature coming soon!');
   }

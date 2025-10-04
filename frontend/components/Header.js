@@ -1,5 +1,4 @@
-// Header Component - Header का component
-// Modern Indian e-commerce header with store info and cart
+// Header Component - Premium header with store info and cart
 
 class Header {
   constructor() {
@@ -7,13 +6,13 @@ class Header {
     this.cartBadge = null;
   }
 
-  // Initialize header - Header को initialize करना
+  // Initialize header
   init() {
     this.render();
     this.setupEventListeners();
   }
 
-  // Render header HTML - Header का HTML render करना
+  // Render header HTML
   render() {
     const headerHTML = `
       <header class="header">
@@ -21,10 +20,10 @@ class Header {
           <div class="header-content">
             <div class="store-info">
               <h1 class="store-name">🏪 Chandra Dukan</h1>
-              <p class="store-tagline">आपके घर तक, जल्दी और आसान</p>
+              <p class="store-tagline">Premium Grocery Delivery to Your Doorstep</p>
             </div>
             <div class="header-actions">
-              <div class="cart-icon" id="cartIcon">
+              <div class="cart-icon" id="cartIcon" role="button" tabindex="0" aria-label="Shopping cart">
                 🛒 <span class="cart-badge" id="cartBadge">0</span>
               </div>
               <button class="btn btn--outline dashboard-toggle" id="dashboardToggle">
@@ -33,8 +32,8 @@ class Header {
             </div>
           </div>
           <div class="store-status">
-            <span class="status status--success">दुकान खुली है • 7:00 AM - 10:00 PM</span>
-            <span class="delivery-info">🚚 4-5 km तक Free Delivery ₹200+ के ऊपर</span>
+            <span class="status status--success">Open • 7:00 AM - 10:00 PM</span>
+            <span class="delivery-info">🚚 Free Delivery up to 4-5 km for orders ₹200+</span>
           </div>
         </div>
       </header>
@@ -45,7 +44,7 @@ class Header {
     this.cartBadge = document.getElementById('cartBadge');
   }
 
-  // Setup event listeners - Event listeners setup करना
+  // Setup event listeners
   setupEventListeners() {
     const cartIcon = document.getElementById('cartIcon');
     const dashboardToggle = document.getElementById('dashboardToggle');
@@ -53,6 +52,14 @@ class Header {
     if (cartIcon) {
       cartIcon.addEventListener('click', () => {
         window.CartModal.open();
+      });
+      
+      // Add keyboard support
+      cartIcon.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          window.CartModal.open();
+        }
       });
     }
     
@@ -63,7 +70,7 @@ class Header {
     }
   }
 
-  // Update cart badge - Cart badge update करना
+  // Update cart badge
   updateCartBadge(count) {
     if (this.cartBadge) {
       this.cartBadge.textContent = count;

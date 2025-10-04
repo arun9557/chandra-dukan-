@@ -1,5 +1,4 @@
-// CartModal Component - Cart modal का component
-// Shopping cart with item management and checkout
+// CartModal Component - Premium shopping cart with item management and checkout
 
 class CartModal {
   constructor() {
@@ -7,21 +6,25 @@ class CartModal {
     this.cart = [];
   }
 
-  // Initialize cart modal - Cart modal initialize करना
+  // Initialize cart modal
   init() {
     this.render();
     this.setupEventListeners();
   }
 
-  // Render cart modal HTML - Cart modal का HTML render करना
+  // Render cart modal HTML
   render() {
     const cartHTML = `
       <div class="modal hidden" id="cartModal">
-        <div class="modal-backdrop" id="cartModalBackdrop"></div>
         <div class="modal-content">
           <div class="modal-header">
-            <h3>आपकी Shopping Cart 🛒</h3>
-            <button class="modal-close" id="closeCartModal">×</button>
+            <h3>Your Shopping Cart 🛒</h3>
+            <button class="modal-close" id="closeCartModal" aria-label="Close cart">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M6 6L18 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </button>
           </div>
           <div class="modal-body">
             <div id="cartItems">
@@ -44,10 +47,10 @@ class CartModal {
           </div>
           <div class="modal-footer">
             <button class="btn btn--secondary" id="continueShoppingBtn">
-              Shopping जारी रखें
+              Continue Shopping
             </button>
             <button class="btn btn--primary" id="checkoutBtn">
-              Checkout करें
+              Proceed to Checkout
             </button>
           </div>
         </div>
@@ -57,10 +60,9 @@ class CartModal {
     document.body.insertAdjacentHTML('beforeend', cartHTML);
   }
 
-  // Setup event listeners - Event listeners setup करना
+  // Setup event listeners
   setupEventListeners() {
     const closeBtn = document.getElementById('closeCartModal');
-    const backdrop = document.getElementById('cartModalBackdrop');
     const continueBtn = document.getElementById('continueShoppingBtn');
     const checkoutBtn = document.getElementById('checkoutBtn');
 
@@ -68,9 +70,20 @@ class CartModal {
       closeBtn.addEventListener('click', () => this.close());
     }
 
-    if (backdrop) {
-      backdrop.addEventListener('click', () => this.close());
-    }
+    // Close modal when clicking outside
+    document.addEventListener('click', (e) => {
+      const modal = document.getElementById('cartModal');
+      if (this.isOpen && modal && e.target === modal) {
+        this.close();
+      }
+    });
+
+    // Close modal with Escape key
+    document.addEventListener('keydown', (e) => {
+      if (this.isOpen && e.key === 'Escape') {
+        this.close();
+      }
+    });
 
     if (continueBtn) {
       continueBtn.addEventListener('click', () => this.close());
@@ -81,7 +94,7 @@ class CartModal {
     }
   }
 
-  // Open cart modal - Cart modal open करना
+  // Open cart modal
   open() {
     const modal = document.getElementById('cartModal');
     if (modal) {
@@ -92,7 +105,7 @@ class CartModal {
     }
   }
 
-  // Close cart modal - Cart modal close करना
+  // Close cart modal
   close() {
     const modal = document.getElementById('cartModal');
     if (modal) {
@@ -102,7 +115,7 @@ class CartModal {
     }
   }
 
-  // Render cart items - Cart items render करना
+  // Render cart items
   renderCartItems() {
     const cartItems = document.getElementById('cartItems');
     if (!cartItems) return;
@@ -114,8 +127,8 @@ class CartModal {
       cartItems.innerHTML = `
         <div class="empty-cart">
           <div class="empty-cart-icon">🛒</div>
-          <p>आपकी cart खाली है</p>
-          <p>Shopping करने के लिए products add करें</p>
+          <h3>Your cart is empty</h3>
+          <p>Add some products to your cart to get started</p>
         </div>
       `;
       this.updateCheckoutButton(false);
@@ -131,7 +144,7 @@ class CartModal {
     this.updateCartTotals();
   }
 
-  // Create cart item element - Cart item element create करना
+  // Create cart item element
   createCartItemElement(item) {
     const itemElement = document.createElement('div');
     itemElement.className = 'cart-item';
@@ -143,11 +156,17 @@ class CartModal {
       </div>
       <div class="cart-item-controls">
         <div class="quantity-controls">
-          <button class="quantity-btn" onclick="CartModal.updateQuantity(${item.id}, -1)">−</button>
+          <button class="quantity-btn" onclick="CartModal.updateQuantity(${item.id}, -1)" aria-label="Decrease quantity">−</button>
           <span class="quantity-display">${item.quantity}</span>
-          <button class="quantity-btn" onclick="CartModal.updateQuantity(${item.id}, 1)">+</button>
+          <button class="quantity-btn" onclick="CartModal.updateQuantity(${item.id}, 1)" aria-label="Increase quantity">+</button>
         </div>
         <button class="remove-item" onclick="CartModal.removeItem(${item.id})">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M19 7L18.1327 19.1425C18.0579 20.1891 17.187 21 16.1378 21H7.86224C6.81296 21 5.94208 20.1891 5.86732 19.1425L5 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M10 11V17" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M14 11V17" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M15 7V4C15 3.44772 14.5523 3 14 3H10C9.44772 3 9 3.44772 9 4V7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
           Remove
         </button>
       </div>
@@ -155,7 +174,7 @@ class CartModal {
     return itemElement;
   }
 
-  // Update cart totals - Cart totals update करना
+  // Update cart totals
   updateCartTotals() {
     const subtotal = this.cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
     const deliveryCharges = subtotal >= 200 ? 0 : 30;
@@ -170,25 +189,24 @@ class CartModal {
     if (totalEl) totalEl.textContent = total;
   }
 
-  // Update checkout button - Checkout button update करना
+  // Update checkout button
   updateCheckoutButton(enabled) {
     const checkoutBtn = document.getElementById('checkoutBtn');
     if (checkoutBtn) {
       checkoutBtn.disabled = !enabled;
-      checkoutBtn.style.opacity = enabled ? '1' : '0.5';
     }
   }
 
-  // Proceed to checkout - Checkout proceed करना
+  // Proceed to checkout
   proceedToCheckout() {
     if (this.cart.length === 0) {
-      alert('आपकी cart खाली है। पहले कुछ items add करें।');
+      alert('Your cart is empty. Please add some items first.');
       return;
     }
 
     const total = this.cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
     if (total < 100) {
-      alert(`Minimum order amount ₹100 होना चाहिए। Current total: ₹${total}`);
+      alert(`Minimum order amount is ₹100. Current total: ₹${total}`);
       return;
     }
 
@@ -198,7 +216,7 @@ class CartModal {
     }
   }
 
-  // Update quantity - Quantity update करना
+  // Update quantity
   static updateQuantity(productId, change) {
     if (window.CartService) {
       window.CartService.updateQuantity(productId, change);
@@ -209,7 +227,7 @@ class CartModal {
     }
   }
 
-  // Remove item - Item remove करना
+  // Remove item
   static removeItem(productId) {
     if (window.CartService) {
       window.CartService.removeItem(productId);
