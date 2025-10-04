@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chandra Dukan - Local Delivery App</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#21808d">
+    <meta name="description" content="Chandra Dukan - आपके घर तक, जल्दी और आसान delivery">
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+</head>
+<body>
+    <!-- App will be rendered by components -->
+
+    <!-- Categories -->
+    <section class="categories-section">
+        <div class="container">
+            <h2>Categories - श्रेणियां</h2>
+            <div class="categories-grid" id="categoriesGrid">
+                <!-- Categories will be loaded here -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Products -->
+    <section class="products-section">
+        <div class="container">
+            <div class="section-header">
+                <h2 id="productsTitle">सभी Products</h2>
+                <div class="product-controls">
+                    <select class="form-control category-filter" id="categoryFilter">
+                        <option value="">सभी Categories</option>
+                    </select>
+                    <select class="form-control sort-filter" id="sortFilter">
+                        <option value="name">Name (नाम)</option>
+                        <option value="price-low">Price: Low to High</option>
+                        <option value="price-high">Price: High to Low</option>
+                        <option value="stock">Stock Available</option>
+                    </select>
+                </div>
+            </div>
+            <div class="products-grid" id="productsGrid">
+                <!-- Products will be loaded here -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Modals will be rendered by components -->
+
+    <!-- Modals will be rendered by components -->
+
+    <!-- Modals will be rendered by components -->
+
+    <!-- Contact Section -->
+    <section class="contact-section">
+        <div class="container">
+            <div class="contact-card">
+                <h3>संपर्क करें - Contact Us</h3>
+                <div class="contact-info">
+                    <div class="contact-item">
+                        <span class="contact-icon">📞</span>
+                        <span>Phone: +91 98765 43210</span>
+                    </div>
+                    <div class="contact-item">
+                        <span class="contact-icon">📱</span>
+                        <a href="https://wa.me/919876543210" target="_blank">WhatsApp पर Message करें</a>
+                    </div>
+                    <div class="contact-item">
+                        <span class="contact-icon">📍</span>
+                        <span>Main Market, Village/Town</span>
+                    </div>
+                    <div class="contact-item">
+                        <span class="contact-icon">🕐</span>
+                        <span>7:00 AM - 10:00 PM (Daily)</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2024 Chandra Dukan - Made with ❤️ for our community</p>
+        </div>
+    </footer>
+
+    <!-- Load component scripts -->
+    <script src="components/Header.js"></script>
+    <script src="components/SearchBar.js"></script>
+    <script src="components/ProductCard.js"></script>
+    <script src="components/CartModal.js"></script>
+    <script src="components/CheckoutModal.js"></script>
+    <script src="components/OrderConfirmModal.js"></script>
+    <script src="components/Dashboard.js"></script>
+    
+    <!-- Load service scripts -->
+    <script src="services/CartService.js"></script>
+    <script src="services/NotificationService.js"></script>
+    <script src="services/DataService.js"></script>
+    
+    <!-- Load main app script -->
+    <script src="app.js"></script>
+</body>
+</html>
