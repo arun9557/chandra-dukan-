@@ -55,7 +55,13 @@ app.get('/api/health', (req, res) => {
     version: process.env.npm_package_version || '1.0.0'
   });
 });
-
+// Root - Helpful message for browser/root requests
+app.get('/', (req, res) => {
+  res.json({
+    message: 'Chandra Dukan API - visit /api/health for status, available routes under /api/*',
+    routes: ['/api/health', '/api/products', '/api/orders', '/api/auth']
+  });
+});
 // Error handling - Error handling middleware
 app.use((err, req, res, next) => {
   console.error(err.stack);
@@ -73,9 +79,10 @@ app.use('*', (req, res) => {
   });
 });
 
-// Start server - Server start करना
-app.listen(PORT, () => {
-  console.log(`🚀 Chandra Dukan Backend running on port ${PORT}`);
+// Start server - Server start करना (bind to 0.0.0.0 to ensure IPv4 accessibility)
+const HOST = process.env.HOST || '0.0.0.0';
+app.listen(PORT, HOST, () => {
+  console.log(`🚀 Chandra Dukan Backend running on ${HOST}:${PORT}`);
   console.log(`📱 Environment: ${process.env.NODE_ENV || 'development'}`);
   console.log(`🌐 CORS enabled for: ${process.env.FRONTEND_URL || 'http://localhost:3000'}`);
 });
