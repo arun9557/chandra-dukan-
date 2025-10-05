@@ -49,6 +49,7 @@ app.use('/api/customers', require('./routes/customers'));
 app.use('/api/notifications', require('./routes/notifications'));
 app.use('/api/analytics', require('./routes/analytics'));
 app.use('/api/upload', require('./routes/upload'));
+app.use('/api/janseva', require('./routes/janseva'));
 
 // Health check - Health check endpoint
 app.get('/api/health', (req, res) => {

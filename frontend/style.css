@@ -48,6 +48,10 @@
   --color-accent-rose-rgb: 244, 63, 94;
   --color-accent-emerald-rgb: 16, 185, 129;
   --color-accent-amber-rgb: 245, 158, 11;
+  
+  /* Jan Seva Colors */
+  --color-janseva-green: #16a34a;
+  --color-janseva-green-dark: #15803d;
   --color-accent-sky-rgb: 14, 165, 233;
   --color-accent-violet-rgb: 139, 92, 246;
 
@@ -2018,5 +2022,80 @@ select.form-control {
   to {
     opacity: 1;
     transform: translateY(0);
+  }
+}
+
+/* Jan Seva Kendra Banner */
+.janseva-banner-section {
+  padding: 20px 0;
+  background: var(--color-bg-primary);
+}
+
+.janseva-banner {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 20px 30px;
+  background: linear-gradient(135deg, var(--color-janseva-green) 0%, var(--color-janseva-green-dark) 100%);
+  border-radius: 16px;
+  text-decoration: none;
+  color: white;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+.janseva-banner:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.2);
+}
+
+.janseva-icon {
+  font-size: 48px;
+  flex-shrink: 0;
+}
+
+.janseva-content {
+  flex: 1;
+}
+
+.janseva-content h3 {
+  font-size: 24px;
+  font-weight: 700;
+  margin: 0 0 5px 0;
+  color: white;
+}
+
+.janseva-content p {
+  font-size: 14px;
+  margin: 0;
+  opacity: 0.95;
+  color: white;
+}
+
+.janseva-arrow {
+  font-size: 32px;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+@media (max-width: 768px) {
+  .janseva-banner {
+    padding: 16px 20px;
+  }
+  
+  .janseva-icon {
+    font-size: 36px;
+  }
+  
+  .janseva-content h3 {
+    font-size: 18px;
+  }
+  
+  .janseva-content p {
+    font-size: 12px;
+  }
+  
+  .janseva-arrow {
+    font-size: 24px;
   }
 }
