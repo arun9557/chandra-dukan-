@@ -3,57 +3,281 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chandra Dukan - Premium Local Delivery App</title>
+    <title>Chandra Dukan - Premium Local Delivery | Groceries in Minutes</title>
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="upgrades.css">
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#6366F1">
-    <meta name="description" content="Chandra Dukan - Premium grocery delivery service to your doorstep">
+    <meta name="description" content="Chandra Dukan - Get fresh groceries delivered to your doorstep in minutes. Best prices, fastest delivery in Nawalpur Beyora.">
     <link rel="icon" type="image/x-icon" href="/favicon.ico">
     
     <!-- Preconnect to Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Open Graph Meta Tags -->
+    <meta property="og:title" content="Chandra Dukan - Premium Grocery Delivery">
+    <meta property="og:description" content="Fresh groceries delivered in minutes">
+    <meta property="og:image" content="/assets/og-image.jpg">
+    <meta property="og:url" content="https://chandradukan.com">
 </head>
 <body>
-    <!-- App will be rendered by components -->
-    
-    <!-- Hero Banners -->
-    <section class="hero-section">
+    <!-- Top Announcement Bar -->
+    <div class="announcement-bar">
         <div class="container">
-            <div class="hero-grid">
-                <div class="hero-card hero-card--primary">
-                    <div class="hero-text">
-                        <h2>Groceries delivered in minutes</h2>
-                        <p>Fresh items, fast delivery, best prices</p>
+            <div class="announcement-content">
+                <span class="announcement-icon">🎉</span>
+                <span class="announcement-text">Grand Opening Offer: Get 20% OFF on your first order! Use code: <strong>FIRST20</strong></span>
+                <button class="announcement-close" onclick="this.parentElement.parentElement.parentElement.style.display='none'">✕</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modern Navigation Header -->
+    <header class="modern-header" id="mainHeader">
+        <div class="container">
+            <div class="header-wrapper">
+                <!-- Logo -->
+                <div class="header-logo">
+                    <a href="/" class="logo-link">
+                        <span class="logo-icon">🏪</span>
+                        <div class="logo-text">
+                            <span class="logo-name">Chandra Dukan</span>
+                            <span class="logo-tagline">चंद्रा दुकान</span>
+                        </div>
+                    </a>
+                </div>
+
+                <!-- Location Selector -->
+                <div class="header-location">
+                    <button class="location-btn" onclick="openLocationModal()">
+                        <span class="location-icon">📍</span>
+                        <div class="location-text">
+                            <span class="location-label">Deliver to</span>
+                            <span class="location-value">Nawalpur Beyora</span>
+                        </div>
+                        <span class="location-arrow">▼</span>
+                    </button>
+                </div>
+
+                <!-- Search Bar -->
+                <div class="header-search">
+                    <input type="text" id="headerSearchInput" placeholder='Search for "milk", "bread", "eggs"...' class="search-input">
+                    <button class="search-btn">
+                        <span class="search-icon">🔍</span>
+                    </button>
+                </div>
+
+                <!-- Filters -->
+                <div class="header-filters">
+                    <select class="form-control-modern category-filter" id="categoryFilter">
+                        <option value="">All Categories</option>
+                    </select>
+                    <select class="form-control-modern sort-filter" id="sortFilter">
+                        <option value="name">Name</option>
+                        <option value="price-low">Price: Low to High</option>
+                        <option value="price-high">Price: High to Low</option>
+                        <option value="stock">Stock Available</option>
+                    </select>
+                </div>
+
+                <!-- Right Actions -->
+                <div class="header-actions">
+                    <!-- Dark Mode Toggle -->
+                    <button class="action-btn dark-mode-toggle" onclick="toggleDarkMode()" title="Toggle Dark Mode">
+                        <span class="action-icon">🌙</span>
+                    </button>
+
+                    <!-- Offers -->
+                    <a href="#offers" class="action-btn" title="Special Offers">
+                        <span class="action-icon">🎁</span>
+                        <span class="action-label">Offers</span>
+                    </a>
+
+                    <!-- Cart -->
+                    <button class="action-btn cart-btn" onclick="openCart()" title="Shopping Cart">
+                        <span class="action-icon">🛒</span>
+                        <span class="cart-badge" id="cartBadge">0</span>
+                        <span class="action-label">Cart</span>
+                    </button>
+
+                    <!-- User Menu -->
+                    <button class="action-btn user-btn" onclick="toggleUserMenu()" title="Account">
+                        <span class="action-icon">👤</span>
+                        <span class="action-label">Account</span>
+                    </button>
+                </div>
+
+                <!-- Mobile Menu Toggle -->
+                <button class="mobile-menu-toggle" onclick="toggleMobileMenu()">
+                    <span class="hamburger-icon">☰</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section with Enhanced Design -->
+    <section class="hero-section-enhanced">
+        <div class="container">
+            <div class="hero-content-wrapper">
+                <!-- Main Hero -->
+                <div class="hero-main">
+                    <div class="hero-badge">
+                        <span class="badge-icon">⚡</span>
+                        <span>Delivery in 17 Minutes</span>
+                    </div>
+                    <h1 class="hero-title">
+                        Fresh Groceries<br>
+                        <span class="hero-highlight">Delivered Fast</span>
+                    </h1>
+                    <p class="hero-description">
+                        Order from 1000+ products and get them delivered to your doorstep in minutes.
+                        Fresh, affordable, and always on time.
+                    </p>
+                    <div class="hero-cta">
+                        <button class="btn-primary-large" onclick="document.getElementById('productsGrid').scrollIntoView({behavior: 'smooth'})">
+                            <span>Start Shopping</span>
+                            <span class="btn-arrow">→</span>
+                        </button>
+                        <button class="btn-secondary-large" onclick="openLocationModal()">
+                            <span class="btn-icon">📍</span>
+                            <span>Check Delivery Area</span>
+                        </button>
+                    </div>
+                    <!-- Trust Badges -->
+                    <div class="trust-badges">
+                        <div class="trust-item">
+                            <span class="trust-icon">✓</span>
+                            <span>100% Fresh</span>
+                        </div>
+                        <div class="trust-item">
+                            <span class="trust-icon">✓</span>
+                            <span>Best Prices</span>
+                        </div>
+                        <div class="trust-item">
+                            <span class="trust-icon">✓</span>
+                            <span>Fast Delivery</span>
+                        </div>
                     </div>
                 </div>
-                <div class="hero-card hero-card--deal">
-                    <div class="hero-text">
-                        <h3>Everyday Essentials</h3>
-                        <p>Up to 30% OFF</p>
-                    </div>
-                </div>
-                <div class="hero-card hero-card--snacks">
-                    <div class="hero-text">
-                        <h3>Snacks & Beverages</h3>
-                        <p>Chill & munch deals</p>
+
+                <!-- Hero Image/Illustration -->
+                <div class="hero-visual">
+                    <div class="hero-image-placeholder">
+                        <div class="floating-card floating-card-1">
+                            <span class="card-icon">🥛</span>
+                            <span class="card-text">Fresh Dairy</span>
+                        </div>
+                        <div class="floating-card floating-card-2">
+                            <span class="card-icon">🥬</span>
+                            <span class="card-text">Vegetables</span>
+                        </div>
+                        <div class="floating-card floating-card-3">
+                            <span class="card-icon">🍞</span>
+                            <span class="card-text">Bakery</span>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Jan Seva Kendra Section -->
-    <section class="janseva-banner-section">
+    <!-- Features Section -->
+    <section class="features-section">
         <div class="container">
-            <a href="janseva.html" class="janseva-banner">
-                <div class="janseva-icon">🏛️</div>
-                <div class="janseva-content">
-                    <h3>Jan Seva Kendra - सरकारी सेवाएं</h3>
-                    <p>Government Citizen Services | Certificates, ID Cards & More</p>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">⚡</div>
+                    <h3>17 Min Delivery</h3>
+                    <p>Lightning fast delivery to your doorstep</p>
                 </div>
-                <div class="janseva-arrow">→</div>
+                <div class="feature-card">
+                    <div class="feature-icon">💰</div>
+                    <h3>Best Prices</h3>
+                    <p>Lowest prices guaranteed on all products</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🌿</div>
+                    <h3>100% Fresh</h3>
+                    <p>Fresh products sourced daily</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">📱</div>
+                    <h3>Easy Ordering</h3>
+                    <p>Simple and quick checkout process</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Promotional Offers Section -->
+    <section class="offers-section" id="offers">
+        <div class="container">
+            <div class="section-header-enhanced">
+                <h2>🎁 Special Offers</h2>
+                <p>Limited time deals you don't want to miss!</p>
+            </div>
+            <div class="offers-grid">
+                <div class="offer-card offer-card-primary">
+                    <div class="offer-badge">HOT DEAL</div>
+                    <div class="offer-content">
+                        <h3>First Order Discount</h3>
+                        <p class="offer-discount">20% OFF</p>
+                        <p class="offer-description">On orders above ₹299</p>
+                        <p class="offer-code">Code: <strong>FIRST20</strong></p>
+                        <div class="offer-timer" id="offerTimer1">
+                            <span class="timer-label">Ends in:</span>
+                            <span class="timer-value">23:45:12</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="offer-card offer-card-secondary">
+                    <div class="offer-badge">SAVE BIG</div>
+                    <div class="offer-content">
+                        <h3>Weekend Special</h3>
+                        <p class="offer-discount">₹100 OFF</p>
+                        <p class="offer-description">On orders above ₹599</p>
+                        <p class="offer-code">Code: <strong>WEEKEND100</strong></p>
+                    </div>
+                </div>
+                <div class="offer-card offer-card-tertiary">
+                    <div class="offer-badge">FREE DELIVERY</div>
+                    <div class="offer-content">
+                        <h3>Free Delivery</h3>
+                        <p class="offer-discount">₹0</p>
+                        <p class="offer-description">On all orders above ₹199</p>
+                        <p class="offer-code">Auto Applied</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Jan Seva Kendra Section (Enhanced) -->
+    <section class="janseva-banner-section-enhanced">
+        <div class="container">
+            <a href="janseva.html" class="janseva-banner-enhanced">
+                <div class="janseva-left">
+                    <div class="janseva-icon-large">🏛️</div>
+                    <div class="janseva-content-enhanced">
+                        <div class="janseva-badge">New Service</div>
+                        <h3>Jan Seva Kendra</h3>
+                        <p class="janseva-subtitle">सरकारी नागरिक सेवाएं</p>
+                        <p class="janseva-description">Apply for certificates, ID cards & government services online</p>
+                        <div class="janseva-features">
+                            <span class="janseva-feature-item">✓ 12+ Services</span>
+                            <span class="janseva-feature-item">✓ Online Application</span>
+                            <span class="janseva-feature-item">✓ Fast Processing</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="janseva-right">
+                    <button class="janseva-cta-btn">
+                        <span>Explore Services</span>
+                        <span class="btn-arrow">→</span>
+                    </button>
+                </div>
             </a>
         </div>
     </section>
@@ -61,78 +285,208 @@
     <!-- Category Strip (Horizontal scroll) -->
     <section class="category-strip-section">
         <div class="container">
+            <h2 class="section-title-small">Shop by Category</h2>
             <div class="category-strip" id="categoryStrip" aria-label="Shop by category"></div>
         </div>
     </section>
 
-    <!-- Categories -->
-    <section class="categories-section">
+    <!-- Products Section (Enhanced) -->
+    <section class="products-section-enhanced">
         <div class="container">
-            <h2>Product Categories</h2>
-            <div class="categories-grid" id="categoriesGrid">
-                <!-- Categories will be loaded here -->
-            </div>
-        </div>
-    </section>
-
-    <!-- Products -->
-    <section class="products-section">
-        <div class="container">
-            <div class="section-header">
-                <h2 id="productsTitle">All Products</h2>
-                <div class="product-controls">
-                    <select class="form-control category-filter" id="categoryFilter">
-                        <option value="">All Categories</option>
-                    </select>
-                    <select class="form-control sort-filter" id="sortFilter">
-                        <option value="name">Name</option>
-                        <option value="price-low">Price: Low to High</option>
-                        <option value="price-high">Price: High to Low</option>
-                        <option value="stock">Stock Available</option>
-                    </select>
+            <div class="section-header-enhanced">
+                <div>
+                    <h2 id="productsTitle">All Products</h2>
+                    <p>Fresh products at best prices</p>
                 </div>
             </div>
-            <div class="products-grid" id="productsGrid">
+            
+            <!-- Loading Skeleton -->
+            <div class="products-skeleton" id="productsSkeleton">
+                <div class="skeleton-card"></div>
+                <div class="skeleton-card"></div>
+                <div class="skeleton-card"></div>
+                <div class="skeleton-card"></div>
+            </div>
+            
+            <div class="products-grid" id="productsGrid" style="display: none;">
                 <!-- Products will be loaded here -->
             </div>
         </div>
     </section>
 
-    <!-- Modals will be rendered by components -->
-
-    <!-- Contact Section -->
-    <section class="contact-section">
+    <!-- Testimonials Section -->
+    <section class="testimonials-section">
         <div class="container">
-            <div class="contact-card">
-                <h3>Contact Us</h3>
-                <div class="contact-info">
-                    <div class="contact-item">
-                        <span class="contact-icon">📞</span>
-                        <span>Phone: - 7465073957</span>
+            <div class="section-header-enhanced">
+                <h2>⭐ What Our Customers Say</h2>
+                <p>Real reviews from real customers</p>
+            </div>
+            <div class="testimonials-grid">
+                <div class="testimonial-card">
+                    <div class="testimonial-rating">⭐⭐⭐⭐⭐</div>
+                    <p class="testimonial-text">"Best grocery delivery service in Nawalpur! Always fresh products and super fast delivery."</p>
+                    <div class="testimonial-author">
+                        <div class="author-avatar">R</div>
+                        <div class="author-info">
+                            <p class="author-name">Rajesh Kumar</p>
+                            <p class="author-location">Nawalpur Beyora</p>
+                        </div>
                     </div>
-                    <div class="contact-item">
-                        <span class="contact-icon">📱</span>
-                        <a href="https://wa.me/917465073957" target="_blank">Message us on WhatsApp - 7465073957</a>
+                </div>
+                <div class="testimonial-card">
+                    <div class="testimonial-rating">⭐⭐⭐⭐⭐</div>
+                    <p class="testimonial-text">"Great prices and excellent service. The delivery is really quick, usually within 20 minutes!"</p>
+                    <div class="testimonial-author">
+                        <div class="author-avatar">P</div>
+                        <div class="author-info">
+                            <p class="author-name">Priya Sharma</p>
+                            <p class="author-location">Bamba Ki Puliya</p>
+                        </div>
                     </div>
-                    <div class="contact-item">
-                        <span class="contact-icon">📍</span>
-                        <span>Main Market Bamba ki puliya Nawalpur beyora</span>
-                    </div>
-                    <div class="contact-item">
-                        <span class="contact-icon">🕐</span>
-                        <span>7:00 AM - 10:00 PM (Daily)</span>
+                </div>
+                <div class="testimonial-card">
+                    <div class="testimonial-rating">⭐⭐⭐⭐⭐</div>
+                    <p class="testimonial-text">"Very convenient! I order all my groceries from here. Quality is always top-notch."</p>
+                    <div class="testimonial-author">
+                        <div class="author-avatar">A</div>
+                        <div class="author-info">
+                            <p class="author-name">Amit Singh</p>
+                            <p class="author-location">Main Market</p>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Footer -->
-    <footer class="footer">
+    <!-- Contact Section (Enhanced) -->
+    <section class="contact-section-enhanced">
         <div class="container">
-            <p>&copy; 2024 Chandra Dukan - Premium Grocery Delivery Service</p>
+            <div class="contact-wrapper">
+                <div class="contact-info-section">
+                    <h2>📞 Get in Touch</h2>
+                    <p>We're here to help you 7 days a week</p>
+                    <div class="contact-details">
+                        <div class="contact-detail-item">
+                            <div class="contact-detail-icon">📞</div>
+                            <div class="contact-detail-content">
+                                <p class="contact-detail-label">Call Us</p>
+                                <a href="tel:+917465073957" class="contact-detail-value">+91 7465073957</a>
+                            </div>
+                        </div>
+                        <div class="contact-detail-item">
+                            <div class="contact-detail-icon">📱</div>
+                            <div class="contact-detail-content">
+                                <p class="contact-detail-label">WhatsApp</p>
+                                <a href="https://wa.me/917465073957" target="_blank" class="contact-detail-value">Message on WhatsApp</a>
+                            </div>
+                        </div>
+                        <div class="contact-detail-item">
+                            <div class="contact-detail-icon">📍</div>
+                            <div class="contact-detail-content">
+                                <p class="contact-detail-label">Visit Us</p>
+                                <p class="contact-detail-value">Main Market Bamba ki puliya<br>Nawalpur Beyora</p>
+                            </div>
+                        </div>
+                        <div class="contact-detail-item">
+                            <div class="contact-detail-icon">🕐</div>
+                            <div class="contact-detail-content">
+                                <p class="contact-detail-label">Working Hours</p>
+                                <p class="contact-detail-value">7:00 AM - 10:00 PM<br>Open Daily</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Newsletter Signup -->
+                <div class="newsletter-section">
+                    <div class="newsletter-card">
+                        <div class="newsletter-icon">📧</div>
+                        <h3>Get Exclusive Offers</h3>
+                        <p>Subscribe to our newsletter and get special discounts!</p>
+                        <form class="newsletter-form" onsubmit="subscribeNewsletter(event)">
+                            <input type="email" placeholder="Enter your email" required class="newsletter-input">
+                            <button type="submit" class="newsletter-btn">Subscribe</button>
+                        </form>
+                        <p class="newsletter-note">We respect your privacy. Unsubscribe anytime.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Enhanced Footer -->
+    <footer class="footer-enhanced">
+        <div class="container">
+            <div class="footer-content">
+                <!-- About Section -->
+                <div class="footer-column">
+                    <div class="footer-logo">
+                        <span class="logo-icon">🏪</span>
+                        <span class="logo-name">Chandra Dukan</span>
+                    </div>
+                    <p class="footer-description">
+                        Your trusted local grocery store delivering fresh products to your doorstep in minutes.
+                    </p>
+                    <div class="social-links">
+                        <a href="#" class="social-link" title="Facebook">📘</a>
+                        <a href="#" class="social-link" title="Instagram">📷</a>
+                        <a href="https://wa.me/917465073957" class="social-link" title="WhatsApp" target="_blank">💬</a>
+                        <a href="#" class="social-link" title="Twitter">🐦</a>
+                    </div>
+                </div>
+
+                <!-- Quick Links -->
+                <div class="footer-column">
+                    <h4>Quick Links</h4>
+                    <ul class="footer-links">
+                        <li><a href="#products">Products</a></li>
+                        <li><a href="#offers">Offers</a></li>
+                        <li><a href="janseva.html">Jan Seva Kendra</a></li>
+                        <li><a href="#contact">Contact Us</a></li>
+                    </ul>
+                </div>
+
+                <!-- Customer Service -->
+                <div class="footer-column">
+                    <h4>Customer Service</h4>
+                    <ul class="footer-links">
+                        <li><a href="#faq">FAQ</a></li>
+                        <li><a href="#shipping">Shipping Info</a></li>
+                        <li><a href="#returns">Returns</a></li>
+                        <li><a href="#terms">Terms & Conditions</a></li>
+                    </ul>
+                </div>
+
+                <!-- Contact Info -->
+                <div class="footer-column">
+                    <h4>Contact Info</h4>
+                    <ul class="footer-contact">
+                        <li>📞 +91 7465073957</li>
+                        <li>📍 Nawalpur Beyora</li>
+                        <li>🕐 7 AM - 10 PM Daily</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Footer Bottom -->
+            <div class="footer-bottom">
+                <p>&copy; 2024 Chandra Dukan. All rights reserved.</p>
+                <div class="footer-bottom-links">
+                    <a href="#privacy">Privacy Policy</a>
+                    <span>•</span>
+                    <a href="#terms">Terms of Service</a>
+                    <span>•</span>
+                    <a href="#sitemap">Sitemap</a>
+                </div>
+            </div>
         </div>
     </footer>
+
+    <!-- Back to Top Button -->
+    <button class="back-to-top" id="backToTop" onclick="scrollToTop()">
+        <span>↑</span>
+    </button>
 
     <!-- Load component scripts -->
     <script src="components/Header.js"></script>
@@ -150,5 +504,8 @@
     
     <!-- Load main app script -->
     <script src="app.js"></script>
+    
+    <!-- Load upgrade features script -->
+    <script src="upgrades.js"></script>
 </body>
 </html>
