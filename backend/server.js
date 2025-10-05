@@ -37,14 +37,18 @@ app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
 // Static files - Static files serve करना
 app.use(express.static('public'));
+app.use('/uploads', express.static('public/uploads'));
+app.use('/assets', express.static('assets'));
 
 // Routes - API routes setup करना
 app.use('/api/auth', require('./routes/auth'));
 app.use('/api/products', require('./routes/products'));
+app.use('/api/categories', require('./routes/categories'));
 app.use('/api/orders', require('./routes/orders'));
 app.use('/api/customers', require('./routes/customers'));
 app.use('/api/notifications', require('./routes/notifications'));
 app.use('/api/analytics', require('./routes/analytics'));
+app.use('/api/upload', require('./routes/upload'));
 
 // Health check - Health check endpoint
 app.get('/api/health', (req, res) => {

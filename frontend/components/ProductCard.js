@@ -15,6 +15,7 @@ class ProductCard {
       <div class="product-card fade-in" data-product-id="${this.product.id}">
         <div class="product-image-container">
           <div class="product-badge-container">
+            <div class="delivery-badge">17 MINS</div>
             ${this.product.stock <= 5 && this.product.stock > 0 ? 
               '<div class="stock-badge stock-low-badge">Low Stock</div>' : ''}
             ${this.product.stock === 0 ? 

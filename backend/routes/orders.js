@@ -5,9 +5,9 @@ const express = require('express');
 const router = express.Router();
 const { body, validationResult } = require('express-validator');
 
-// Mock data for now - Real database integration later
-let orders = [];
-let orderIdCounter = 1;
+const store = require('../utils/jsonStore');
+let orders = store.read('orders', []);
+let orderIdCounter = orders.length + 1;
 
 // Get all orders - सभी orders get करना
 router.get('/', (req, res) => {
@@ -122,6 +122,7 @@ router.post('/', [
     };
     
     orders.push(newOrder);
+    store.write('orders', orders);
     
     // Send notification (mock)
     console.log(`📱 Order notification sent for order ${newOrder.id}`);
