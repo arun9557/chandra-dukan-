@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView, TextInput, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import OrderService from '../services/OrderService';
+import NotificationService from '../services/NotificationService';
 import { useSelector } from 'react-redux';
 
 const CheckoutScreen = ({ navigation }) => {
@@ -55,6 +56,8 @@ const CheckoutScreen = ({ navigation }) => {
     try {
       setLoading(true);
       const order = await OrderService.placeOrder(payload);
+      // Local notification bhejna - user ko confirmation dene ke liye
+      try { await new NotificationService().sendOrderNotification(order); } catch (_) {}
       // Success - navigate to confirmation and tracking
       navigation.replace('OrderConfirmation', { order });
     } catch (e) {

@@ -5,22 +5,22 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { COLORS, SPACING, FONT_SIZES } from '../../utils/theme';
 
 const JanSevaConfirmationScreen = ({ route, navigation }) => {
-  const { service } = route.params;
-  const applicationId = 'JS' + Date.now().toString().slice(-8);
+  const { service, application } = route.params;
+  const applicationId = application?.id || ('JS' + Date.now().toString().slice(-8));
 
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.content}>
         <Text style={styles.icon}>✅</Text>
         <Text style={styles.title}>Application Submitted!</Text>
-        <Text style={styles.subtitle}>Your application has been submitted successfully</Text>
+        <Text style={styles.subtitle}>Aapki application safalta se submit ho gayi</Text>
         <View style={styles.card}>
           <Text style={styles.label}>Application ID</Text>
           <Text style={styles.appId}>{applicationId}</Text>
           <Text style={styles.label}>Service</Text>
-          <Text style={styles.value}>{service.name}</Text>
+          <Text style={styles.value}>{service?.name}</Text>
           <Text style={styles.label}>Processing Time</Text>
-          <Text style={styles.value}>{service.time}</Text>
+          <Text style={styles.value}>{service?.time || application?.processing_time || '—'}</Text>
         </View>
         <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Home')}>
           <Text style={styles.buttonText}>Back to Home</Text>

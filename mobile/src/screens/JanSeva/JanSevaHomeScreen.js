@@ -7,6 +7,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import { COLORS, SPACING, FONT_SIZES, RADIUS } from '../../utils/theme';
+import JanSevaAPIService from '../../services/JanSevaAPIService';
 
 const JanSevaHomeScreen = ({ navigation }) => {
   const [services, setServices] = useState([]);
@@ -18,18 +19,18 @@ const JanSevaHomeScreen = ({ navigation }) => {
   }, []);
 
   const loadServices = async () => {
-    // Sample services - वास्तविक API से लोड करें
-    const sampleServices = [
-      { id: 1, name: 'Caste Certificate', nameHindi: 'जाति प्रमाण पत्र', icon: '📜', price: 50, time: '7 days', category: 'certificates' },
-      { id: 2, name: 'Income Certificate', nameHindi: 'आय प्रमाण पत्र', icon: '💰', price: 50, time: '7 days', category: 'certificates' },
-      { id: 3, name: 'Birth Certificate', nameHindi: 'जन्म प्रमाण पत्र', icon: '👶', price: 30, time: '5 days', category: 'certificates' },
-      { id: 4, name: 'PAN Card', nameHindi: 'पैन कार्ड', icon: '💳', price: 100, time: '15 days', category: 'cards' },
-      { id: 5, name: 'Aadhar Update', nameHindi: 'आधार अपडेट', icon: '🆔', price: 50, time: '10 days', category: 'cards' },
-      { id: 6, name: 'Voter ID', nameHindi: 'वोटर आईडी', icon: '🗳️', price: 50, time: '30 days', category: 'cards' },
-      { id: 7, name: 'Ration Card', nameHindi: 'राशन कार्ड', icon: '🍚', price: 100, time: '30 days', category: 'welfare' },
-      { id: 8, name: 'Pension', nameHindi: 'पेंशन', icon: '👴', price: 100, time: '45 days', category: 'welfare' },
-    ];
-    setServices(sampleServices);
+    // Backend se JanSeva services fetch karna - Web parity
+    const res = await JanSevaAPIService.getServices();
+    const list = res?.data || [];
+    setServices(list.map(s => ({
+      id: s.id,
+      name: s.name,
+      nameHindi: s.hindi_name || s.name,
+      icon: s.icon || '📋',
+      price: s.fee || s.price || 0,
+      time: s.processing_time || '—',
+      category: s.category || 'others',
+    })));
   };
 
   const categories = [

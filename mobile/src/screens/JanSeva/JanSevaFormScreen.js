@@ -5,6 +5,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { COLORS, SPACING, FONT_SIZES, RADIUS } from '../../utils/theme';
 import * as DocumentPicker from 'expo-document-picker';
+import JanSevaAPIService from '../../services/JanSevaAPIService';
 
 const JanSevaFormScreen = ({ route, navigation }) => {
   const { service } = route.params;
@@ -21,20 +22,41 @@ const JanSevaFormScreen = ({ route, navigation }) => {
     try {
       const result = await DocumentPicker.getDocumentAsync({ type: 'application/pdf,image/*' });
       if (result.type === 'success') {
-        setDocuments([...documents, result]);
-        Alert.alert('Success', 'Document uploaded');
+        // Backend par upload - Web parity (Hinglish)
+        try {
+          const uploadRes = await JanSevaAPIService.uploadDocument(result);
+          setDocuments([...documents, { ...result, serverPath: uploadRes?.path }]);
+          Alert.alert('Success', 'Document uploaded');
+        } catch (e) {
+          setDocuments([...documents, result]);
+          Alert.alert('Uploaded (Local)', 'Server upload failed, local ref saved');
+        }
       }
     } catch (error) {
       Alert.alert('Error', 'Failed to pick document');
     }
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (!formData.name || !formData.mobile) {
       Alert.alert('Error', 'Please fill all required fields');
       return;
     }
-    navigation.navigate('JanSevaConfirmation', { service, formData });
+    try {
+      const payload = {
+        service_id: service.id,
+        name: formData.name,
+        mobile: formData.mobile,
+        email: formData.email,
+        address: formData.address,
+        documents: documents.map(d => ({ name: d.name, uri: d.serverPath || d.uri })),
+        payment_method: paymentMethod.toLowerCase(),
+      };
+      const res = await JanSevaAPIService.submitApplication(payload);
+      navigation.navigate('JanSevaConfirmation', { service, formData, application: res?.data || res });
+    } catch (e) {
+      Alert.alert('Error', 'Application submit karte waqt samasya aayi.');
+    }
   };
 
   return (

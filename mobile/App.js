@@ -29,6 +29,7 @@ import CartScreen from './src/screens/CartScreen';
 import CheckoutScreen from './src/screens/CheckoutScreen';
 import OrderConfirmationScreen from './src/screens/OrderConfirmationScreen';
 import OrderTrackingScreen from './src/screens/OrderTrackingScreen';
+import OrderHistoryScreen from './src/screens/OrderHistoryScreen';
 import DashboardScreen from './src/screens/DashboardScreen';
 import ProfileScreen from './src/screens/ProfileScreen';
 import SettingsScreen from './src/screens/SettingsScreen';
@@ -107,6 +108,16 @@ function TabNavigator() {
           tabBarLabel: 'Dashboard',
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="analytics-outline" size={size} color={color} />
+          ),
+        }}
+      />
+      <Tab.Screen 
+        name="Orders" 
+        component={OrderHistoryScreen}
+        options={{
+          tabBarLabel: 'Orders',
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="receipt-outline" size={size} color={color} />
           ),
         }}
       />
