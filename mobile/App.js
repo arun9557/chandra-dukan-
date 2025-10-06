@@ -22,6 +22,7 @@ import { store, persistor } from './src/store/store';
 // Screens
 import SplashScreen from './src/screens/SplashScreen';
 import HomeScreen from './src/screens/HomeScreen';
+import HomeScreenUpgraded from './src/screens/HomeScreenUpgraded';
 import ProductsScreen from './src/screens/ProductsScreen';
 import ProductDetailScreen from './src/screens/ProductDetailScreen';
 import CartScreen from './src/screens/CartScreen';
@@ -33,6 +34,11 @@ import ProfileScreen from './src/screens/ProfileScreen';
 import SettingsScreen from './src/screens/SettingsScreen';
 import LoginScreen from './src/screens/LoginScreen';
 import RegisterScreen from './src/screens/RegisterScreen';
+
+// Jan Seva Screens
+import JanSevaHomeScreen from './src/screens/JanSeva/JanSevaHomeScreen';
+import JanSevaFormScreen from './src/screens/JanSeva/JanSevaFormScreen';
+import JanSevaConfirmationScreen from './src/screens/JanSeva/JanSevaConfirmationScreen';
 
 // Components
 import CustomDrawerContent from './src/components/CustomDrawerContent';
@@ -66,7 +72,7 @@ function TabNavigator() {
     >
       <Tab.Screen 
         name="Home" 
-        component={HomeScreen}
+        component={HomeScreenUpgraded}
         options={{
           tabBarLabel: 'Home',
           tabBarIcon: ({ color, size }) => (
@@ -191,6 +197,27 @@ function StackNavigator() {
             backgroundColor: '#ff6b35',
           },
           headerTintColor: '#fff',
+        }}
+      />
+      <Stack.Screen 
+        name="JanSeva" 
+        component={JanSevaHomeScreen}
+        options={{
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen 
+        name="JanSevaDetail" 
+        component={JanSevaFormScreen}
+        options={{
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen 
+        name="JanSevaConfirmation" 
+        component={JanSevaConfirmationScreen}
+        options={{
+          headerShown: false,
         }}
       />
     </Stack.Navigator>
