@@ -1,22 +1,36 @@
-// ProductService.js - Product service for API calls
-import axios from 'axios';
-
-const API_BASE = 'http://192.168.31.84:3000/api';
+// ProductService.js - Product service for GraphQL API calls
+import { gql } from '@apollo/client';
+import client from './api';
 
 const ProductService = {
   // Get all categories
   getCategories: async () => {
     try {
-      const response = await axios.get(`${API_BASE}/categories`);
-      return response.data.data || response.data || [];
+      const GET_CATEGORIES = gql`
+        query GetCategories {
+          categories {
+            id
+            name
+            icon
+            arabic_name
+          }
+        }
+      `;
+
+      const { data } = await client.query({
+        query: GET_CATEGORIES,
+        fetchPolicy: 'network-only',
+      });
+
+      return data?.categories || [];
     } catch (error) {
       console.error('Error fetching categories:', error);
       // Return sample data as fallback
       return [
-        { id: 1, name: 'Dairy & Bread', icon: '🥛', hindi_name: 'डेयरी और ब्रेड' },
-        { id: 2, name: 'Snacks', icon: '🍿', hindi_name: 'स्नैक्स' },
-        { id: 3, name: 'Beverages', icon: '🥤', hindi_name: 'पेय पदार्थ' },
-        { id: 4, name: 'Vegetables', icon: '🥬', hindi_name: 'सब्जियां' },
+        { id: 1, name: 'Dairy & Bread', icon: '🥛', arabic_name: 'اللبن والخبز' },
+        { id: 2, name: 'Snacks', icon: '🍿', arabic_name: 'السناكس' },
+        { id: 3, name: 'Beverages', icon: '🥤', arabic_name: 'المشروبات' },
+        { id: 4, name: 'Vegetables', icon: '🥬', arabic_name: 'الخضروات' },
       ];
     }
   },
@@ -24,8 +38,30 @@ const ProductService = {
   // Get featured products
   getFeaturedProducts: async () => {
     try {
-      const response = await axios.get(`${API_BASE}/products?featured=true`);
-      return response.data.data || response.data || [];
+      const GET_FEATURED_PRODUCTS = gql`
+        query GetFeaturedProducts {
+          products(featured: true) {
+            id
+            name
+            description
+            price
+            originalPrice
+            image
+            category
+            featured
+            stock
+            unit
+            arabic_name
+          }
+        }
+      `;
+
+      const { data } = await client.query({
+        query: GET_FEATURED_PRODUCTS,
+        fetchPolicy: 'network-only',
+      });
+
+      return data?.products || [];
     } catch (error) {
       console.error('Error fetching featured products:', error);
       return [
@@ -38,14 +74,40 @@ const ProductService = {
   // Get store info
   getStoreInfo: async () => {
     try {
-      const response = await axios.get(`${API_BASE}/store/info`);
-      return response.data;
+      const GET_STORE_INFO = gql`
+        query GetStoreInfo {
+          storeInfo {
+            name
+            description
+            address
+            phone
+            email
+            openingHours
+            logo
+            socialMedia {
+              facebook
+              instagram
+              twitter
+            }
+          }
+        }
+      `;
+
+      const { data } = await client.query({
+        query: GET_STORE_INFO,
+        fetchPolicy: 'cache-first',
+      });
+
+      return data?.storeInfo || {};
     } catch (error) {
       console.error('Error fetching store info:', error);
+      // Return sample data as fallback
       return {
         name: 'Chandra Dukan',
-        isOpen: true,
-        deliveryTime: '1 Day',
+        description: 'Your local grocery store',
+        address: '123 Main St, Your City',
+        phone: '+91 98765 43210',
+        email: 'info@chandradukan.com',
       };
     }
   },
@@ -53,10 +115,32 @@ const ProductService = {
   // Get all products
   getAllProducts: async () => {
     try {
-      const response = await axios.get(`${API_BASE}/products`);
-      return response.data.data || response.data || [];
+      const GET_ALL_PRODUCTS = gql`
+        query GetAllProducts {
+          products {
+            id
+            name
+            description
+            price
+            originalPrice
+            image
+            category
+            featured
+            stock
+            unit
+            arabic_name
+          }
+        }
+      `;
+
+      const { data } = await client.query({
+        query: GET_ALL_PRODUCTS,
+        fetchPolicy: 'network-only',
+      });
+
+      return data?.products || [];
     } catch (error) {
-      console.error('Error fetching products:', error);
+      console.error('Error fetching all products:', error);
       return [];
     }
   },
@@ -64,14 +148,43 @@ const ProductService = {
   // Get product by id - Product ko ID se lana (cart parity ke liye)
   getProductById: async (productId) => {
     try {
-      // Backend mein individual GET endpoint specified nahi dikh raha; fallback: list aur filter
-      const products = await ProductService.getAllProducts();
-      return products.find(p => p.id === productId) || null;
+      const GET_PRODUCT_BY_ID = gql`
+        query GetProductById($id: ID!) {
+          product(id: $id) {
+            id
+            name
+            description
+            price
+            originalPrice
+            image
+            category
+            featured
+            stock
+            unit
+            arabic_name
+            details
+            rating
+            reviews {
+              id
+              user
+              rating
+              comment
+              createdAt
+            }
+          }
+        }
+      `;
+
+      const { data } = await client.query({
+        query: GET_PRODUCT_BY_ID,
+        variables: { id: productId },
+        fetchPolicy: 'network-only',
+      });
+
+      return data?.product || null;
     } catch (error) {
-      console.error('Error fetching product by id:', error);
+      console.error(`Error fetching product ${productId}:`, error);
       return null;
     }
   },
 };
-
-export default ProductService;

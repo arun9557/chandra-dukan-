@@ -4,7 +4,16 @@ import { View, Text, StyleSheet, ScrollView, TextInput, TouchableOpacity, Alert 
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { COLORS, SPACING, FONT_SIZES, RADIUS } from '../../utils/theme';
-import * as DocumentPicker from 'expo-document-picker';
+// Document picker temporarily disabled
+const DocumentPicker = {
+  getDocumentAsync: async () => ({
+    type: 'cancel',
+    name: 'document.pdf',
+    size: 0,
+    uri: '',
+  }),
+};
+
 import JanSevaAPIService from '../../services/JanSevaAPIService';
 
 const JanSevaFormScreen = ({ route, navigation }) => {
@@ -15,11 +24,18 @@ const JanSevaFormScreen = ({ route, navigation }) => {
     email: '',
     address: '',
   });
-  const [documents, setDocuments] = useState([]);
+  const [documents, setDocuments] = useState([
+    // Mock document for testing
+    { name: 'document1.pdf', size: 1024, type: 'application/pdf' },
+    { name: 'image1.jpg', size: 2048, type: 'image/jpeg' }
+  ]);
   const [paymentMethod, setPaymentMethod] = useState('COD');
 
   const pickDocument = async () => {
     try {
+      // Simulate document picker
+      Alert.alert('Info', 'Document upload functionality is temporarily disabled');
+      /*
       const result = await DocumentPicker.getDocumentAsync({ type: 'application/pdf,image/*' });
       if (result.type === 'success') {
         // Backend par upload - Web parity (Hinglish)
