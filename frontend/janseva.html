@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jan Seva Kendra - Government Citizen Services | Chandra Dukan</title>
+    <link rel="stylesheet" href="janseva-style.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="janseva-header">
+        <div class="container">
+            <div class="header-content">
+                <div class="logo-section">
+                    <a href="index.html" class="back-btn">← Back to Home</a>
+                    <h1>🏛️ Jan Seva Kendra</h1>
+                </div>
+                <div class="header-info">
+                    <span class="helpline">📞 Helpline: 1800-XXX-XXXX</span>
+                </div>
+            </div>
+            <p class="tagline">सरकारी नागरिक सेवाएं - Government Citizen Services</p>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <div class="container">
+            <div class="hero-content">
+                <h2>सभी सरकारी सेवाएं एक जगह</h2>
+                <p>All Government Services at One Place</p>
+                <div class="hero-stats">
+                    <div class="stat-item">
+                        <span class="stat-number">50+</span>
+                        <span class="stat-label">Services</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number">24/7</span>
+                        <span class="stat-label">Available</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number">Fast</span>
+                        <span class="stat-label">Processing</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Search Section -->
+    <section class="search-section">
+        <div class="container">
+            <div class="search-box">
+                <input type="text" id="serviceSearch" placeholder="Search for services... (e.g., Caste Certificate, PAN Card)">
+                <button class="search-btn">🔍 Search</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Popular Services -->
+    <section class="services-section">
+        <div class="container">
+            <h2 class="section-title">🌟 Popular Services</h2>
+            <div class="services-grid" id="popularServices">
+                <!-- Populated by JavaScript -->
+            </div>
+        </div>
+    </section>
+
+    <!-- All Services by Category -->
+    <section class="services-section">
+        <div class="container">
+            <h2 class="section-title">📋 All Services</h2>
+            
+            <!-- Category Tabs -->
+            <div class="category-tabs">
+                <button class="tab-btn active" data-category="all">All Services</button>
+                <button class="tab-btn" data-category="certificates">Certificates</button>
+                <button class="tab-btn" data-category="cards">ID Cards</button>
+                <button class="tab-btn" data-category="welfare">Welfare Schemes</button>
+                <button class="tab-btn" data-category="other">Other Services</button>
+            </div>
+
+            <!-- Services Grid -->
+            <div class="services-grid" id="allServices">
+                <!-- Populated by JavaScript -->
+            </div>
+        </div>
+    </section>
+
+    <!-- How It Works -->
+    <section class="how-it-works">
+        <div class="container">
+            <h2 class="section-title">📝 How It Works</h2>
+            <div class="steps-grid">
+                <div class="step-card">
+                    <div class="step-number">1</div>
+                    <h3>Select Service</h3>
+                    <p>Choose the service you need</p>
+                </div>
+                <div class="step-card">
+                    <div class="step-number">2</div>
+                    <h3>Fill Form</h3>
+                    <p>Complete the application form</p>
+                </div>
+                <div class="step-card">
+                    <div class="step-number">3</div>
+                    <h3>Upload Documents</h3>
+                    <p>Upload required documents</p>
+                </div>
+                <div class="step-card">
+                    <div class="step-number">4</div>
+                    <h3>Make Payment</h3>
+                    <p>Pay service charge via UPI</p>
+                </div>
+                <div class="step-card">
+                    <div class="step-number">5</div>
+                    <h3>Track Status</h3>
+                    <p>Monitor your application</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQs -->
+    <section class="faq-section">
+        <div class="container">
+            <h2 class="section-title">❓ Frequently Asked Questions</h2>
+            <div class="faq-list">
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <h3>How long does it take to process?</h3>
+                        <span class="faq-icon">+</span>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Processing time varies by service. Typically 3-7 working days for most certificates.</p>
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <h3>What documents are required?</h3>
+                        <span class="faq-icon">+</span>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Required documents vary by service. Check the specific service page for details.</p>
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <h3>How can I track my application?</h3>
+                        <span class="faq-icon">+</span>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Use your application number to track status on our website or call helpline.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="janseva-footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>Jan Seva Kendra</h3>
+                    <p>Government Citizen Services</p>
+                </div>
+                <div class="footer-section">
+                    <h3>Quick Links</h3>
+                    <ul>
+                        <li><a href="#about">About Us</a></li>
+                        <li><a href="#terms">Terms & Conditions</a></li>
+                        <li><a href="#privacy">Privacy Policy</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3>Contact</h3>
+                    <p>📞 1800-XXX-XXXX</p>
+                    <p>📧 support@jansevakendra.in</p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 Jan Seva Kendra. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="components/JanSevaService.js"></script>
+    <script src="janseva-app.js"></script>
+</body>
+</html>

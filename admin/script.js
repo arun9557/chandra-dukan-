@@ -14,6 +14,7 @@ window.AdminApp = {
     nav('navCategories', 'categories');
     nav('navOrders', 'orders');
     nav('navCustomers', 'customers');
+    nav('navJanSeva', 'janseva');
     nav('navAnalytics', 'analytics');
   },
   async render() {
@@ -23,7 +24,23 @@ window.AdminApp = {
     if (v === 'categories') return window.AdminCategories.render(this.viewEl);
     if (v === 'orders') return window.AdminOrders.render(this.viewEl);
     if (v === 'customers') return window.AdminCustomers.render(this.viewEl);
+    if (v === 'janseva') return this.renderJanSeva();
     if (v === 'analytics') return window.AdminAnalytics.render(this.viewEl);
+  },
+  renderJanSeva() {
+    this.viewEl.innerHTML = `
+      <h2>🏛️ Jan Seva Kendra - Applications Management</h2>
+      <div id="janSevaStats"></div>
+      <div class="filters" style="margin: 20px 0;">
+        <input type="text" id="appSearch" placeholder="Search applications..." style="padding: 10px; width: 300px; border: 1px solid #ddd; border-radius: 5px;">
+        <button class="filter-btn active" onclick="filterApplications('all')">All</button>
+        <button class="filter-btn" onclick="filterApplications('pending')">Pending</button>
+        <button class="filter-btn" onclick="filterApplications('under_review')">Under Review</button>
+        <button class="filter-btn" onclick="filterApplications('approved')">Approved</button>
+        <button class="filter-btn" onclick="filterApplications('completed')">Completed</button>
+      </div>
+      <div id="applicationsTable"></div>
+    `;
   }
 };
 
