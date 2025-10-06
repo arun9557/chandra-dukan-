@@ -117,9 +117,24 @@ function openLocationModal() {
     // TODO: Implement location modal
 }
 
+function openDeliveryAreaMap() {
+    // Open delivery area map in new tab
+    window.open('delivery-map.html', '_blank');
+}
+
 function toggleUserMenu() {
-    alert('User menu coming soon! Sign in to access your account.');
-    // TODO: Implement user menu dropdown
+    const dropdown = document.getElementById('userMenuDropdown');
+    if (dropdown) {
+        dropdown.classList.toggle('show');
+    }
+    
+    // Close dropdown when clicking outside
+    document.addEventListener('click', function(event) {
+        const container = event.target.closest('.user-menu-container');
+        if (!container) {
+            dropdown?.classList.remove('show');
+        }
+    });
 }
 
 function toggleMobileMenu() {

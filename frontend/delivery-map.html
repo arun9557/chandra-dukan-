@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Delivery Tracking - Chandra Dukan</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <style>
+        body { font-family: Arial, sans-serif; margin: 0; padding: 20px; }
+        .tracking-header { text-align: center; margin-bottom: 20px; }
+        #map { height: 400px; border-radius: 10px; }
+        .delivery-info { background: #f8f9fa; padding: 15px; border-radius: 8px; margin-top: 15px; }
+    </style>
+</head>
+<body>
+    <div class="tracking-header">
+        <h2>📍 Delivery Area Coverage</h2>
+        <p>Check if we deliver to your location | <span style="color: green;">5km radius coverage</span></p>
+    </div>
+    
+    <div id="map"></div>
+    
+    <div class="delivery-info">
+        <h3>🚚 Delivery Coverage Information</h3>
+        <p><strong>Store Location:</strong> Chandra Dukan, Main Market, Nawalpur Beyora</p>
+        <p><strong>Delivery Radius:</strong> 5 kilometers from store</p>
+        <p><strong>Delivery Time:</strong> Same day or next day</p>
+        <p><strong>Coverage Areas:</strong> Station Road, School Para, Hospital Chowk, Old Town, New Colony</p>
+        <p><strong>Contact:</strong> 📞 +91 7465073957</p>
+        <div style="margin-top: 15px; padding: 10px; background: #e8f5e8; border-radius: 5px;">
+            <strong>✅ Free Delivery:</strong> Orders above ₹200 | <strong>🕒 Hours:</strong> 7:00 AM - 10:00 PM
+        </div>
+    </div>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script>
+        // Initialize map
+        const map = L.map('map').setView([26.7606, 83.3732], 14);
+        
+        // Add free tile layer
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '© OpenStreetMap contributors'
+        }).addTo(map);
+        
+        // Store location - Main marker
+        const storeMarker = L.marker([26.7606, 83.3732])
+            .addTo(map)
+            .bindPopup('🏪 <b>Chandra Dukan</b><br>Main Market, Nawalpur Beyora<br>📞 +91 7465073957')
+            .openPopup();
+        
+        // Coverage area markers
+        const coverageAreas = [
+            {lat: 26.7650, lng: 83.3700, name: 'Station Road'},
+            {lat: 26.7580, lng: 83.3780, name: 'School Para'},
+            {lat: 26.7520, lng: 83.3720, name: 'Hospital Chowk'},
+            {lat: 26.7680, lng: 83.3650, name: 'Old Town'},
+            {lat: 26.7550, lng: 83.3800, name: 'New Colony'}
+        ];
+        
+        // Add coverage area markers
+        coverageAreas.forEach(area => {
+            L.marker([area.lat, area.lng])
+                .addTo(map)
+                .bindPopup(`📍 <b>${area.name}</b><br>✅ Delivery Available`);
+        });
+        
+        // Delivery area
+        L.circle([26.7606, 83.3732], {
+            color: '#ff6b35',
+            fillColor: '#ff6b35',
+            fillOpacity: 0.1,
+            radius: 5000
+        }).addTo(map);
+        
+        // Add click event to check if location is in delivery area
+        map.on('click', function(e) {
+            const clickedPoint = e.latlng;
+            const storeLocation = L.latLng(26.7606, 83.3732);
+            const distance = clickedPoint.distanceTo(storeLocation);
+            
+            if (distance <= 5000) {
+                L.popup()
+                    .setLatLng(clickedPoint)
+                    .setContent(`✅ <b>Delivery Available!</b><br>Distance: ${Math.round(distance)}m from store<br>Delivery: Same day or next day`)
+                    .openOn(map);
+            } else {
+                L.popup()
+                    .setLatLng(clickedPoint)
+                    .setContent(`❌ <b>Outside Delivery Area</b><br>Distance: ${Math.round(distance)}m from store<br>Maximum delivery: 5000m`)
+                    .openOn(map);
+            }
+        });
+    </script>
+</body>
+</html>

@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chandra Dukan - Premium Local Delivery | Groceries in Minutes</title>
+    <title>Chandra Dukan - Premium Local Delivery | Groceries in 1 Day</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="upgrades.css">
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#6366F1">
-    <meta name="description" content="Chandra Dukan - Get fresh groceries delivered to your doorstep in minutes. Best prices, fastest delivery in Nawalpur Beyora.">
+    <meta name="description" content="Chandra Dukan - Get fresh groceries delivered to your doorstep within a day. Best prices, reliable delivery in Nawalpur Beyora.">
     <link rel="icon" type="image/x-icon" href="/favicon.ico">
     
     <!-- Preconnect to Google Fonts -->
@@ -18,7 +18,7 @@
     
     <!-- Open Graph Meta Tags -->
     <meta property="og:title" content="Chandra Dukan - Premium Grocery Delivery">
-    <meta property="og:description" content="Fresh groceries delivered in minutes">
+    <meta property="og:description" content="Fresh groceries delivered within a day">
     <meta property="og:image" content="/assets/og-image.jpg">
     <meta property="og:url" content="https://chandradukan.com">
 </head>
@@ -103,10 +103,34 @@
                     </a>
 
                     <!-- User Menu -->
-                    <button class="action-btn user-btn" onclick="toggleUserMenu()" title="Account">
-                        <span class="action-icon">👤</span>
-                        <span class="action-label">Account</span>
-                    </button>
+                    <div class="user-menu-container">
+                        <button class="action-btn user-btn" onclick="toggleUserMenu()" title="Account">
+                            <span class="action-icon">👤</span>
+                            <span class="action-label">Account</span>
+                        </button>
+                        <div class="user-menu-dropdown" id="userMenuDropdown">
+                            <a href="login.html" class="user-menu-item">
+                                <span class="menu-icon">🔐</span>
+                                <span>Login</span>
+                            </a>
+                            <a href="signup.html" class="user-menu-item">
+                                <span class="menu-icon">📝</span>
+                                <span>Register</span>
+                            </a>
+                            <a href="#profile" class="user-menu-item">
+                                <span class="menu-icon">👤</span>
+                                <span>My Profile</span>
+                            </a>
+                            <a href="#orders" class="user-menu-item">
+                                <span class="menu-icon">📦</span>
+                                <span>My Orders</span>
+                            </a>
+                            <a href="delivery-map.html" class="user-menu-item">
+                                <span class="menu-icon">🗺️</span>
+                                <span>Track Delivery</span>
+                            </a>
+                        </div>
+                    </div>
                 </div>
 
                 <!-- Mobile Menu Toggle -->
@@ -114,6 +138,7 @@
                     <span class="hamburger-icon">☰</span>
                 </button>
             </div>
+            
         </div>
     </header>
 
@@ -123,16 +148,12 @@
             <div class="hero-content-wrapper">
                 <!-- Main Hero -->
                 <div class="hero-main">
-                    <div class="hero-badge">
-                        <span class="badge-icon">⚡</span>
-                        <span>Delivery in 17 Minutes</span>
-                    </div>
                     <h1 class="hero-title">
                         Fresh Groceries<br>
                         <span class="hero-highlight">Delivered Fast</span>
                     </h1>
                     <p class="hero-description">
-                        Order from 1000+ products and get them delivered to your doorstep in minutes.
+                        Order from 1000+ products and get them delivered to your doorstep within a day.
                         Fresh, affordable, and always on time.
                     </p>
                     <div class="hero-cta">
@@ -140,7 +161,7 @@
                             <span>Start Shopping</span>
                             <span class="btn-arrow">→</span>
                         </button>
-                        <button class="btn-secondary-large" onclick="openLocationModal()">
+                        <button class="btn-secondary-large" onclick="openDeliveryAreaMap()">
                             <span class="btn-icon">📍</span>
                             <span>Check Delivery Area</span>
                         </button>
@@ -158,6 +179,14 @@
                         <div class="trust-item">
                             <span class="trust-icon">✓</span>
                             <span>Fast Delivery</span>
+                        </div>
+                        <div class="trust-item">
+                            <span class="trust-icon">✓</span>
+                            <span>Delivery in 1 day</span>
+                        </div>
+                        <div class="trust-item">
+                            <span class="trust-icon">✓</span>
+                            <span>4 km to 5 km</span>
                         </div>
                     </div>
                 </div>
@@ -189,8 +218,8 @@
             <div class="features-grid">
                 <div class="feature-card">
                     <div class="feature-icon">⚡</div>
-                    <h3>17 Min Delivery</h3>
-                    <p>Lightning fast delivery to your doorstep</p>
+                    <h3>Delivery in 1 day</h3>
+                    <p>Reliable delivery to your doorstep</p>
                 </div>
                 <div class="feature-card">
                     <div class="feature-icon">💰</div>
@@ -206,6 +235,11 @@
                     <div class="feature-icon">📱</div>
                     <h3>Easy Ordering</h3>
                     <p>Simple and quick checkout process</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🗺️</div>
+                    <h3>Live Tracking</h3>
+                    <p>Track your delivery in real-time on map</p>
                 </div>
             </div>
         </div>
@@ -335,7 +369,7 @@
                 </div>
                 <div class="testimonial-card">
                     <div class="testimonial-rating">⭐⭐⭐⭐⭐</div>
-                    <p class="testimonial-text">"Great prices and excellent service. The delivery is really quick, usually within 20 minutes!"</p>
+                    <p class="testimonial-text">"Great prices and excellent service. The delivery is reliable, usually same day or next day!"</p>
                     <div class="testimonial-author">
                         <div class="author-avatar">P</div>
                         <div class="author-info">
@@ -426,7 +460,7 @@
                         <span class="logo-name">Chandra Dukan</span>
                     </div>
                     <p class="footer-description">
-                        Your trusted local grocery store delivering fresh products to your doorstep in minutes.
+                        Your trusted local grocery store delivering fresh products to your doorstep within a day.
                     </p>
                     <div class="social-links">
                         <a href="#" class="social-link" title="Facebook">📘</a>
@@ -442,6 +476,7 @@
                     <ul class="footer-links">
                         <li><a href="#products">Products</a></li>
                         <li><a href="#offers">Offers</a></li>
+                        <li><a href="delivery-map.html">Track Delivery</a></li>
                         <li><a href="janseva.html">Jan Seva Kendra</a></li>
                         <li><a href="#contact">Contact Us</a></li>
                     </ul>
