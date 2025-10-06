@@ -3,7 +3,7 @@
 
 import axios from 'axios';
 
-const API_BASE = 'http://localhost:3000/api'; // TODO: env se configurable banana future mein
+const API_BASE = 'http://192.168.31.84:3000/api'; // TODO: env se configurable banana future mein
 
 const OrderService = {
   // Place order - Order place karna

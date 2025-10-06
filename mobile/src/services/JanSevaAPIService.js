@@ -1,7 +1,7 @@
 // JanSevaAPIService.js
 import axios from 'axios';
 
-const API_BASE = 'http://localhost:3000/api';
+const API_BASE = 'http://192.168.31.84:3000/api';
 
 const JanSevaAPIService = {
   getServices: async () => {

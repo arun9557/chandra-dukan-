@@ -40,7 +40,7 @@ class NotificationService {
     }
   }
 
-  // Get push token - Push token get करना
+  // Get push token - Push token get करना (Expo Go ke saath safe fallback)
   async getPushToken() {
     try {
       if (!Device.isDevice) {
@@ -48,14 +48,20 @@ class NotificationService {
         return null;
       }
 
-      const token = await Notifications.getExpoPushTokenAsync({
-        projectId: Constants.expoConfig.extra.eas.projectId,
-      });
+      // Expo Go mein projectId kabhi-kabhi undefined hota hai, isliye optional rakh rahe hain
+      const projectId = (Constants?.expoConfig?.extra?.eas?.projectId)
+        || (Constants?.easConfig?.projectId)
+        || (Constants?.manifest2?.extra?.eas?.projectId)
+        || null;
+
+      const token = projectId
+        ? await Notifications.getExpoPushTokenAsync({ projectId })
+        : await Notifications.getExpoPushTokenAsync();
       
-      this.expoPushToken = token.data;
+      this.expoPushToken = token?.data || null;
       return this.expoPushToken;
     } catch (error) {
-      console.error('Error getting push token:', error);
+      console.error('Error getting push token:', error?.message || error);
       return null;
     }
   }
