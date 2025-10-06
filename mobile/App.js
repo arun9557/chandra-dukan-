@@ -6,6 +6,7 @@ import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, View, Alert } from 'react-native';
 import { Provider } from 'react-redux';
 import { PersistGate } from 'redux-persist/integration/react';
+import { ApolloProvider } from '@apollo/client';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
@@ -48,6 +49,7 @@ import CustomTabBar from './src/components/CustomTabBar';
 // Services
 import NotificationService from './src/services/NotificationService';
 import LocationService from './src/services/LocationService';
+import client from './src/services/api';
 
 // Configure notifications
 Notifications.setNotificationHandler({
@@ -279,19 +281,22 @@ export default function App() {
   }
 
   return (
-    <Provider store={store}>
-      <PersistGate loading={<SplashScreen />} persistor={persistor}>
-        <PaperProvider>
-          <NavigationContainer>
-            <View style={styles.container}>
-              <StackNavigator />
-              <StatusBar style="light" backgroundColor="#ff6b35" />
-              <Toast />
-            </View>
-          </NavigationContainer>
-        </PaperProvider>
-      </PersistGate>
-    </Provider>
+    <ApolloProvider client={client}>
+      <Provider store={store}>
+        <PersistGate loading={null} persistor={persistor}>
+          <PaperProvider>
+            <NavigationContainer>
+              <View style={styles.container}>
+                <StackNavigator />
+                <StatusBar style="light" backgroundColor="#ff6b35" />
+                <Toast />
+              </View>
+            </NavigationContainer>
+          </PaperProvider>
+          <Toast ref={(ref) => Toast.setRef(ref)} />
+        </PersistGate>
+      </Provider>
+    </ApolloProvider>
   );
 }
 

@@ -1,0 +1,74 @@
+export default {
+  expo: {
+    name: 'Chandra Dukan',
+    slug: 'chandra-dukan',
+    version: '1.0.0',
+    orientation: 'portrait',
+    updates: {
+      enabled: true,
+      fallbackToCacheTimeout: 0
+    },
+    assetBundlePatterns: ['**/*'],
+    icon: './assets/icon.png',
+    userInterfaceStyle: 'light',
+    splash: {
+      image: './assets/splash.png',
+      resizeMode: 'contain',
+      backgroundColor: '#ff6b35'
+    },
+    ios: {
+      supportsTablet: true,
+      bundleIdentifier: 'com.chandrashekhar.chandradudukan',
+      buildNumber: '1.0.0',
+      infoPlist: {
+        NSCameraUsageDescription: 'This app needs access to camera to scan barcodes and take product photos.',
+        NSLocationWhenInUseUsageDescription: 'This app needs location access to find nearby stores and calculate delivery distance.',
+        NSLocationAlwaysAndWhenInUseUsageDescription: 'This app needs location access to find nearby stores and calculate delivery distance.',
+        NSMicrophoneUsageDescription: 'This app needs microphone access for voice search functionality.'
+      }
+    },
+    android: {
+      adaptiveIcon: {
+        foregroundImage: './assets/adaptive-icon.png',
+        backgroundColor: '#ff6b35'
+      },
+      package: 'com.chandrashekhar.chandradudukan',
+      versionCode: 1,
+      permissions: [
+        'android.permission.CAMERA',
+        'android.permission.ACCESS_FINE_LOCATION',
+        'android.permission.ACCESS_COARSE_LOCATION',
+        'android.permission.READ_EXTERNAL_STORAGE',
+        'android.permission.WRITE_EXTERNAL_STORAGE',
+        'android.permission.INTERNET',
+        'android.permission.ACCESS_NETWORK_STATE',
+        'android.permission.VIBRATE',
+        'android.permission.RECEIVE_BOOT_COMPLETED',
+        'android.permission.WAKE_LOCK'
+      ]
+    },
+    web: {
+      favicon: './assets/favicon.png'
+    },
+    plugins: [
+      'expo-notifications',
+      'expo-location',
+      'expo-camera',
+      [
+        'expo-image-picker',
+        {
+          photosPermission: 'The app accesses your photos to let you share them with your friends.'
+        }
+      ]
+    ],
+    notification: {
+      icon: './assets/notification-icon.png',
+      color: '#ff6b35',
+      androidMode: 'default',
+      androidCollapsedTitle: 'Chandra Dukan'
+    },
+    extra: {
+      graphqlEndpoint: 'http://192.168.31.84:4000/graphql'
+    }
+  }
+};
