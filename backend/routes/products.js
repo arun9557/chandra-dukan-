@@ -4,9 +4,13 @@
 const express = require('express');
 const router = express.Router();
 const { body, validationResult } = require('express-validator');
+const multer = require('multer');
+const path = require('path');
 
-// Mock data for now - Real database integration later
-let products = [
+const store = require('../utils/jsonStore');
+
+// Load from JSON store
+let products = store.read('products', [
   {
     id: 1,
     category_id: 1,
@@ -43,16 +47,29 @@ let products = [
     created_at: new Date().toISOString(),
     updated_at: new Date().toISOString()
   }
-];
+]);
 
-let categories = [
+let categories = store.read('categories', [
   { id: 1, name: "Cold Drinks & Beverages", hindi_name: "Cold Drink aur Juice", icon: "🥤" },
   { id: 2, name: "Namkeen & Snacks", hindi_name: "Namkeen aur Biscuit", icon: "🍪" },
   { id: 3, name: "Daily Essentials", hindi_name: "Rojana Saman", icon: "🛒" },
   { id: 4, name: "Dairy Products", hindi_name: "Milk aur Eggs", icon: "🥛" },
   { id: 5, name: "Gas Cylinder", hindi_name: "Cooking Gas", icon: "🔥" },
   { id: 6, name: "Jan Seva Kendra", hindi_name: "Sarkari Services", icon: "📋" }
-];
+]);
+
+// Multer storage for image uploads
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, path.join(process.cwd(), 'public', 'uploads'));
+  },
+  filename: function (req, file, cb) {
+    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
+    cb(null, uniqueSuffix + path.extname(file.originalname));
+  }
+});
+
+const upload = multer({ storage });
 
 // Get all products - सभी products get करना
 router.get('/', (req, res) => {
@@ -180,6 +197,7 @@ router.post('/', [
     };
     
     products.push(newProduct);
+    store.write('products', products);
     
     res.status(201).json({
       success: true,
@@ -192,6 +210,19 @@ router.post('/', [
       error: 'Failed to create product',
       message: error.message
     });
+  }
+});
+
+// Upload product image - Product image upload करना
+router.post('/upload', upload.single('image'), (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ success: false, error: 'No file uploaded' });
+    }
+    const fileUrl = `/uploads/${req.file.filename}`;
+    res.status(201).json({ success: true, data: { url: fileUrl }, message: 'Image uploaded successfully' });
+  } catch (error) {
+    res.status(500).json({ success: false, error: 'Failed to upload image', message: error.message });
   }
 });
 
@@ -227,6 +258,7 @@ router.put('/:id', [
     };
     
     products[productIndex] = updatedProduct;
+    store.write('products', products);
     
     res.json({
       success: true,
@@ -310,6 +342,7 @@ router.delete('/:id', (req, res) => {
     }
     
     products.splice(productIndex, 1);
+    store.write('products', products);
     
     res.json({
       success: true,

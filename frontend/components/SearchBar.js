@@ -23,6 +23,7 @@ class SearchBar {
                    placeholder="कुछ भी Search करें... (Search anything)">
             <button class="btn btn--primary" id="searchBtn">खोजें</button>
             <button class="btn btn--outline" id="clearSearchBtn">Clear</button>
+            <div class="search-suggestions hidden" id="searchSuggestions" role="listbox" aria-label="Suggestions"></div>
           </div>
           <div class="search-filters">
             <select class="form-control category-filter" id="categoryFilter">
@@ -68,6 +69,10 @@ class SearchBar {
           this.performSearch();
         }
       });
+
+      searchInput.addEventListener('input', () => this.updateSuggestions());
+      searchInput.addEventListener('focus', () => this.updateSuggestions());
+      searchInput.addEventListener('blur', () => setTimeout(() => this.toggleSuggestions(false), 150));
     }
 
     if (categoryFilter) {
@@ -80,6 +85,33 @@ class SearchBar {
 
     // Populate category filter
     this.populateCategoryFilter();
+  }
+
+  // Suggestions based on product names
+  updateSuggestions() {
+    const input = document.getElementById('searchInput');
+    const box = document.getElementById('searchSuggestions');
+    if (!input || !box) return;
+    const q = input.value.trim().toLowerCase();
+    const products = window.AppData?.products || [];
+    const matches = q ? products.filter(p => p.name.toLowerCase().includes(q)).slice(0, 8) : [];
+    if (matches.length === 0) { this.toggleSuggestions(false); return; }
+    box.innerHTML = matches.map(m => `<div class="suggestion" role="option" data-name="${m.name}">${m.name}</div>`).join('');
+    this.toggleSuggestions(true);
+    box.querySelectorAll('.suggestion').forEach(el => {
+      el.addEventListener('mousedown', (e) => {
+        const name = e.currentTarget.getAttribute('data-name');
+        input.value = name;
+        this.performSearch();
+        this.toggleSuggestions(false);
+      });
+    });
+  }
+
+  toggleSuggestions(show) {
+    const box = document.getElementById('searchSuggestions');
+    if (!box) return;
+    box.classList.toggle('hidden', !show);
   }
 
   // Perform search - Search करना
@@ -131,7 +163,7 @@ class SearchBar {
     const event = new CustomEvent('productUpdate', {
       detail: {
         search: this.currentSearch,
-        filter: this.currentFilter,
+        category: this.currentFilter,
         sort: document.getElementById('sortFilter')?.value || 'name'
       }
     });

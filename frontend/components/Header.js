@@ -19,13 +19,27 @@ class Header {
         <div class="container">
           <div class="header-content">
             <div class="store-info">
-              <h1 class="store-name">🏪 Chandra Dukan</h1>
-              <p class="store-tagline">Premium Grocery Delivery to Your Doorstep</p>
+              <div class="logo-line">
+                <span class="blinkit-logo">Chandra Dukan</span>
+                <span class="delivery-time">Delivery in <strong>1 day</strong></span>
+              </div>
+              <div class="location-line">
+                <label for="locationSelect" class="sr-only">Select location</label>
+                <select id="locationSelect" class="location-select">
+                  <option>Main Market, Village/Town</option>
+                  <option>Station Road</option>
+                  <option>School Para</option>
+                  <option>Hospital Chowk</option>
+                  <option>Old Town</option>
+                  <option>New Colony</option>
+                </select>
+              </div>
             </div>
             <div class="header-actions">
               <div class="cart-icon" id="cartIcon" role="button" tabindex="0" aria-label="Shopping cart">
                 🛒 <span class="cart-badge" id="cartBadge">0</span>
               </div>
+              <button class="btn btn--outline login-btn" id="loginBtn">Login</button>
               <button class="btn btn--outline dashboard-toggle" id="dashboardToggle">
                 📊 Dashboard
               </button>
@@ -48,6 +62,7 @@ class Header {
   setupEventListeners() {
     const cartIcon = document.getElementById('cartIcon');
     const dashboardToggle = document.getElementById('dashboardToggle');
+    const loginBtn = document.getElementById('loginBtn');
     
     if (cartIcon) {
       cartIcon.addEventListener('click', () => {
@@ -66,6 +81,12 @@ class Header {
     if (dashboardToggle) {
       dashboardToggle.addEventListener('click', () => {
         window.Dashboard.open();
+      });
+    }
+
+    if (loginBtn) {
+      loginBtn.addEventListener('click', () => {
+        alert('Login flow coming soon');
       });
     }
   }

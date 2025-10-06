@@ -96,6 +96,8 @@ chandra-dukan/
 │   ├── middleware/         # Custom Middleware
 │   ├── server.js
 │   └── package.json
+├── admin/                 # Admin dashboard (to be added)
+├── assets/                # Shared images/icons (to be added)
 └── DEPLOYMENT.md
 ```
 

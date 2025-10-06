@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chandra Dukan Admin</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="admin-header">
+    <div class="container">
+      <h1>📊 Admin Dashboard</h1>
+    </div>
+  </header>
+  <main class="container">
+    <section class="cards">
+      <a class="card" href="#" id="navProducts">Products</a>
+      <a class="card" href="#" id="navCategories">Categories</a>
+      <a class="card" href="#" id="navOrders">Orders</a>
+      <a class="card" href="#" id="navCustomers">Customers</a>
+      <a class="card" href="#" id="navAnalytics">Analytics</a>
+    </section>
+    <section id="view"></section>
+  </main>
+  <script src="script.js"></script>
+  <script src="views/products.js"></script>
+  <script src="views/categories.js"></script>
+  <script src="views/orders.js"></script>
+  <script src="views/customers.js"></script>
+  <script src="views/analytics.js"></script>
+  <script>window.AdminApp.init();</script>
+  </body>
+</html>
+
+

@@ -92,12 +92,35 @@ class ChandraDukanApp {
   loadInitialData() {
     // Render categories
     this.renderCategories();
+    this.renderCategoryStrip();
     
     // Render products
     this.renderProducts();
     
     // Update cart badge
     this.updateCartBadge();
+  }
+
+  // Render category strip (horizontal) like Blinkit
+  renderCategoryStrip() {
+    const strip = document.getElementById('categoryStrip');
+    if (!strip) return;
+    const categories = this.services.data.getCategories();
+    strip.innerHTML = '';
+    categories.forEach(category => {
+      const chip = document.createElement('button');
+      chip.className = 'category-chip';
+      chip.innerHTML = `
+        <span class="category-chip__icon">${category.icon}</span>
+        <span class="category-chip__text">${category.name}</span>
+      `;
+      chip.addEventListener('click', () => {
+        this.filterByCategory(category.id);
+        const categoriesTitle = document.getElementById('productsTitle');
+        if (categoriesTitle) categoriesTitle.textContent = category.name;
+      });
+      strip.appendChild(chip);
+    });
   }
 
   // Handle product update - Product update handle करना
@@ -160,7 +183,7 @@ class ChandraDukanApp {
     
     // Trigger product update
     const event = new CustomEvent('productUpdate', {
-      detail: { filter: categoryId.toString() }
+      detail: { category: categoryId.toString() }
     });
     document.dispatchEvent(event);
   }
@@ -170,7 +193,12 @@ class ChandraDukanApp {
     const productsGrid = document.getElementById('productsGrid');
     if (!productsGrid) return;
 
-    const products = this.services.data.getProducts(filters);
+    const normalized = {
+      search: filters.search,
+      sort: filters.sort,
+      category: filters.category || filters.filter
+    };
+    const products = this.services.data.getProducts(normalized);
     productsGrid.innerHTML = '';
 
     if (products.length === 0) {

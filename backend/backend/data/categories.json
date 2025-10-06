@@ -1,0 +1,38 @@
+[
+  {
+    "id": 1,
+    "name": "Cold Drinks & Beverages",
+    "hindi_name": "Cold Drink aur Juice",
+    "icon": "🥤"
+  },
+  {
+    "id": 2,
+    "name": "Namkeen & Snacks",
+    "hindi_name": "Namkeen aur Biscuit",
+    "icon": "🍪"
+  },
+  {
+    "id": 3,
+    "name": "Daily Essentials",
+    "hindi_name": "Rojana Saman",
+    "icon": "🛒"
+  },
+  {
+    "id": 4,
+    "name": "Dairy Products",
+    "hindi_name": "Milk aur Eggs",
+    "icon": "🥛"
+  },
+  {
+    "id": 5,
+    "name": "Gas Cylinder",
+    "hindi_name": "Cooking Gas",
+    "icon": "🔥"
+  },
+  {
+    "id": 6,
+    "name": "Jan Seva Kendra",
+    "hindi_name": "Sarkari Services",
+    "icon": "📋"
+  }
+]
