@@ -1,0 +1,182 @@
+[
+  {
+    "id": 1,
+    "name": "Amul Taaza Toned Milk",
+    "price": 29,
+    "image": "milk-amul.jpg",
+    "category": "Dairy & Bread",
+    "stock": 50,
+    "deliveryTime": "17 MINS"
+  },
+  {
+    "id": 2,
+    "name": "Mother Dairy Full Cream Milk",
+    "price": 32,
+    "image": "milk-mother-dairy.jpg",
+    "category": "Dairy & Bread",
+    "stock": 45,
+    "deliveryTime": "17 MINS"
+  },
+  {
+    "id": 3,
+    "name": "Britannia Bread",
+    "price": 25,
+    "image": "bread-britannia.jpg",
+    "category": "Dairy & Bread",
+    "stock": 30,
+    "deliveryTime": "17 MINS"
+  },
+  {
+    "id": 4,
+    "name": "Amul Butter 500g",
+    "price": 265,
+    "image": "butter-amul.jpg",
+    "category": "Dairy & Bread",
+    "stock": 25,
+    "deliveryTime": "17 MINS"
+  },
+  {
+    "id": 5,
+    "name": "Farm Fresh Eggs (6 pcs)",
+    "price": 42,
+    "image": "eggs-farm-fresh.jpg",
+    "category": "Dairy & Bread",
+    "stock": 60,
+    "deliveryTime": "17 MINS"
+  },
+  {
+    "id": 6,
+    "name": "Lay's Classic Salted Chips",
+    "price": 20,
+    "image": "chips-lays.jpg",
+    "category": "Snacks & Munchies",
+    "stock": 100,
+    "deliveryTime": "17 MINS"
+  },
+  {
+    "id": 7,
+    "name": "Kurkure Masala Munch",
+    "price": 20,
+    "image": "kurkure.jpg",
+    "category": "Snacks & Munchies",
+    "stock": 80,
+    "deliveryTime": "17 MINS"
+  },
+  {
+    "id": 8,
+    "name": "Haldiram's Bhujia",
+    "price": 45,
+    "image": "bhujia-haldirams.jpg",
+    "category": "Snacks & Munchies",
+    "stock": 50,
+    "deliveryTime": "17 MINS"
+  },
+  {
+    "id": 9,
+    "name": "Coca Cola 750ml",
+    "price": 40,
+    "image": "coke.jpg",
+    "category": "Cold Drinks & Juices",
+    "stock": 70,
+    "deliveryTime": "17 MINS"
+  },
+  {
+    "id": 10,
+    "name": "Real Fruit Juice 1L",
+    "price": 120,
+    "image": "real-juice.jpg",
+    "category": "Cold Drinks & Juices",
+    "stock": 40,
+    "deliveryTime": "17 MINS"
+  },
+  {
+    "id": 11,
+    "name": "Fresh Tomatoes (500g)",
+    "price": 25,
+    "image": "tomatoes.jpg",
+    "category": "Fruits & Vegetables",
+    "stock": 100,
+    "deliveryTime": "17 MINS"
+  },
+  {
+    "id": 12,
+    "name": "Fresh Onions (1kg)",
+    "price": 35,
+    "image": "onions.jpg",
+    "category": "Fruits & Vegetables",
+    "stock": 120,
+    "deliveryTime": "17 MINS"
+  },
+  {
+    "id": 13,
+    "name": "Fresh Bananas (6 pcs)",
+    "price": 30,
+    "image": "bananas.jpg",
+    "category": "Fruits & Vegetables",
+    "stock": 80,
+    "deliveryTime": "17 MINS"
+  },
+  {
+    "id": 14,
+    "name": "Apples (4 pcs)",
+    "price": 80,
+    "image": "apples.jpg",
+    "category": "Fruits & Vegetables",
+    "stock": 60,
+    "deliveryTime": "17 MINS"
+  },
+  {
+    "id": 15,
+    "name": "Maggi Noodles 2-Pack",
+    "price": 28,
+    "image": "maggi.jpg",
+    "category": "Instant & Frozen Food",
+    "stock": 150,
+    "deliveryTime": "17 MINS"
+  },
+  {
+    "id": 16,
+    "name": "Yippee Noodles",
+    "price": 24,
+    "image": "yippee.jpg",
+    "category": "Instant & Frozen Food",
+    "stock": 120,
+    "deliveryTime": "17 MINS"
+  },
+  {
+    "id": 17,
+    "name": "McCain French Fries",
+    "price": 135,
+    "image": "fries-mccain.jpg",
+    "category": "Instant & Frozen Food",
+    "stock": 35,
+    "deliveryTime": "17 MINS"
+  },
+  {
+    "id": 18,
+    "name": "Tata Tea Gold 500g",
+    "price": 245,
+    "image": "tea-tata.jpg",
+    "category": "Tea, Coffee & Health Drinks",
+    "stock": 40,
+    "deliveryTime": "17 MINS"
+  },
+  {
+    "id": 19,
+    "name": "Nescafe Classic Coffee",
+    "price": 299,
+    "image": "coffee-nescafe.jpg",
+    "category": "Tea, Coffee & Health Drinks",
+    "stock": 30,
+    "deliveryTime": "17 MINS"
+  },
+  {
+    "id": 20,
+    "name": "Bournvita 500g",
+    "price": 225,
+    "image": "bournvita.jpg",
+    "category": "Tea, Coffee & Health Drinks",
+    "stock": 45,
+    "deliveryTime": "17 MINS"
+  }
+]

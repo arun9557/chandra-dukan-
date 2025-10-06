@@ -1,0 +1,128 @@
+[
+  {
+    "id": 1,
+    "name": "Dairy & Bread",
+    "icon": "🥛",
+    "description": "Milk, bread, eggs & more",
+    "image": "category-dairy.jpg"
+  },
+  {
+    "id": 2,
+    "name": "Fruits & Vegetables",
+    "icon": "🥬",
+    "description": "Fresh fruits & vegetables",
+    "image": "category-fruits.jpg"
+  },
+  {
+    "id": 3,
+    "name": "Cold Drinks & Juices",
+    "icon": "🥤",
+    "description": "Soft drinks, juices & more",
+    "image": "category-drinks.jpg"
+  },
+  {
+    "id": 4,
+    "name": "Snacks & Munchies",
+    "icon": "🍿",
+    "description": "Chips, namkeen & snacks",
+    "image": "category-snacks.jpg"
+  },
+  {
+    "id": 5,
+    "name": "Instant & Frozen Food",
+    "icon": "🍜",
+    "description": "Ready to cook & frozen items",
+    "image": "category-instant.jpg"
+  },
+  {
+    "id": 6,
+    "name": "Tea, Coffee & Health Drinks",
+    "icon": "☕",
+    "description": "Tea, coffee & health drinks",
+    "image": "category-beverages.jpg"
+  },
+  {
+    "id": 7,
+    "name": "Bakery & Biscuits",
+    "icon": "🍪",
+    "description": "Cookies, cakes & bakery items",
+    "image": "category-bakery.jpg"
+  },
+  {
+    "id": 8,
+    "name": "Sweet Tooth",
+    "icon": "🍫",
+    "description": "Chocolates, candies & sweets",
+    "image": "category-sweets.jpg"
+  },
+  {
+    "id": 9,
+    "name": "Atta, Rice & Dal",
+    "icon": "🌾",
+    "description": "Staples & grains",
+    "image": "category-staples.jpg"
+  },
+  {
+    "id": 10,
+    "name": "Masala, Oil & More",
+    "icon": "🧂",
+    "description": "Spices, oils & condiments",
+    "image": "category-masala.jpg"
+  },
+  {
+    "id": 11,
+    "name": "Sauces & Spreads",
+    "icon": "🍯",
+    "description": "Ketchup, jam & spreads",
+    "image": "category-sauces.jpg"
+  },
+  {
+    "id": 12,
+    "name": "Chicken, Meat & Fish",
+    "icon": "🍗",
+    "description": "Fresh meat & seafood",
+    "image": "category-meat.jpg"
+  },
+  {
+    "id": 13,
+    "name": "Paan Corner",
+    "icon": "🌿",
+    "description": "Paan, supari & mouth fresheners",
+    "image": "category-paan.jpg"
+  },
+  {
+    "id": 14,
+    "name": "Pharma & Wellness",
+    "icon": "💊",
+    "description": "Health & wellness products",
+    "image": "category-pharma.jpg"
+  },
+  {
+    "id": 15,
+    "name": "Cleaning Essentials",
+    "icon": "🧹",
+    "description": "Cleaning & household items",
+    "image": "category-cleaning.jpg"
+  },
+  {
+    "id": 16,
+    "name": "Home & Office",
+    "icon": "🏠",
+    "description": "Home & office supplies",
+    "image": "category-home.jpg"
+  },
+  {
+    "id": 17,
+    "name": "Personal Care",
+    "icon": "🧴",
+    "description": "Bath, beauty & hygiene",
+    "image": "category-personal.jpg"
+  },
+  {
+    "id": 18,
+    "name": "Pet Care",
+    "icon": "🐾",
+    "description": "Food & accessories for pets",
+    "image": "category-pet.jpg"
+  }
+]
