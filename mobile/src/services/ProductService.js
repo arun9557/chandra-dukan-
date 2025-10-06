@@ -60,6 +60,18 @@ const ProductService = {
       return [];
     }
   },
+
+  // Get product by id - Product ko ID se lana (cart parity ke liye)
+  getProductById: async (productId) => {
+    try {
+      // Backend mein individual GET endpoint specified nahi dikh raha; fallback: list aur filter
+      const products = await ProductService.getAllProducts();
+      return products.find(p => p.id === productId) || null;
+    } catch (error) {
+      console.error('Error fetching product by id:', error);
+      return null;
+    }
+  },
 };
 
 export default ProductService;

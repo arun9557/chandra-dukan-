@@ -14,6 +14,7 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
+import ProductService from '../services/ProductService';
 
 const { width } = Dimensions.get('window');
 const CARD_WIDTH = (width - 48) / 2;
@@ -30,9 +31,9 @@ const ProductsScreen = ({ navigation, route }) => {
   const loadProducts = async () => {
     try {
       setLoading(true);
-      const response = await fetch('http://localhost:3000/api/products');
-      const data = await response.json();
-      setProducts(data.data || data || []);
+      // Backend API se products laana (ProductService use karke) - Web parity
+      const data = await ProductService.getAllProducts();
+      setProducts(data || []);
     } catch (error) {
       console.error('Error loading products:', error);
       // Fallback sample data
