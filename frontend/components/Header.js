@@ -86,7 +86,7 @@ class Header {
 
     if (loginBtn) {
       loginBtn.addEventListener('click', () => {
-        alert('Login flow coming soon');
+        window.location.href = 'login.html';
       });
     }
   }

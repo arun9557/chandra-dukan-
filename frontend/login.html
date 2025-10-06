@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Chandra Dukan</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            background-color: #f9fafb;
+        }
+        .error {
+            border-color: #ef4444 !important;
+        }
+        .error-message {
+            display: none;
+            color: #ef4444;
+            font-size: 0.75rem;
+            margin-top: 0.25rem;
+            margin-left: 0.5rem;
+        }
+        .input-field:focus {
+            border-color: #6366f1;
+            box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.2);
+            outline: none;
+        }
+        .card {
+            background: white;
+            border-radius: 1rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+        .toast {
+            animation: slideIn 0.3s ease-out;
+        }
+        @keyframes slideIn {
+            from { transform: translate(-50%, 100%); opacity: 0; }
+            to { transform: translate(-50%, 0); opacity: 1; }
+        }
+    </style>
+</head>
+<body class="min-h-screen flex items-center justify-center p-4 bg-gray-50">
+    <!-- Main Container -->
+    <div class="w-full max-w-md">
+        <!-- Logo -->
+        <div class="text-center mb-8">
+            <h1 class="text-3xl font-bold text-indigo-600">Chandra Dukan</h1>
+            <p class="text-gray-500 mt-2">Your one-stop shop for everything</p>
+        </div>
+        
+        <!-- Card -->
+        <div class="card p-8">
+            <!-- Login Form (Default) -->
+            <form id="loginForm" class="space-y-4">
+                <h2 class="text-2xl font-semibold text-center text-gray-800 mb-6">Welcome back</h2>
+                
+                <!-- Email Field -->
+                <div>
+                    <input 
+                        id="email"
+                        name="email"
+                        class="w-full px-4 py-2.5 border border-gray-300 rounded-full focus:ring-2 focus:ring-indigo-200 focus:border-indigo-500 transition duration-200"
+                        type="email"
+                        placeholder="Enter your email"
+                        required
+                    >
+                    <div class="error-message" id="email-error"></div>
+                </div>
+                
+                <!-- Password Field -->
+                <div>
+                    <input 
+                        id="password"
+                        name="password"
+                        class="w-full px-4 py-2.5 border border-gray-300 rounded-full mt-3 focus:ring-2 focus:ring-indigo-200 focus:border-indigo-500 transition duration-200"
+                        type="password"
+                        placeholder="Enter your password"
+                        required
+                        minlength="6"
+                    >
+                    <div class="error-message" id="password-error"></div>
+                </div>
+                
+                <!-- Forgot Password -->
+                <div class="text-right">
+                    <a href="#" class="text-sm text-indigo-600 hover:underline">Forgot password?</a>
+                </div>
+                
+                <!-- Submit Button -->
+                <button 
+                    type="submit" 
+                    class="w-full py-2.5 px-4 bg-indigo-600 hover:bg-indigo-700 text-white font-medium rounded-full transition duration-200 flex items-center justify-center"
+                >
+                    <span class="button-text">Log in</span>
+                    <svg class="animate-spin -ml-1 mr-2 h-5 w-5 text-white hidden" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                </button>
+            </form>
+            
+            <!-- Signup Form (Hidden by default) -->
+            <form id="signupForm" class="space-y-4 hidden">
+                <h2 class="text-2xl font-semibold text-center text-gray-800 mb-6">Create Account</h2>
+                
+                <!-- Name Field -->
+                <div>
+                    <input 
+                        id="signup-name"
+                        name="name"
+                        class="w-full px-4 py-2.5 border border-gray-300 rounded-full focus:ring-2 focus:ring-indigo-200 focus:border-indigo-500 transition duration-200"
+                        type="text"
+                        placeholder="Full Name"
+                        required
+                    >
+                    <div class="error-message" id="name-error"></div>
+                </div>
+                
+                <!-- Email Field -->
+                <div>
+                    <input 
+                        id="signup-email"
+                        name="email"
+                        class="w-full px-4 py-2.5 border border-gray-300 rounded-full mt-3 focus:ring-2 focus:ring-indigo-200 focus:border-indigo-500 transition duration-200"
+                        type="email"
+                        placeholder="Email Address"
+                        required
+                    >
+                    <div class="error-message" id="signup-email-error"></div>
+                </div>
+                
+                <!-- Password Field -->
+                <div>
+                    <input 
+                        id="signup-password"
+                        name="password"
+                        class="w-full px-4 py-2.5 border border-gray-300 rounded-full mt-3 focus:ring-2 focus:ring-indigo-200 focus:border-indigo-500 transition duration-200"
+                        type="password"
+                        placeholder="Create Password"
+                        required
+                        minlength="6"
+                    >
+                    <div class="error-message" id="signup-password-error"></div>
+                </div>
+                
+                <!-- Confirm Password Field -->
+                <div>
+                    <input 
+                        id="confirm-password"
+                        name="confirmPassword"
+                        class="w-full px-4 py-2.5 border border-gray-300 rounded-full mt-3 focus:ring-2 focus:ring-indigo-200 focus:border-indigo-500 transition duration-200"
+                        type="password"
+                        placeholder="Confirm Password"
+                        required
+                        minlength="6"
+                    >
+                    <div class="error-message" id="confirm-password-error"></div>
+                </div>
+                
+                <!-- Submit Button -->
+                <button 
+                    type="submit" 
+                    class="w-full py-2.5 px-4 bg-indigo-600 hover:bg-indigo-700 text-white font-medium rounded-full transition duration-200 flex items-center justify-center"
+                >
+                    <span class="button-text">Create Account</span>
+                    <svg class="animate-spin -ml-1 mr-2 h-5 w-5 text-white hidden" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                </button>
+                
+                <!-- Already have an account -->
+                <p class="text-center text-sm text-gray-600 mt-4">
+                    Already have an account? 
+                    <a href="#" id="showLogin" class="text-indigo-600 hover:underline font-medium">Log in</a>
+                </p>
+            </form>
+            
+            <!-- Toggle between Login and Signup -->
+            <div id="loginFormFooter" class="mt-6 text-center">
+                <p class="text-sm text-gray-600">
+                    Don't have an account? 
+                    <a href="#" id="showSignup" class="text-indigo-600 hover:underline font-medium">Sign up</a>
+                </p>
+            </div>
+            
+            <!-- Divider -->
+            <div class="relative my-6">
+                <div class="absolute inset-0 flex items-center">
+                    <div class="w-full border-t border-gray-200"></div>
+                </div>
+                <div class="relative flex justify-center text-sm">
+                    <span class="px-2 bg-white text-gray-500">Or continue with</span>
+                </div>
+            </div>
+            
+            <!-- Social Login Buttons -->
+            <div class="space-y-3">
+                <button 
+                    type="button" 
+                    class="w-full flex items-center justify-center gap-2 bg-gray-900 hover:bg-gray-800 text-white py-2.5 px-4 rounded-full font-medium transition duration-200"
+                    id="appleLogin"
+                >
+                    <img 
+                        src="https://raw.githubusercontent.com/prebuiltui/prebuiltui/main/assets/login/appleLogo.png" 
+                        alt="Apple Logo" 
+                        class="h-4 w-4"
+                    >
+                    Log in with Apple
+                </button>
+                
+                <button 
+                    type="button" 
+                    class="w-full flex items-center justify-center gap-2 bg-white border border-gray-300 hover:bg-gray-50 text-gray-800 py-2.5 px-4 rounded-full font-medium transition duration-200"
+                    id="googleLogin"
+                >
+                    <img 
+                        src="https://raw.githubusercontent.com/prebuiltui/prebuiltui/main/assets/login/googleFavicon.png" 
+                        alt="Google Logo" 
+                        class="h-4 w-4"
+                    >
+                    Log in with Google
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="fixed bottom-4 left-1/2 transform -translate-x-1/2 bg-gray-800 text-white px-6 py-3 rounded-full text-sm font-medium hidden">
+        <span id="toast-message">This is a toast message</span>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const loginForm = document.getElementById('loginForm');
+            const signupForm = document.getElementById('signupForm');
+            const loginFormFooter = document.getElementById('loginFormFooter');
+            const showSignupLink = document.getElementById('showSignup');
+            const showLoginLink = document.getElementById('showLogin');
+            const toast = document.getElementById('toast');
+            const toastMessage = document.getElementById('toast-message');
+
+            // Toggle between login and signup forms
+            showSignupLink?.addEventListener('click', function(e) {
+                e.preventDefault();
+                loginForm.classList.add('hidden');
+                signupForm.classList.remove('hidden');
+                loginFormFooter.classList.add('hidden');
+                window.scrollTo(0, 0);
+            });
+            
+            showLoginLink?.addEventListener('click', function(e) {
+                e.preventDefault();
+                signupForm.classList.add('hidden');
+                loginForm.classList.remove('hidden');
+                loginFormFooter.classList.remove('hidden');
+                window.scrollTo(0, 0);
+            });
+
+            // Login form submission
+            loginForm?.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                // Reset errors
+                const errorMessages = loginForm.querySelectorAll('.error-message');
+                errorMessages.forEach(el => {
+                    el.style.display = 'none';
+                    el.textContent = '';
+                });
+                
+                const inputs = loginForm.querySelectorAll('input');
+                inputs.forEach(input => input.classList.remove('error', 'border-red-500'));
+                
+                // Get form values
+                const email = document.getElementById('email').value.trim();
+                const password = document.getElementById('password').value;
+                
+                let isValid = true;
+                
+                // Email validation
+                if (!email) {
+                    showError('email', 'email-error', 'Email is required');
+                    isValid = false;
+                } else if (!isValidEmail(email)) {
+                    showError('email', 'email-error', 'Please enter a valid email');
+                    isValid = false;
+                }
+                
+                // Password validation
+                if (!password) {
+                    showError('password', 'password-error', 'Password is required');
+                    isValid = false;
+                } else if (password.length < 6) {
+                    showError('password', 'password-error', 'Password must be at least 6 characters');
+                    isValid = false;
+                }
+                
+                if (isValid) {
+                    const submitBtn = loginForm.querySelector('button[type="submit"]');
+                    const buttonText = submitBtn.querySelector('.button-text');
+                    const spinner = submitBtn.querySelector('svg');
+                    
+                    // Show loading state
+                    buttonText.textContent = 'Logging in...';
+                    spinner.classList.remove('hidden');
+                    submitBtn.disabled = true;
+                    
+                    // Simulate API call
+                    setTimeout(() => {
+                        // Reset button state
+                        buttonText.textContent = 'Log in';
+                        spinner.classList.add('hidden');
+                        submitBtn.disabled = false;
+                        
+                        // Show success message
+                        showToast('Login successful! Redirecting...', 'success');
+                        
+                        // Redirect to dashboard (uncomment when ready)
+                        // window.location.href = '/dashboard';
+                    }, 1500);
+                }
+            });
+
+            // Signup form submission
+            signupForm?.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                // Reset errors
+                const errorMessages = signupForm.querySelectorAll('.error-message');
+                errorMessages.forEach(el => {
+                    el.style.display = 'none';
+                    el.textContent = '';
+                });
+                
+                const inputs = signupForm.querySelectorAll('input');
+                inputs.forEach(input => input.classList.remove('error', 'border-red-500'));
+                
+                // Get form values
+                const name = document.getElementById('signup-name').value.trim();
+                const email = document.getElementById('signup-email').value.trim();
+                const password = document.getElementById('signup-password').value;
+                const confirmPassword = document.getElementById('confirm-password').value;
+                
+                let isValid = true;
+                
+                // Name validation
+                if (!name) {
+                    showError('signup-name', 'name-error', 'Name is required');
+                    isValid = false;
+                }
+                
+                // Email validation
+                if (!email) {
+                    showError('signup-email', 'signup-email-error', 'Email is required');
+                    isValid = false;
+                } else if (!isValidEmail(email)) {
+                    showError('signup-email', 'signup-email-error', 'Please enter a valid email');
+                    isValid = false;
+                }
+                
+                // Password validation
+                if (!password) {
+                    showError('signup-password', 'signup-password-error', 'Password is required');
+                    isValid = false;
+                } else if (password.length < 6) {
+                    showError('signup-password', 'signup-password-error', 'Password must be at least 6 characters');
+                    isValid = false;
+                }
+                
+                // Confirm password validation
+                if (password !== confirmPassword) {
+                    showError('confirm-password', 'confirm-password-error', 'Passwords do not match');
+                    isValid = false;
+                }
+                
+                if (isValid) {
+                    const submitBtn = signupForm.querySelector('button[type="submit"]');
+                    const buttonText = submitBtn.querySelector('.button-text');
+                    const spinner = submitBtn.querySelector('svg');
+                    
+                    // Show loading state
+                    buttonText.textContent = 'Creating Account...';
+                    spinner.classList.remove('hidden');
+                    submitBtn.disabled = true;
+                    
+                    // Simulate API call
+                    setTimeout(() => {
+                        // Reset button state
+                        buttonText.textContent = 'Create Account';
+                        spinner.classList.add('hidden');
+                        submitBtn.disabled = false;
+                        
+                        // Show success message
+                        showToast('Account created successfully! Please log in.', 'success');
+                        
+                        // Switch back to login form
+                        signupForm.classList.add('hidden');
+                        loginForm.classList.remove('hidden');
+                        loginFormFooter.classList.remove('hidden');
+                        
+                        // Clear form
+                        signupForm.reset();
+                    }, 1500);
+                }
+            });
+            
+            // Social login button handlers
+            document.getElementById('appleLogin')?.addEventListener('click', function() {
+                showToast('Apple login will be implemented soon', 'info');
+            });
+
+            document.getElementById('googleLogin')?.addEventListener('click', function() {
+                showToast('Google login will be implemented soon', 'info');
+            });
+            
+            // Helper function to show error messages
+            function showError(inputId, errorId, message) {
+                const input = document.getElementById(inputId);
+                const errorElement = document.getElementById(errorId);
+                
+                if (input && errorElement) {
+                    input.classList.add('error', 'border-red-500');
+                    errorElement.textContent = message;
+                    errorElement.style.display = 'block';
+                }
+            }
+            
+            // Validate email format
+            function isValidEmail(email) {
+                return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+            }
+            
+            // Show toast notification
+            function showToast(message, type = 'success') {
+                toastMessage.textContent = message;
+                toast.className = `fixed bottom-4 left-1/2 transform -translate-x-1/2 px-6 py-3 rounded-full text-sm font-medium ${
+                    type === 'success' ? 'bg-green-500' : 
+                    type === 'error' ? 'bg-red-500' : 'bg-blue-500'
+                } text-white`;
+                toast.style.display = 'block';
+                
+                // Hide after 3 seconds
+                setTimeout(() => {
+                    toast.style.display = 'none';
+                }, 3000);
+            }
+
+            // Add focus/hover effects to all input fields
+            const inputs = document.querySelectorAll('input');
+            inputs.forEach(input => {
+                input.addEventListener('focus', function() {
+                    this.classList.add('ring-2', 'ring-indigo-200', 'border-indigo-500');
+                });
+                
+                input.addEventListener('blur', function() {
+                    this.classList.remove('ring-2', 'ring-indigo-200', 'border-indigo-500');
+                });
+            });
+        });
+    </script>
+</body>
+</html>
