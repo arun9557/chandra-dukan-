@@ -15,36 +15,9 @@ class SearchBar {
 
   // Render search bar HTML - Search bar का HTML render करना
   render() {
-    const searchHTML = `
-      <section class="search-section">
-        <div class="container">
-          <div class="search-bar">
-            <input type="text" id="searchInput" class="form-control" 
-                   placeholder="कुछ भी Search करें... (Search anything)">
-            <button class="btn btn--primary" id="searchBtn">खोजें</button>
-            <button class="btn btn--outline" id="clearSearchBtn">Clear</button>
-            <div class="search-suggestions hidden" id="searchSuggestions" role="listbox" aria-label="Suggestions"></div>
-          </div>
-          <div class="search-filters">
-            <select class="form-control category-filter" id="categoryFilter">
-              <option value="">सभी Categories (All Categories)</option>
-            </select>
-            <select class="form-control sort-filter" id="sortFilter">
-              <option value="name">Name (नाम)</option>
-              <option value="price-low">Price: Low to High</option>
-              <option value="price-high">Price: High to Low</option>
-              <option value="stock">Stock Available</option>
-            </select>
-          </div>
-        </div>
-      </section>
-    `;
-    
-    // Insert after header
-    const header = document.querySelector('.header');
-    if (header) {
-      header.insertAdjacentHTML('afterend', searchHTML);
-    }
+    // Disabled: Using header search instead
+    // Old search section removed for cleaner UI
+    console.log('SearchBar: Using header search, old search section disabled');
   }
 
   // Setup event listeners - Event listeners setup करना

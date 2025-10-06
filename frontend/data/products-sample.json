@@ -6,7 +6,7 @@
     "image": "milk-amul.jpg",
     "category": "Dairy & Bread",
     "stock": 50,
-    "deliveryTime": "17 MINS"
+    "deliveryTime": "1 Day"
   },
   {
     "id": 2,
@@ -15,7 +15,7 @@
     "image": "milk-mother-dairy.jpg",
     "category": "Dairy & Bread",
     "stock": 45,
-    "deliveryTime": "17 MINS"
+    "deliveryTime": "1 Day"
   },
   {
     "id": 3,
@@ -24,7 +24,7 @@
     "image": "bread-britannia.jpg",
     "category": "Dairy & Bread",
     "stock": 30,
-    "deliveryTime": "17 MINS"
+    "deliveryTime": "1 Day"
   },
   {
     "id": 4,
@@ -33,7 +33,7 @@
     "image": "butter-amul.jpg",
     "category": "Dairy & Bread",
     "stock": 25,
-    "deliveryTime": "17 MINS"
+    "deliveryTime": "1 Day"
   },
   {
     "id": 5,
@@ -42,7 +42,7 @@
     "image": "eggs-farm-fresh.jpg",
     "category": "Dairy & Bread",
     "stock": 60,
-    "deliveryTime": "17 MINS"
+    "deliveryTime": "1 Day"
   },
   {
     "id": 6,
@@ -51,7 +51,7 @@
     "image": "chips-lays.jpg",
     "category": "Snacks & Munchies",
     "stock": 100,
-    "deliveryTime": "17 MINS"
+    "deliveryTime": "1 Day"
   },
   {
     "id": 7,
@@ -60,7 +60,7 @@
     "image": "kurkure.jpg",
     "category": "Snacks & Munchies",
     "stock": 80,
-    "deliveryTime": "17 MINS"
+    "deliveryTime": "1 Day"
   },
   {
     "id": 8,
@@ -69,7 +69,7 @@
     "image": "bhujia-haldirams.jpg",
     "category": "Snacks & Munchies",
     "stock": 50,
-    "deliveryTime": "17 MINS"
+    "deliveryTime": "1 Day"
   },
   {
     "id": 9,
@@ -78,7 +78,7 @@
     "image": "coke.jpg",
     "category": "Cold Drinks & Juices",
     "stock": 70,
-    "deliveryTime": "17 MINS"
+    "deliveryTime": "1 Day"
   },
   {
     "id": 10,
@@ -87,7 +87,7 @@
     "image": "real-juice.jpg",
     "category": "Cold Drinks & Juices",
     "stock": 40,
-    "deliveryTime": "17 MINS"
+    "deliveryTime": "1 Day"
   },
   {
     "id": 11,
@@ -96,7 +96,7 @@
     "image": "tomatoes.jpg",
     "category": "Fruits & Vegetables",
     "stock": 100,
-    "deliveryTime": "17 MINS"
+    "deliveryTime": "1 Day"
   },
   {
     "id": 12,
@@ -105,7 +105,7 @@
     "image": "onions.jpg",
     "category": "Fruits & Vegetables",
     "stock": 120,
-    "deliveryTime": "17 MINS"
+    "deliveryTime": "1 Day"
   },
   {
     "id": 13,
@@ -114,7 +114,7 @@
     "image": "bananas.jpg",
     "category": "Fruits & Vegetables",
     "stock": 80,
-    "deliveryTime": "17 MINS"
+    "deliveryTime": "1 Day"
   },
   {
     "id": 14,
@@ -123,7 +123,7 @@
     "image": "apples.jpg",
     "category": "Fruits & Vegetables",
     "stock": 60,
-    "deliveryTime": "17 MINS"
+    "deliveryTime": "1 Day"
   },
   {
     "id": 15,
@@ -132,7 +132,7 @@
     "image": "maggi.jpg",
     "category": "Instant & Frozen Food",
     "stock": 150,
-    "deliveryTime": "17 MINS"
+    "deliveryTime": "1 Day"
   },
   {
     "id": 16,
@@ -141,7 +141,7 @@
     "image": "yippee.jpg",
     "category": "Instant & Frozen Food",
     "stock": 120,
-    "deliveryTime": "17 MINS"
+    "deliveryTime": "1 Day"
   },
   {
     "id": 17,
@@ -150,7 +150,7 @@
     "image": "fries-mccain.jpg",
     "category": "Instant & Frozen Food",
     "stock": 35,
-    "deliveryTime": "17 MINS"
+    "deliveryTime": "1 Day"
   },
   {
     "id": 18,
@@ -159,7 +159,7 @@
     "image": "tea-tata.jpg",
     "category": "Tea, Coffee & Health Drinks",
     "stock": 40,
-    "deliveryTime": "17 MINS"
+    "deliveryTime": "1 Day"
   },
   {
     "id": 19,
@@ -168,7 +168,7 @@
     "image": "coffee-nescafe.jpg",
     "category": "Tea, Coffee & Health Drinks",
     "stock": 30,
-    "deliveryTime": "17 MINS"
+    "deliveryTime": "1 Day"
   },
   {
     "id": 20,
@@ -177,6 +177,6 @@
     "image": "bournvita.jpg",
     "category": "Tea, Coffee & Health Drinks",
     "stock": 45,
-    "deliveryTime": "17 MINS"
+    "deliveryTime": "1 Day"
   }
 ]
