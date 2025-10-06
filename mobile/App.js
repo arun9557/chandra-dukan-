@@ -289,11 +289,10 @@ export default function App() {
               <View style={styles.container}>
                 <StackNavigator />
                 <StatusBar style="light" backgroundColor="#ff6b35" />
-                <Toast />
               </View>
             </NavigationContainer>
+            <Toast />
           </PaperProvider>
-          <Toast ref={(ref) => Toast.setRef(ref)} />
         </PersistGate>
       </Provider>
     </ApolloProvider>

@@ -48,6 +48,7 @@ const JanSevaFormScreen = ({ route, navigation }) => {
           Alert.alert('Uploaded (Local)', 'Server upload failed, local ref saved');
         }
       }
+      */
     } catch (error) {
       Alert.alert('Error', 'Failed to pick document');
     }
