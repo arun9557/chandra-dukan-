@@ -2,7 +2,6 @@
 // Modern modular grocery delivery app
 
 class ChandraDukanApp {
-  constructor() {
     this.components = {};
     this.services = {};
     this.isInitialized = false;
@@ -13,6 +12,9 @@ class ChandraDukanApp {
     if (this.isInitialized) return;
 
     try {
+      // Check authentication status
+      this.checkAuthStatus();
+      
       // Initialize services first
       await this.initializeServices();
       
@@ -30,6 +32,24 @@ class ChandraDukanApp {
       
     } catch (error) {
       console.error('Error initializing app:', error);
+    }
+  }
+
+  // Check authentication status - Authentication check करना
+  checkAuthStatus() {
+    const token = localStorage.getItem('authToken');
+    const userData = localStorage.getItem('userData');
+    
+    if (token && userData) {
+      const user = JSON.parse(userData);
+      // Show user menu
+      const guestMenu = document.getElementById('guestMenu');
+      const userMenu = document.getElementById('userMenu');
+      const userMenuName = document.getElementById('userMenuName');
+      
+      if (guestMenu) guestMenu.style.display = 'none';
+      if (userMenu) userMenu.style.display = 'block';
+      if (userMenuName) userMenuName.textContent = user.name;
     }
   }
 

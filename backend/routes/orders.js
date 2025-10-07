@@ -1,39 +1,143 @@
-// Orders API Routes - Orders के लिए API routes
-// Order management endpoints
-
+// Orders API Routes with MongoDB - Orders के लिए MongoDB API routes
 const express = require('express');
 const router = express.Router();
 const { body, validationResult } = require('express-validator');
+const Order = require('../models/Order');
+const Product = require('../models/Product');
+const { authenticateToken, requireAdmin } = require('../middleware/auth');
 
-const store = require('../utils/jsonStore');
-let orders = store.read('orders', []);
-let orderIdCounter = orders.length + 1;
-
-// Get all orders - सभी orders get करना
-router.get('/', (req, res) => {
+// Place new order - नया order place करना
+router.post('/', authenticateToken, [
+  body('items').isArray({ min: 1 }).withMessage('At least one item is required'),
+  body('customerDetails.name').notEmpty().withMessage('Customer name is required'),
+  body('customerDetails.phone').matches(/^[6-9]\d{9}$/).withMessage('Valid phone number required'),
+  body('customerDetails.address.street').notEmpty().withMessage('Street address is required'),
+  body('customerDetails.address.city').notEmpty().withMessage('City is required'),
+  body('customerDetails.address.pincode').notEmpty().withMessage('Pincode is required'),
+  body('paymentMethod').isIn(['cod', 'upi', 'phonepe', 'razorpay', 'card']).withMessage('Invalid payment method')
+], async (req, res) => {
   try {
-    const { status, customer_id, limit = 50, offset = 0 } = req.query;
-    
-    let filteredOrders = [...orders];
-    
-    if (status) {
-      filteredOrders = filteredOrders.filter(order => order.status === status);
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({
+        success: false,
+        error: 'Validation failed',
+        details: errors.array()
+      });
     }
-    
-    if (customer_id) {
-      filteredOrders = filteredOrders.filter(order => order.customer_id === customer_id);
+
+    const { items, customerDetails, paymentMethod, notes } = req.body;
+
+    // Validate and prepare order items
+    const orderItems = [];
+    let subtotal = 0;
+
+    for (const item of items) {
+      const product = await Product.findById(item.productId || item.product);
+      
+      if (!product) {
+        return res.status(404).json({
+          success: false,
+          error: `Product not found: ${item.productId || item.product}`
+        });
+      }
+
+      if (product.stock < item.quantity) {
+        return res.status(400).json({
+          success: false,
+          error: `Insufficient stock for ${product.name}. Available: ${product.stock}`
+        });
+      }
+
+      const itemSubtotal = product.price * item.quantity;
+      subtotal += itemSubtotal;
+
+      orderItems.push({
+        product: product._id,
+        name: product.name,
+        price: product.price,
+        quantity: item.quantity,
+        image: product.image,
+        subtotal: itemSubtotal
+      });
+
+      // Reduce stock
+      await product.updateStock(item.quantity, 'subtract');
     }
-    
-    // Pagination
-    const paginatedOrders = filteredOrders.slice(offset, offset + parseInt(limit));
-    
+
+    // Calculate pricing
+    const deliveryCharge = subtotal >= 500 ? 0 : 40; // Free delivery above ₹500
+    const total = subtotal + deliveryCharge;
+
+    // Create order
+    const order = new Order({
+      user: req.user._id,
+      items: orderItems,
+      customerDetails,
+      pricing: {
+        subtotal,
+        deliveryCharge,
+        discount: 0,
+        tax: 0,
+        total
+      },
+      paymentMethod,
+      paymentStatus: paymentMethod === 'cod' ? 'pending' : 'pending',
+      notes: notes || ''
+    });
+
+    await order.save();
+
+    res.status(201).json({
+      success: true,
+      message: 'Order placed successfully',
+      message_hi: 'ऑर्डर सफलतापूर्वक प्लेस हो गया',
+      data: order
+    });
+
+  } catch (error) {
+    console.error('Order creation error:', error);
+    res.status(500).json({
+      success: false,
+      error: 'Failed to place order',
+      message: error.message
+    });
+  }
+});
+
+// Get user's orders - User के orders get करना
+router.get('/user/:userId', authenticateToken, async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const { status, limit = 20, offset = 0 } = req.query;
+
+    // Check if user is accessing their own orders or is admin
+    if (req.user._id.toString() !== userId && req.user.role !== 'admin') {
+      return res.status(403).json({
+        success: false,
+        error: 'Access denied'
+      });
+    }
+
+    let query = { user: userId };
+    if (status) query.status = status;
+
+    const orders = await Order.find(query)
+      .populate('items.product', 'name image')
+      .sort({ createdAt: -1 })
+      .limit(parseInt(limit))
+      .skip(parseInt(offset));
+
+    const total = await Order.countDocuments(query);
+
     res.json({
       success: true,
-      data: paginatedOrders,
-      total: filteredOrders.length,
+      data: orders,
+      total,
       limit: parseInt(limit),
       offset: parseInt(offset)
     });
+
   } catch (error) {
     res.status(500).json({
       success: false,
@@ -44,21 +148,32 @@ router.get('/', (req, res) => {
 });
 
 // Get order by ID - Order को ID से get करना
-router.get('/:id', (req, res) => {
+router.get('/:orderId', authenticateToken, async (req, res) => {
   try {
-    const order = orders.find(o => o.id === req.params.id);
-    
+    const order = await Order.findById(req.params.orderId)
+      .populate('user', 'name email phone')
+      .populate('items.product', 'name image category');
+
     if (!order) {
       return res.status(404).json({
         success: false,
         error: 'Order not found'
       });
     }
-    
+
+    // Check if user owns this order or is admin
+    if (order.user._id.toString() !== req.user._id.toString() && req.user.role !== 'admin') {
+      return res.status(403).json({
+        success: false,
+        error: 'Access denied'
+      });
+    }
+
     res.json({
       success: true,
       data: order
     });
+
   } catch (error) {
     res.status(500).json({
       success: false,
@@ -68,14 +183,46 @@ router.get('/:id', (req, res) => {
   }
 });
 
-// Create new order - नया order create करना
-router.post('/', [
-  body('customer_name').notEmpty().withMessage('Customer name is required'),
-  body('customer_phone').isMobilePhone('en-IN').withMessage('Valid Indian phone number required'),
-  body('customer_address').notEmpty().withMessage('Customer address is required'),
-  body('items').isArray({ min: 1 }).withMessage('At least one item is required'),
-  body('payment_method').isIn(['cod', 'upi', 'phonepe', 'gpay']).withMessage('Invalid payment method')
-], (req, res) => {
+// Get order by order number - Order number से order get करना
+router.get('/track/:orderNumber', async (req, res) => {
+  try {
+    const order = await Order.findByOrderNumber(req.params.orderNumber);
+
+    if (!order) {
+      return res.status(404).json({
+        success: false,
+        error: 'Order not found',
+        message_hi: 'ऑर्डर नहीं मिला'
+      });
+    }
+
+    res.json({
+      success: true,
+      data: {
+        orderNumber: order.orderNumber,
+        status: order.status,
+        statusHistory: order.statusHistory,
+        items: order.items,
+        total: order.pricing.total,
+        deliveryDate: order.deliveryDate,
+        createdAt: order.createdAt
+      }
+    });
+
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: 'Failed to track order',
+      message: error.message
+    });
+  }
+});
+
+// Update order status - Order status update करना (Admin only)
+router.put('/:orderId/status', authenticateToken, requireAdmin, [
+  body('status').isIn(['pending', 'confirmed', 'processing', 'packed', 'shipped', 'out_for_delivery', 'delivered', 'cancelled']).withMessage('Invalid status'),
+  body('note').optional().isString()
+], async (req, res) => {
   try {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -85,92 +232,26 @@ router.post('/', [
         details: errors.array()
       });
     }
-    
-    const {
-      customer_name,
-      customer_phone,
-      customer_address,
-      customer_area,
-      items,
-      payment_method,
-      total_amount,
-      delivery_instructions
-    } = req.body;
-    
-    // Calculate total if not provided
-    const calculatedTotal = items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-    const finalTotal = total_amount || calculatedTotal;
-    
-    const newOrder = {
-      id: `CD${Date.now().toString().slice(-6)}`,
-      customer: {
-        name: customer_name,
-        phone: customer_phone,
-        address: customer_address,
-        area: customer_area || 'Main Market Area'
-      },
-      items: items,
-      payment_method: payment_method,
-      total_amount: finalTotal,
-      delivery_charges: finalTotal >= 200 ? 0 : 30,
-      final_amount: finalTotal + (finalTotal >= 200 ? 0 : 30),
-      status: 'placed',
-      delivery_instructions: delivery_instructions || '',
-      created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString(),
-      estimated_delivery: new Date(Date.now() + 60 * 60 * 1000).toISOString() // 1 hour from now
-    };
-    
-    orders.push(newOrder);
-    store.write('orders', orders);
-    
-    // Send notification (mock)
-    console.log(`📱 Order notification sent for order ${newOrder.id}`);
-    
-    res.status(201).json({
-      success: true,
-      data: newOrder,
-      message: 'Order placed successfully'
-    });
-  } catch (error) {
-    res.status(500).json({
-      success: false,
-      error: 'Failed to create order',
-      message: error.message
-    });
-  }
-});
 
-// Update order status - Order status update करना
-router.patch('/:id/status', [
-  body('status').isIn(['placed', 'confirmed', 'processing', 'packed', 'out_for_delivery', 'delivered', 'cancelled']).withMessage('Invalid status')
-], (req, res) => {
-  try {
-    const { status } = req.body;
-    const orderIndex = orders.findIndex(o => o.id === req.params.id);
-    
-    if (orderIndex === -1) {
+    const { status, note } = req.body;
+    const order = await Order.findById(req.params.orderId);
+
+    if (!order) {
       return res.status(404).json({
         success: false,
         error: 'Order not found'
       });
     }
-    
-    orders[orderIndex].status = status;
-    orders[orderIndex].updated_at = new Date().toISOString();
-    
-    // Update delivery time for certain statuses
-    if (status === 'out_for_delivery') {
-      orders[orderIndex].out_for_delivery_at = new Date().toISOString();
-    } else if (status === 'delivered') {
-      orders[orderIndex].delivered_at = new Date().toISOString();
-    }
-    
+
+    await order.updateStatus(status, note || '');
+
     res.json({
       success: true,
-      data: orders[orderIndex],
-      message: 'Order status updated successfully'
+      message: 'Order status updated successfully',
+      message_hi: 'ऑर्डर स्टेटस अपडेट हो गया',
+      data: order
     });
+
   } catch (error) {
     res.status(500).json({
       success: false,
@@ -181,33 +262,54 @@ router.patch('/:id/status', [
 });
 
 // Cancel order - Order cancel करना
-router.patch('/:id/cancel', (req, res) => {
+router.put('/:orderId/cancel', authenticateToken, [
+  body('reason').notEmpty().withMessage('Cancellation reason is required')
+], async (req, res) => {
   try {
-    const orderIndex = orders.findIndex(o => o.id === req.params.id);
-    
-    if (orderIndex === -1) {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({
+        success: false,
+        error: 'Validation failed',
+        details: errors.array()
+      });
+    }
+
+    const order = await Order.findById(req.params.orderId);
+
+    if (!order) {
       return res.status(404).json({
         success: false,
         error: 'Order not found'
       });
     }
-    
-    if (orders[orderIndex].status === 'delivered') {
-      return res.status(400).json({
+
+    // Check if user owns this order
+    if (order.user.toString() !== req.user._id.toString() && req.user.role !== 'admin') {
+      return res.status(403).json({
         success: false,
-        error: 'Cannot cancel delivered order'
+        error: 'Access denied'
       });
     }
-    
-    orders[orderIndex].status = 'cancelled';
-    orders[orderIndex].cancelled_at = new Date().toISOString();
-    orders[orderIndex].updated_at = new Date().toISOString();
-    
+
+    // Check if order can be cancelled
+    if (['delivered', 'cancelled'].includes(order.status)) {
+      return res.status(400).json({
+        success: false,
+        error: 'Order cannot be cancelled',
+        message_hi: 'ऑर्डर कैंसल नहीं किया जा सकता'
+      });
+    }
+
+    await order.cancelOrder(req.body.reason);
+
     res.json({
       success: true,
-      data: orders[orderIndex],
-      message: 'Order cancelled successfully'
+      message: 'Order cancelled successfully',
+      message_hi: 'ऑर्डर कैंसल हो गया',
+      data: order
     });
+
   } catch (error) {
     res.status(500).json({
       success: false,
@@ -217,41 +319,110 @@ router.patch('/:id/cancel', (req, res) => {
   }
 });
 
-// Get order analytics - Order analytics get करना
-router.get('/analytics/summary', (req, res) => {
+// Get all orders (Admin only) - सभी orders get करना
+router.get('/admin/all', authenticateToken, requireAdmin, async (req, res) => {
   try {
-    const { start_date, end_date } = req.query;
+    const { status, date, customer, limit = 50, offset = 0 } = req.query;
+
+    let query = {};
     
-    let filteredOrders = orders;
+    if (status) query.status = status;
     
-    if (start_date && end_date) {
-      filteredOrders = orders.filter(order => {
-        const orderDate = new Date(order.created_at);
-        return orderDate >= new Date(start_date) && orderDate <= new Date(end_date);
-      });
+    if (date) {
+      const startDate = new Date(date);
+      startDate.setHours(0, 0, 0, 0);
+      const endDate = new Date(date);
+      endDate.setHours(23, 59, 59, 999);
+      query.createdAt = { $gte: startDate, $lte: endDate };
     }
-    
-    const analytics = {
-      total_orders: filteredOrders.length,
-      total_revenue: filteredOrders.reduce((sum, order) => sum + order.final_amount, 0),
-      orders_by_status: {
-        placed: filteredOrders.filter(o => o.status === 'placed').length,
-        confirmed: filteredOrders.filter(o => o.status === 'confirmed').length,
-        processing: filteredOrders.filter(o => o.status === 'processing').length,
-        packed: filteredOrders.filter(o => o.status === 'packed').length,
-        out_for_delivery: filteredOrders.filter(o => o.status === 'out_for_delivery').length,
-        delivered: filteredOrders.filter(o => o.status === 'delivered').length,
-        cancelled: filteredOrders.filter(o => o.status === 'cancelled').length
-      },
-      average_order_value: filteredOrders.length > 0 ? 
-        filteredOrders.reduce((sum, order) => sum + order.final_amount, 0) / filteredOrders.length : 0,
-      top_products: getTopProducts(filteredOrders)
-    };
-    
+
+    if (customer) {
+      query['customerDetails.phone'] = { $regex: customer, $options: 'i' };
+    }
+
+    const orders = await Order.find(query)
+      .populate('user', 'name email phone')
+      .populate('items.product', 'name')
+      .sort({ createdAt: -1 })
+      .limit(parseInt(limit))
+      .skip(parseInt(offset));
+
+    const total = await Order.countDocuments(query);
+
     res.json({
       success: true,
-      data: analytics
+      data: orders,
+      total,
+      limit: parseInt(limit),
+      offset: parseInt(offset)
     });
+
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: 'Failed to fetch orders',
+      message: error.message
+    });
+  }
+});
+
+// Get today's orders (Admin) - आज के orders get करना
+router.get('/admin/today', authenticateToken, requireAdmin, async (req, res) => {
+  try {
+    const orders = await Order.getTodayOrders();
+
+    res.json({
+      success: true,
+      data: orders,
+      count: orders.length
+    });
+
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: 'Failed to fetch today\'s orders',
+      message: error.message
+    });
+  }
+});
+
+// Get order analytics (Admin) - Order analytics get करना
+router.get('/admin/analytics', authenticateToken, requireAdmin, async (req, res) => {
+  try {
+    const { startDate, endDate } = req.query;
+
+    const start = startDate ? new Date(startDate) : new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
+    const end = endDate ? new Date(endDate) : new Date();
+
+    const stats = await Order.getRevenueStats(start, end);
+
+    // Get status breakdown
+    const statusBreakdown = await Order.aggregate([
+      {
+        $match: {
+          createdAt: { $gte: start, $lte: end }
+        }
+      },
+      {
+        $group: {
+          _id: '$status',
+          count: { $sum: 1 }
+        }
+      }
+    ]);
+
+    res.json({
+      success: true,
+      data: {
+        ...stats,
+        statusBreakdown,
+        period: {
+          start,
+          end
+        }
+      }
+    });
+
   } catch (error) {
     res.status(500).json({
       success: false,
@@ -260,25 +431,5 @@ router.get('/analytics/summary', (req, res) => {
     });
   }
 });
-
-// Helper function to get top products - Top products get करने का helper function
-function getTopProducts(orders) {
-  const productCounts = {};
-  
-  orders.forEach(order => {
-    order.items.forEach(item => {
-      if (productCounts[item.name]) {
-        productCounts[item.name] += item.quantity;
-      } else {
-        productCounts[item.name] = item.quantity;
-      }
-    });
-  });
-  
-  return Object.entries(productCounts)
-    .sort(([,a], [,b]) => b - a)
-    .slice(0, 10)
-    .map(([name, count]) => ({ name, count }));
-}
 
 module.exports = router;

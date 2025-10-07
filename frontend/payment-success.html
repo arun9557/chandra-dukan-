@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment Success - Chandra Dukan</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @keyframes success {
+            0% { transform: scale(0) rotate(0deg); }
+            50% { transform: scale(1.2) rotate(180deg); }
+            100% { transform: scale(1) rotate(360deg); }
+        }
+        .success-icon {
+            animation: success 0.8s ease-out;
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <div class="min-h-screen flex items-center justify-center p-4">
+        <div class="max-w-md w-full">
+            <!-- Success Card -->
+            <div class="bg-white rounded-2xl shadow-2xl p-8 text-center">
+                <div class="success-icon w-24 h-24 bg-green-100 rounded-full mx-auto flex items-center justify-center mb-6">
+                    <svg class="w-16 h-16 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path>
+                    </svg>
+                </div>
+
+                <h1 class="text-3xl font-bold text-gray-800 mb-2">Payment Successful!</h1>
+                <p class="text-xl text-gray-600 mb-1">भुगतान सफल रहा!</p>
+                <p class="text-gray-500 mb-6">Your order has been confirmed</p>
+
+                <!-- Payment Details -->
+                <div class="bg-gray-50 rounded-lg p-4 mb-6 text-left">
+                    <div class="flex justify-between py-2 border-b">
+                        <span class="text-gray-600">Transaction ID:</span>
+                        <span class="font-mono text-sm" id="transactionId">Loading...</span>
+                    </div>
+                    <div class="flex justify-between py-2 border-b">
+                        <span class="text-gray-600">Order Number:</span>
+                        <span class="font-semibold" id="orderNumber">Loading...</span>
+                    </div>
+                    <div class="flex justify-between py-2">
+                        <span class="text-gray-600">Amount Paid:</span>
+                        <span class="text-xl font-bold text-green-600" id="amountPaid">₹0</span>
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="space-y-3">
+                    <a href="order-confirmation.html" id="viewOrderBtn" class="block w-full bg-indigo-600 text-white py-3 rounded-lg font-medium hover:bg-indigo-700 transition">
+                        View Order Details
+                    </a>
+                    <a href="index.html" class="block w-full bg-gray-200 text-gray-800 py-3 rounded-lg font-medium hover:bg-gray-300 transition">
+                        Continue Shopping
+                    </a>
+                </div>
+
+                <!-- Receipt Download -->
+                <button onclick="downloadReceipt()" class="mt-4 text-indigo-600 hover:underline text-sm">
+                    📄 Download Receipt
+                </button>
+            </div>
+
+            <!-- Security Badge -->
+            <div class="mt-6 text-center text-sm text-gray-500">
+                <p>🔒 Your payment is secure and encrypted</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        const orderId = urlParams.get('orderId');
+        const paymentId = urlParams.get('paymentId');
+
+        if (!orderId || !paymentId) {
+            alert('Invalid payment details');
+            window.location.href = 'index.html';
+        }
+
+        // Display payment details
+        document.getElementById('transactionId').textContent = paymentId;
+        document.getElementById('viewOrderBtn').href = `order-confirmation.html?orderId=${orderId}`;
+
+        // Load order details
+        async function loadOrderDetails() {
+            const token = localStorage.getItem('authToken');
+            
+            try {
+                const response = await fetch(`http://localhost:3000/api/orders/${orderId}`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                const data = await response.json();
+
+                if (response.ok && data.success) {
+                    document.getElementById('orderNumber').textContent = data.data.orderNumber;
+                    document.getElementById('amountPaid').textContent = `₹${data.data.pricing.total}`;
+                }
+            } catch (error) {
+                console.error('Error loading order:', error);
+            }
+        }
+
+        function downloadReceipt() {
+            alert('Receipt download feature will be implemented');
+        }
+
+        loadOrderDetails();
+
+        // Clear cart
+        localStorage.removeItem('cart');
+    </script>
+</body>
+</html>

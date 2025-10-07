@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Confirmation - Chandra Dukan</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @keyframes checkmark {
+            0% { transform: scale(0); opacity: 0; }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        .checkmark {
+            animation: checkmark 0.6s ease-out;
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- Header -->
+    <header class="bg-white shadow-sm">
+        <div class="container mx-auto px-4 py-4">
+            <a href="index.html" class="flex items-center space-x-2">
+                <span class="text-2xl">🏪</span>
+                <span class="text-xl font-bold text-indigo-600">Chandra Dukan</span>
+            </a>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <div class="container mx-auto px-4 py-8">
+        <div class="max-w-2xl mx-auto">
+            <!-- Success Message -->
+            <div class="bg-white rounded-2xl shadow-lg p-8 text-center mb-6">
+                <div class="checkmark w-20 h-20 bg-green-100 rounded-full mx-auto flex items-center justify-center mb-4">
+                    <svg class="w-12 h-12 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path>
+                    </svg>
+                </div>
+                <h1 class="text-3xl font-bold text-gray-800 mb-2">Order Placed Successfully!</h1>
+                <p class="text-xl text-gray-600 mb-1">ऑर्डर सफलतापूर्वक प्लेस हो गया!</p>
+                <p class="text-gray-500">Thank you for shopping with us</p>
+            </div>
+
+            <!-- Order Details -->
+            <div class="bg-white rounded-2xl shadow-lg p-6 mb-6">
+                <h2 class="text-xl font-semibold mb-4">Order Details</h2>
+                
+                <div class="space-y-3">
+                    <div class="flex justify-between py-2 border-b">
+                        <span class="text-gray-600">Order Number:</span>
+                        <span class="font-semibold" id="orderNumber">Loading...</span>
+                    </div>
+                    <div class="flex justify-between py-2 border-b">
+                        <span class="text-gray-600">Order Date:</span>
+                        <span class="font-semibold" id="orderDate">Loading...</span>
+                    </div>
+                    <div class="flex justify-between py-2 border-b">
+                        <span class="text-gray-600">Payment Method:</span>
+                        <span class="font-semibold" id="paymentMethod">Loading...</span>
+                    </div>
+                    <div class="flex justify-between py-2 border-b">
+                        <span class="text-gray-600">Status:</span>
+                        <span class="px-3 py-1 bg-yellow-100 text-yellow-800 rounded-full text-sm font-medium" id="orderStatus">Pending</span>
+                    </div>
+                    <div class="flex justify-between py-2">
+                        <span class="text-gray-600">Total Amount:</span>
+                        <span class="text-2xl font-bold text-indigo-600" id="totalAmount">₹0</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Order Items -->
+            <div class="bg-white rounded-2xl shadow-lg p-6 mb-6">
+                <h2 class="text-xl font-semibold mb-4">Order Items</h2>
+                <div id="orderItems" class="space-y-3">
+                    <!-- Items will be loaded here -->
+                </div>
+            </div>
+
+            <!-- Delivery Address -->
+            <div class="bg-white rounded-2xl shadow-lg p-6 mb-6">
+                <h2 class="text-xl font-semibold mb-4">Delivery Address</h2>
+                <div id="deliveryAddress" class="text-gray-600">
+                    <!-- Address will be loaded here -->
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="grid grid-cols-2 gap-4">
+                <a href="index.html" class="bg-gray-200 text-gray-800 py-3 rounded-lg text-center font-medium hover:bg-gray-300 transition">
+                    Continue Shopping
+                </a>
+                <a href="account.html?tab=orders" class="bg-indigo-600 text-white py-3 rounded-lg text-center font-medium hover:bg-indigo-700 transition">
+                    View Orders
+                </a>
+            </div>
+
+            <!-- Track Order -->
+            <div class="mt-6 text-center">
+                <p class="text-gray-600 mb-2">Track your order status</p>
+                <a href="#" onclick="trackOrder()" class="text-indigo-600 hover:underline font-medium">
+                    Track Order →
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = 'http://localhost:3000/api';
+        
+        // Get order ID from URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const orderId = urlParams.get('orderId');
+
+        if (!orderId) {
+            alert('No order ID found');
+            window.location.href = 'index.html';
+        }
+
+        // Load order details
+        async function loadOrderDetails() {
+            const token = localStorage.getItem('authToken');
+            
+            if (!token) {
+                alert('Please login to view order');
+                window.location.href = 'login.html';
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_URL}/orders/${orderId}`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                const data = await response.json();
+
+                if (response.ok && data.success) {
+                    displayOrderDetails(data.data);
+                } else {
+                    alert('Failed to load order details');
+                }
+            } catch (error) {
+                console.error('Error loading order:', error);
+                alert('Network error. Please try again.');
+            }
+        }
+
+        function displayOrderDetails(order) {
+            // Order details
+            document.getElementById('orderNumber').textContent = order.orderNumber;
+            document.getElementById('orderDate').textContent = new Date(order.createdAt).toLocaleDateString('en-IN');
+            document.getElementById('paymentMethod').textContent = order.paymentMethod.toUpperCase();
+            document.getElementById('orderStatus').textContent = order.status;
+            document.getElementById('totalAmount').textContent = `₹${order.pricing.total}`;
+
+            // Order items
+            const itemsHtml = order.items.map(item => `
+                <div class="flex items-center space-x-4 py-3 border-b">
+                    <img src="${item.image}" alt="${item.name}" class="w-16 h-16 object-cover rounded-lg">
+                    <div class="flex-1">
+                        <h3 class="font-medium">${item.name}</h3>
+                        <p class="text-sm text-gray-500">Qty: ${item.quantity} × ₹${item.price}</p>
+                    </div>
+                    <div class="font-semibold">₹${item.subtotal}</div>
+                </div>
+            `).join('');
+            document.getElementById('orderItems').innerHTML = itemsHtml;
+
+            // Delivery address
+            const addr = order.customerDetails.address;
+            document.getElementById('deliveryAddress').innerHTML = `
+                <p class="font-medium mb-1">${order.customerDetails.name}</p>
+                <p>${order.customerDetails.phone}</p>
+                <p class="mt-2">${addr.street}, ${addr.city}</p>
+                <p>${addr.state} - ${addr.pincode}</p>
+                ${addr.landmark ? `<p class="text-sm text-gray-500">Landmark: ${addr.landmark}</p>` : ''}
+            `;
+
+            // Clear cart
+            localStorage.removeItem('cart');
+        }
+
+        function trackOrder() {
+            const orderNumber = document.getElementById('orderNumber').textContent;
+            window.location.href = `order-tracking.html?orderNumber=${orderNumber}`;
+        }
+
+        // Load order on page load
+        loadOrderDetails();
+    </script>
+</body>
+</html>

@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Account - Chandra Dukan</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- Header -->
+    <header class="bg-white shadow-sm">
+        <div class="container mx-auto px-4 py-4">
+            <div class="flex items-center justify-between">
+                <a href="index.html" class="flex items-center space-x-2">
+                    <span class="text-2xl">🏪</span>
+                    <span class="text-xl font-bold text-indigo-600">Chandra Dukan</span>
+                </a>
+                <button onclick="logout()" class="text-red-600 hover:text-red-700 font-medium">
+                    Logout
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <div class="container mx-auto px-4 py-8">
+        <div class="max-w-6xl mx-auto">
+            <h1 class="text-3xl font-bold text-gray-800 mb-8">My Account</h1>
+
+            <div class="grid md:grid-cols-3 gap-6">
+                <!-- Sidebar -->
+                <div class="md:col-span-1">
+                    <div class="bg-white rounded-lg shadow-md p-6">
+                        <div class="text-center mb-6">
+                            <div class="w-20 h-20 bg-indigo-100 rounded-full mx-auto flex items-center justify-center mb-3">
+                                <span class="text-3xl" id="userAvatar">👤</span>
+                            </div>
+                            <h2 class="text-xl font-semibold text-gray-800" id="userName">Loading...</h2>
+                            <p class="text-sm text-gray-500" id="userEmail">Loading...</p>
+                        </div>
+
+                        <nav class="space-y-2">
+                            <button onclick="showTab('profile')" class="tab-btn w-full text-left px-4 py-2 rounded-lg hover:bg-indigo-50 transition">
+                                👤 Profile Information
+                            </button>
+                            <button onclick="showTab('orders')" class="tab-btn w-full text-left px-4 py-2 rounded-lg hover:bg-indigo-50 transition">
+                                📦 My Orders
+                            </button>
+                            <button onclick="showTab('addresses')" class="tab-btn w-full text-left px-4 py-2 rounded-lg hover:bg-indigo-50 transition">
+                                📍 Saved Addresses
+                            </button>
+                            <button onclick="showTab('security')" class="tab-btn w-full text-left px-4 py-2 rounded-lg hover:bg-indigo-50 transition">
+                                🔒 Security & Password
+                            </button>
+                        </nav>
+                    </div>
+                </div>
+
+                <!-- Content Area -->
+                <div class="md:col-span-2">
+                    <!-- Profile Tab -->
+                    <div id="profileTab" class="tab-content bg-white rounded-lg shadow-md p-6">
+                        <h3 class="text-2xl font-semibold mb-6">Profile Information</h3>
+                        <form id="profileForm" class="space-y-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Full Name</label>
+                                <input type="text" id="profileName" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500" required>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Email</label>
+                                <input type="email" id="profileEmail" class="w-full px-4 py-2 border border-gray-300 rounded-lg bg-gray-50" readonly>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Phone Number</label>
+                                <input type="tel" id="profilePhone" pattern="[6-9][0-9]{9}" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500" required>
+                            </div>
+                            <button type="submit" class="w-full bg-indigo-600 text-white py-2 rounded-lg hover:bg-indigo-700 transition">
+                                Update Profile
+                            </button>
+                        </form>
+                    </div>
+
+                    <!-- Orders Tab -->
+                    <div id="ordersTab" class="tab-content hidden bg-white rounded-lg shadow-md p-6">
+                        <h3 class="text-2xl font-semibold mb-6">My Orders</h3>
+                        <div id="ordersList" class="space-y-4">
+                            <p class="text-gray-500">Loading orders...</p>
+                        </div>
+                    </div>
+
+                    <!-- Addresses Tab -->
+                    <div id="addressesTab" class="tab-content hidden bg-white rounded-lg shadow-md p-6">
+                        <h3 class="text-2xl font-semibold mb-6">Saved Addresses</h3>
+                        <form id="addressForm" class="space-y-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Street Address</label>
+                                <input type="text" id="addressStreet" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500">
+                            </div>
+                            <div class="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">City</label>
+                                    <input type="text" id="addressCity" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">State</label>
+                                    <input type="text" id="addressState" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500">
+                                </div>
+                            </div>
+                            <div class="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Pincode</label>
+                                    <input type="text" id="addressPincode" pattern="[0-9]{6}" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Landmark</label>
+                                    <input type="text" id="addressLandmark" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500">
+                                </div>
+                            </div>
+                            <button type="submit" class="w-full bg-indigo-600 text-white py-2 rounded-lg hover:bg-indigo-700 transition">
+                                Save Address
+                            </button>
+                        </form>
+                    </div>
+
+                    <!-- Security Tab -->
+                    <div id="securityTab" class="tab-content hidden bg-white rounded-lg shadow-md p-6">
+                        <h3 class="text-2xl font-semibold mb-6">Change Password</h3>
+                        <form id="passwordForm" class="space-y-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Current Password</label>
+                                <input type="password" id="currentPassword" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500" required>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">New Password</label>
+                                <input type="password" id="newPassword" minlength="6" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500" required>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Confirm New Password</label>
+                                <input type="password" id="confirmNewPassword" minlength="6" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500" required>
+                            </div>
+                            <button type="submit" class="w-full bg-indigo-600 text-white py-2 rounded-lg hover:bg-indigo-700 transition">
+                                Change Password
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="account.js"></script>
+</body>
+</html>

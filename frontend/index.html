@@ -109,26 +109,40 @@
                             <span class="action-label">Account</span>
                         </button>
                         <div class="user-menu-dropdown" id="userMenuDropdown">
-                            <a href="login.html" class="user-menu-item">
-                                <span class="menu-icon">🔐</span>
-                                <span>Login</span>
-                            </a>
-                            <a href="signup.html" class="user-menu-item">
-                                <span class="menu-icon">📝</span>
-                                <span>Register</span>
-                            </a>
-                            <a href="#profile" class="user-menu-item">
-                                <span class="menu-icon">👤</span>
-                                <span>My Profile</span>
-                            </a>
-                            <a href="#orders" class="user-menu-item">
-                                <span class="menu-icon">📦</span>
-                                <span>My Orders</span>
-                            </a>
-                            <a href="delivery-map.html" class="user-menu-item">
-                                <span class="menu-icon">🗺️</span>
-                                <span>Track Delivery</span>
-                            </a>
+                            <!-- Show when NOT logged in -->
+                            <div id="guestMenu">
+                                <a href="login.html" class="user-menu-item">
+                                    <span class="menu-icon">🔐</span>
+                                    <span>Login</span>
+                                </a>
+                                <a href="register.html" class="user-menu-item">
+                                    <span class="menu-icon">📝</span>
+                                    <span>Register</span>
+                                </a>
+                            </div>
+                            <!-- Show when logged in -->
+                            <div id="userMenu" style="display: none;">
+                                <div class="user-menu-item" style="border-bottom: 1px solid #e5e7eb; padding-bottom: 8px; margin-bottom: 8px;">
+                                    <span class="menu-icon">👤</span>
+                                    <span id="userMenuName">User</span>
+                                </div>
+                                <a href="account.html" class="user-menu-item">
+                                    <span class="menu-icon">⚙️</span>
+                                    <span>My Account</span>
+                                </a>
+                                <a href="account.html?tab=orders" class="user-menu-item">
+                                    <span class="menu-icon">📦</span>
+                                    <span>My Orders</span>
+                                </a>
+                                <a href="delivery-map.html" class="user-menu-item">
+                                    <span class="menu-icon">🗺️</span>
+                                    <span>Track Delivery</span>
+                                </a>
+                                <a href="#" onclick="logoutUser()" class="user-menu-item" style="color: #dc2626;">
+                                    <span class="menu-icon">🚪</span>
+                                    <span>Logout</span>
+                                </a>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -536,6 +550,9 @@
     <script src="services/CartService.js"></script>
     <script src="services/NotificationService.js"></script>
     <script src="services/DataService.js"></script>
+    
+    <!-- Load auth utilities -->
+    <script src="auth-utils.js"></script>
     
     <!-- Load main app script -->
     <script src="app.js"></script>

@@ -2,60 +2,148 @@
 const express = require('express');
 const router = express.Router();
 const { body, validationResult } = require('express-validator');
+const Category = require('../models/Category');
 
-const store = require('../utils/jsonStore');
-
-let categories = store.read('categories', [
-  { id: 1, name: 'Cold Drinks & Beverages', hindi_name: 'Cold Drink aur Juice', icon: '🥤' },
-  { id: 2, name: 'Namkeen & Snacks', hindi_name: 'Namkeen aur Biscuit', icon: '🍪' },
-  { id: 3, name: 'Daily Essentials', hindi_name: 'Rojana Saman', icon: '🛒' },
-  { id: 4, name: 'Dairy Products', hindi_name: 'Milk aur Eggs', icon: '🥛' },
-  { id: 5, name: 'Gas Cylinder', hindi_name: 'Cooking Gas', icon: '🔥' },
-  { id: 6, name: 'Jan Seva Kendra', hindi_name: 'Sarkari Services', icon: '📋' }
-]);
-
-router.get('/', (req, res) => {
-  res.json({ success: true, data: categories });
-});
-
-router.post('/', [
-  body('name').notEmpty(),
-  body('hindi_name').optional().isString(),
-  body('icon').optional().isString()
-], (req, res) => {
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    return res.status(400).json({ success: false, error: 'Validation failed', details: errors.array() });
+// Get all categories - सभी categories get करना
+router.get('/', async (req, res) => {
+  try {
+    const { active, parent } = req.query;
+    
+    let query = {};
+    if (active === 'true') query.isActive = true;
+    if (parent === 'null') query.parent = null;
+    
+    const categories = await Category.find(query)
+      .populate('parent', 'name hindiName')
+      .sort({ displayOrder: 1, name: 1 });
+    
+    res.json({ success: true, data: categories });
+  } catch (error) {
+    res.status(500).json({ 
+      success: false, 
+      error: 'Failed to fetch categories', 
+      message: error.message 
+    });
   }
-  const { name, hindi_name, icon } = req.body;
-  const newCategory = { id: Math.max(...categories.map(c => c.id)) + 1, name, hindi_name: hindi_name || '', icon: icon || '🛍️' };
-  categories.push(newCategory);
-  store.write('categories', categories);
-  res.status(201).json({ success: true, data: newCategory, message: 'Category created' });
 });
 
+// Get category by ID
+router.get('/:id', async (req, res) => {
+  try {
+    const category = await Category.findById(req.params.id)
+      .populate('parent', 'name hindiName');
+    
+    if (!category) {
+      return res.status(404).json({ success: false, error: 'Category not found' });
+    }
+    
+    res.json({ success: true, data: category });
+  } catch (error) {
+    res.status(500).json({ 
+      success: false, 
+      error: 'Failed to fetch category', 
+      message: error.message 
+    });
+  }
+});
+
+// Create new category
+router.post('/', [
+  body('name').notEmpty().withMessage('Category name is required'),
+  body('hindiName').optional().isString(),
+  body('icon').optional().isString(),
+  body('description').optional().isString()
+], async (req, res) => {
+  try {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ 
+        success: false, 
+        error: 'Validation failed', 
+        details: errors.array() 
+      });
+    }
+    
+    const category = new Category(req.body);
+    await category.save();
+    
+    res.status(201).json({ 
+      success: true, 
+      data: category, 
+      message: 'Category created successfully' 
+    });
+  } catch (error) {
+    if (error.code === 11000) {
+      return res.status(409).json({ 
+        success: false, 
+        error: 'Category with this name already exists' 
+      });
+    }
+    res.status(500).json({ 
+      success: false, 
+      error: 'Failed to create category', 
+      message: error.message 
+    });
+  }
+});
+
+// Update category
 router.put('/:id', [
   body('name').optional().notEmpty(),
-  body('hindi_name').optional().isString(),
+  body('hindiName').optional().isString(),
   body('icon').optional().isString()
-], (req, res) => {
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    return res.status(400).json({ success: false, error: 'Validation failed', details: errors.array() });
+], async (req, res) => {
+  try {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ 
+        success: false, 
+        error: 'Validation failed', 
+        details: errors.array() 
+      });
+    }
+    
+    const category = await Category.findByIdAndUpdate(
+      req.params.id,
+      req.body,
+      { new: true, runValidators: true }
+    );
+    
+    if (!category) {
+      return res.status(404).json({ success: false, error: 'Category not found' });
+    }
+    
+    res.json({ 
+      success: true, 
+      data: category, 
+      message: 'Category updated successfully' 
+    });
+  } catch (error) {
+    res.status(500).json({ 
+      success: false, 
+      error: 'Failed to update category', 
+      message: error.message 
+    });
   }
-  const idx = categories.findIndex(c => c.id == req.params.id);
-  if (idx === -1) return res.status(404).json({ success: false, error: 'Category not found' });
-  categories[idx] = { ...categories[idx], ...req.body };
-  store.write('categories', categories);
-  res.json({ success: true, data: categories[idx], message: 'Category updated' });
 });
 
-router.delete('/:id', (req, res) => {
-  const idx = categories.findIndex(c => c.id == req.params.id);
-  if (idx === -1) return res.status(404).json({ success: false, error: 'Category not found' });
-  categories.splice(idx, 1);
-  store.write('categories', categories);
-  res.json({ success: true, message: 'Category deleted' });
+// Delete category
+router.delete('/:id', async (req, res) => {
+  try {
+    const category = await Category.findByIdAndDelete(req.params.id);
+    
+    if (!category) {
+      return res.status(404).json({ success: false, error: 'Category not found' });
+    }
+    
+    res.json({ success: true, message: 'Category deleted successfully' });
+  } catch (error) {
+    res.status(500).json({ 
+      success: false, 
+      error: 'Failed to delete category', 
+      message: error.message 
+    });
+  }
 });
 
 module.exports = router;

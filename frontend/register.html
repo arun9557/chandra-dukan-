@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register - Chandra Dukan</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            background-color: #f9fafb;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex items-center justify-center p-4 bg-gray-50">
+    <div class="w-full max-w-md">
+        <!-- Logo -->
+        <div class="text-center mb-8">
+            <h1 class="text-3xl font-bold text-indigo-600">Chandra Dukan</h1>
+            <p class="text-gray-500 mt-2">Create your account</p>
+        </div>
+        
+        <!-- Register Form -->
+        <div class="bg-white rounded-2xl shadow-lg p-8">
+            <form id="registerForm" class="space-y-4">
+                <h2 class="text-2xl font-semibold text-center text-gray-800 mb-6">Sign Up</h2>
+                
+                <!-- Name -->
+                <div>
+                    <input 
+                        id="name"
+                        type="text"
+                        placeholder="Full Name"
+                        class="w-full px-4 py-2.5 border border-gray-300 rounded-full focus:ring-2 focus:ring-indigo-200 focus:border-indigo-500"
+                        required
+                    >
+                </div>
+                
+                <!-- Email -->
+                <div>
+                    <input 
+                        id="email"
+                        type="email"
+                        placeholder="Email Address"
+                        class="w-full px-4 py-2.5 border border-gray-300 rounded-full focus:ring-2 focus:ring-indigo-200 focus:border-indigo-500"
+                        required
+                    >
+                </div>
+                
+                <!-- Phone -->
+                <div>
+                    <input 
+                        id="phone"
+                        type="tel"
+                        placeholder="Phone Number (10 digits)"
+                        pattern="[6-9][0-9]{9}"
+                        class="w-full px-4 py-2.5 border border-gray-300 rounded-full focus:ring-2 focus:ring-indigo-200 focus:border-indigo-500"
+                        required
+                    >
+                </div>
+                
+                <!-- Password -->
+                <div>
+                    <input 
+                        id="password"
+                        type="password"
+                        placeholder="Password (min 6 characters)"
+                        minlength="6"
+                        class="w-full px-4 py-2.5 border border-gray-300 rounded-full focus:ring-2 focus:ring-indigo-200 focus:border-indigo-500"
+                        required
+                    >
+                </div>
+                
+                <!-- Confirm Password -->
+                <div>
+                    <input 
+                        id="confirmPassword"
+                        type="password"
+                        placeholder="Confirm Password"
+                        minlength="6"
+                        class="w-full px-4 py-2.5 border border-gray-300 rounded-full focus:ring-2 focus:ring-indigo-200 focus:border-indigo-500"
+                        required
+                    >
+                </div>
+                
+                <!-- Submit Button -->
+                <button 
+                    type="submit" 
+                    class="w-full py-2.5 px-4 bg-indigo-600 hover:bg-indigo-700 text-white font-medium rounded-full transition duration-200"
+                >
+                    Create Account
+                </button>
+                
+                <!-- Login Link -->
+                <div class="text-center mt-4">
+                    <p class="text-sm text-gray-600">
+                        Already have an account? 
+                        <a href="login.html" class="text-indigo-600 hover:underline font-medium">Login</a>
+                    </p>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <script src="register.js"></script>
+</body>
+</html>

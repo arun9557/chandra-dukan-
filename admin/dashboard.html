@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Chandra Dukan</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .sidebar { transition: transform 0.3s; }
+        @media (max-width: 768px) {
+            .sidebar.hidden { transform: translateX(-100%); }
+        }
+    </style>
+</head>
+<body class="bg-gray-100">
+    <!-- Mobile Menu Toggle -->
+    <button onclick="toggleSidebar()" class="md:hidden fixed top-4 left-4 z-50 bg-indigo-600 text-white p-2 rounded-lg">
+        ☰
+    </button>
+
+    <div class="flex h-screen">
+        <!-- Sidebar - Admin navigation -->
+        <aside id="sidebar" class="sidebar w-64 bg-indigo-900 text-white fixed md:static h-full overflow-y-auto z-40">
+            <div class="p-6">
+                <h1 class="text-2xl font-bold mb-2">🏪 Chandra Dukan</h1>
+                <p class="text-indigo-300 text-sm">Admin Panel</p>
+            </div>
+
+            <nav class="mt-6">
+                <a href="dashboard.html" class="flex items-center px-6 py-3 bg-indigo-800 border-l-4 border-white">
+                    <span class="mr-3">📊</span>
+                    <span>Dashboard</span>
+                </a>
+                <a href="products.html" class="flex items-center px-6 py-3 hover:bg-indigo-800">
+                    <span class="mr-3">📦</span>
+                    <span>Products</span>
+                </a>
+                <a href="orders.html" class="flex items-center px-6 py-3 hover:bg-indigo-800">
+                    <span class="mr-3">🛒</span>
+                    <span>Orders</span>
+                </a>
+                <a href="users.html" class="flex items-center px-6 py-3 hover:bg-indigo-800">
+                    <span class="mr-3">👥</span>
+                    <span>Customers</span>
+                </a>
+                <a href="analytics.html" class="flex items-center px-6 py-3 hover:bg-indigo-800">
+                    <span class="mr-3">📈</span>
+                    <span>Analytics</span>
+                </a>
+                <a href="janseva.html" class="flex items-center px-6 py-3 hover:bg-indigo-800">
+                    <span class="mr-3">📋</span>
+                    <span>Jan Seva</span>
+                </a>
+            </nav>
+
+            <div class="absolute bottom-0 w-64 p-6 border-t border-indigo-800">
+                <div class="flex items-center mb-4">
+                    <div class="w-10 h-10 bg-indigo-700 rounded-full flex items-center justify-center mr-3">
+                        <span id="adminInitial">A</span>
+                    </div>
+                    <div>
+                        <p class="font-medium" id="adminName">Admin</p>
+                        <p class="text-xs text-indigo-300">Administrator</p>
+                    </div>
+                </div>
+                <button onclick="logout()" class="w-full bg-red-600 hover:bg-red-700 py-2 rounded-lg transition">
+                    🚪 Logout
+                </button>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="flex-1 overflow-y-auto p-6 md:p-8">
+            <!-- Header -->
+            <div class="mb-8">
+                <h2 class="text-3xl font-bold text-gray-800">Dashboard Overview</h2>
+                <p class="text-gray-600">Welcome back! Here's what's happening today</p>
+            </div>
+
+            <!-- Stats Cards - Statistics dikhane ke liye -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                <!-- Total Orders -->
+                <div class="bg-white rounded-lg shadow p-6">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-gray-500 text-sm">Total Orders</p>
+                            <p class="text-2xl font-bold text-gray-800" id="totalOrders">0</p>
+                        </div>
+                        <div class="bg-blue-100 p-3 rounded-full">
+                            <span class="text-2xl">🛒</span>
+                        </div>
+                    </div>
+                    <p class="text-sm text-green-600 mt-2">↑ <span id="ordersChange">0</span> from yesterday</p>
+                </div>
+
+                <!-- Total Revenue -->
+                <div class="bg-white rounded-lg shadow p-6">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-gray-500 text-sm">Total Revenue</p>
+                            <p class="text-2xl font-bold text-gray-800">₹<span id="totalRevenue">0</span></p>
+                        </div>
+                        <div class="bg-green-100 p-3 rounded-full">
+                            <span class="text-2xl">💰</span>
+                        </div>
+                    </div>
+                    <p class="text-sm text-green-600 mt-2">↑ <span id="revenueChange">0%</span> from last month</p>
+                </div>
+
+                <!-- Total Products -->
+                <div class="bg-white rounded-lg shadow p-6">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-gray-500 text-sm">Total Products</p>
+                            <p class="text-2xl font-bold text-gray-800" id="totalProducts">0</p>
+                        </div>
+                        <div class="bg-purple-100 p-3 rounded-full">
+                            <span class="text-2xl">📦</span>
+                        </div>
+                    </div>
+                    <p class="text-sm text-red-600 mt-2"><span id="lowStockCount">0</span> low stock items</p>
+                </div>
+
+                <!-- Total Customers -->
+                <div class="bg-white rounded-lg shadow p-6">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-gray-500 text-sm">Total Customers</p>
+                            <p class="text-2xl font-bold text-gray-800" id="totalCustomers">0</p>
+                        </div>
+                        <div class="bg-yellow-100 p-3 rounded-full">
+                            <span class="text-2xl">👥</span>
+                        </div>
+                    </div>
+                    <p class="text-sm text-green-600 mt-2">↑ <span id="customersChange">0</span> new this week</p>
+                </div>
+            </div>
+
+            <!-- Charts Row -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+                <!-- Sales Chart -->
+                <div class="bg-white rounded-lg shadow p-6">
+                    <h3 class="text-lg font-semibold mb-4">Sales Overview</h3>
+                    <canvas id="salesChart"></canvas>
+                </div>
+
+                <!-- Orders Chart -->
+                <div class="bg-white rounded-lg shadow p-6">
+                    <h3 class="text-lg font-semibold mb-4">Order Status</h3>
+                    <canvas id="ordersChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Recent Orders Table -->
+            <div class="bg-white rounded-lg shadow">
+                <div class="p-6 border-b">
+                    <h3 class="text-lg font-semibold">Recent Orders</h3>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Order ID</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Customer</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Amount</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Date</th>
+                            </tr>
+                        </thead>
+                        <tbody id="recentOrdersTable" class="divide-y divide-gray-200">
+                            <!-- Orders will be loaded here -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="admin-auth.js"></script>
+    <script src="dashboard.js"></script>
+</body>
+</html>
