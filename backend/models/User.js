@@ -52,12 +52,24 @@ const userSchema = new mongoose.Schema({
     type: Boolean,
     default: false
   },
+  verificationToken: {
+    type: String,
+    default: null
+  },
+  verificationTokenExpiry: {
+    type: Date,
+    default: null
+  },
   avatar: {
     type: String,
     default: ''
   },
   lastLogin: {
     type: Date,
+    default: null
+  },
+  refreshToken: {
+    type: String,
     default: null
   }
 }, {

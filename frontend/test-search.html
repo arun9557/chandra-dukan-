@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search Feature Test - Chandra Dukan</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="search.css">
+    <style>
+        .test-container {
+            max-width: 900px;
+            margin: 40px auto;
+            padding: 20px;
+            font-family: 'Inter', sans-serif;
+        }
+        .test-section {
+            background: white;
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 24px;
+        }
+        .test-section h2 {
+            margin-top: 0;
+            color: #6366f1;
+        }
+        .test-result {
+            padding: 12px;
+            margin: 8px 0;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+        .test-success {
+            background: #d1fae5;
+            color: #065f46;
+            border: 1px solid #059669;
+        }
+        .test-error {
+            background: #fee2e2;
+            color: #991b1b;
+            border: 1px solid #dc2626;
+        }
+        .test-info {
+            background: #dbeafe;
+            color: #1e40af;
+            border: 1px solid #3b82f6;
+        }
+        .test-button {
+            background: #6366f1;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            margin: 8px;
+            font-weight: 600;
+        }
+        .test-button:hover {
+            background: #4f46e5;
+        }
+        .test-input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            margin: 8px 0;
+            font-size: 14px;
+        }
+        .results-display {
+            max-height: 400px;
+            overflow-y: auto;
+            background: #f9fafb;
+            border-radius: 8px;
+            padding: 12px;
+            margin-top: 12px;
+        }
+        pre {
+            background: #1e293b;
+            color: #e2e8f0;
+            padding: 16px;
+            border-radius: 8px;
+            overflow-x: auto;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>🔍 Search Feature Testing</h1>
+        <p>Comprehensive testing suite for product search functionality</p>
+
+        <!-- Test 1: API Connection -->
+        <div class="test-section">
+            <h2>1. API Connection Test</h2>
+            <p>Test if backend search API is accessible</p>
+            <button class="test-button" onclick="testAPIConnection()">Test API Connection</button>
+            <div id="apiResult"></div>
+        </div>
+
+        <!-- Test 2: Search Functionality -->
+        <div class="test-section">
+            <h2>2. Search Functionality Test</h2>
+            <p>Test search with different queries</p>
+            <input type="text" class="test-input" id="testQuery" placeholder="Enter search term (e.g., milk, bread, juice)">
+            <button class="test-button" onclick="testSearch()">Test Search</button>
+            <div id="searchResult"></div>
+            <div id="searchDisplay" class="results-display" style="display: none;"></div>
+        </div>
+
+        <!-- Test 3: Debouncing -->
+        <div class="test-section">
+            <h2>3. Debouncing Test</h2>
+            <p>Test if debouncing prevents excessive API calls (300ms delay)</p>
+            <input type="text" class="test-input" id="debounceInput" placeholder="Type quickly...">
+            <div id="debounceResult"></div>
+            <p><small>Type quickly in the box above. API should only be called after you stop typing for 300ms.</small></p>
+        </div>
+
+        <!-- Test 4: Caching -->
+        <div class="test-section">
+            <h2>4. Caching Test</h2>
+            <p>Test if repeated searches use cache</p>
+            <button class="test-button" onclick="testCaching()">Test Caching</button>
+            <div id="cacheResult"></div>
+        </div>
+
+        <!-- Test 5: Keyword Highlighting -->
+        <div class="test-section">
+            <h2>5. Keyword Highlighting Test</h2>
+            <p>Test if search terms are highlighted in results</p>
+            <input type="text" class="test-input" id="highlightText" placeholder="Text to search in" value="Amul Fresh Milk 500ml">
+            <input type="text" class="test-input" id="highlightTerm" placeholder="Term to highlight" value="milk">
+            <button class="test-button" onclick="testHighlight()">Test Highlight</button>
+            <div id="highlightResult"></div>
+        </div>
+
+        <!-- Test 6: Empty Query -->
+        <div class="test-section">
+            <h2>6. Empty Query Test</h2>
+            <p>Test behavior with empty search query</p>
+            <button class="test-button" onclick="testEmptyQuery()">Test Empty Query</button>
+            <div id="emptyResult"></div>
+        </div>
+
+        <!-- Test 7: Recent Searches -->
+        <div class="test-section">
+            <h2>7. Recent Searches Test</h2>
+            <p>Test search history functionality</p>
+            <button class="test-button" onclick="testRecentSearches()">View Recent Searches</button>
+            <button class="test-button" onclick="clearRecentSearches()">Clear History</button>
+            <div id="recentResult"></div>
+        </div>
+
+        <!-- Test 8: Sort Functionality -->
+        <div class="test-section">
+            <h2>8. Sort Functionality Test</h2>
+            <p>Test sorting of search results</p>
+            <button class="test-button" onclick="testSort('price-low')">Sort by Price (Low)</button>
+            <button class="test-button" onclick="testSort('price-high')">Sort by Price (High)</button>
+            <button class="test-button" onclick="testSort('name')">Sort by Name</button>
+            <div id="sortResult"></div>
+        </div>
+
+        <!-- Summary -->
+        <div class="test-section">
+            <h2>Test Summary</h2>
+            <div id="testSummary">
+                <p>Run tests above to see results</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Load Scripts -->
+    <script src="services/SearchService.js"></script>
+    
+    <script>
+        let testResults = {
+            passed: 0,
+            failed: 0,
+            total: 0
+        };
+
+        function logResult(elementId, message, type) {
+            const element = document.getElementById(elementId);
+            const className = type === 'success' ? 'test-success' : type === 'error' ? 'test-error' : 'test-info';
+            element.innerHTML = `<div class="test-result ${className}">${message}</div>`;
+            
+            if (type === 'success') testResults.passed++;
+            if (type === 'error') testResults.failed++;
+            testResults.total++;
+            updateSummary();
+        }
+
+        function updateSummary() {
+            const summary = document.getElementById('testSummary');
+            summary.innerHTML = `
+                <p><strong>Total Tests:</strong> ${testResults.total}</p>
+                <p style="color: #059669;"><strong>Passed:</strong> ${testResults.passed}</p>
+                <p style="color: #dc2626;"><strong>Failed:</strong> ${testResults.failed}</p>
+            `;
+        }
+
+        // Test 1: API Connection
+        async function testAPIConnection() {
+            try {
+                logResult('apiResult', '⏳ Testing API connection...', 'info');
+                
+                const response = await fetch('/api/products/search/query?query=test&limit=1');
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    logResult('apiResult', `✅ API connection successful! Endpoint is responding. Success: ${data.success}`, 'success');
+                } else {
+                    logResult('apiResult', `⚠️ API returned status: ${response.status}. Check if backend is running.`, 'error');
+                }
+            } catch (error) {
+                logResult('apiResult', `❌ API connection failed: ${error.message}. Make sure backend server is running on port 3000.`, 'error');
+            }
+        }
+
+        // Test 2: Search Functionality
+        async function testSearch() {
+            const query = document.getElementById('testQuery').value.trim();
+            
+            if (!query) {
+                logResult('searchResult', '⚠️ Please enter a search term', 'error');
+                return;
+            }
+
+            try {
+                logResult('searchResult', `⏳ Searching for "${query}"...`, 'info');
+                
+                const results = await window.SearchService.searchProducts(query);
+                
+                if (results && results.length > 0) {
+                    logResult('searchResult', `✅ Found ${results.length} products matching "${query}"`, 'success');
+                    
+                    // Display results
+                    const display = document.getElementById('searchDisplay');
+                    display.style.display = 'block';
+                    display.innerHTML = '<pre>' + JSON.stringify(results, null, 2) + '</pre>';
+                } else {
+                    logResult('searchResult', `✅ Search completed. No products found for "${query}"`, 'success');
+                }
+            } catch (error) {
+                logResult('searchResult', `❌ Search failed: ${error.message}`, 'error');
+            }
+        }
+
+        // Test 3: Debouncing
+        let debounceCallCount = 0;
+        let debounceTimer;
+        
+        document.addEventListener('DOMContentLoaded', () => {
+            const debounceInput = document.getElementById('debounceInput');
+            if (debounceInput) {
+                debounceInput.addEventListener('input', (e) => {
+                    clearTimeout(debounceTimer);
+                    
+                    document.getElementById('debounceResult').innerHTML = 
+                        `<div class="test-result test-info">⏳ Waiting for you to stop typing...</div>`;
+                    
+                    debounceTimer = setTimeout(() => {
+                        debounceCallCount++;
+                        logResult('debounceResult', 
+                            `✅ Debounce working! API call #${debounceCallCount} would be made now after 300ms delay.`, 
+                            'success');
+                    }, 300);
+                });
+            }
+        });
+
+        // Test 4: Caching
+        async function testCaching() {
+            const testQuery = 'milk';
+            
+            try {
+                logResult('cacheResult', '⏳ Testing cache performance...', 'info');
+                
+                // Clear cache first
+                window.SearchService.clearCache();
+                
+                // First search (no cache)
+                const start1 = performance.now();
+                await window.SearchService.searchProducts(testQuery);
+                const time1 = performance.now() - start1;
+                
+                // Second search (from cache)
+                const start2 = performance.now();
+                await window.SearchService.searchProducts(testQuery);
+                const time2 = performance.now() - start2;
+                
+                const speedup = (time1 / time2).toFixed(2);
+                
+                logResult('cacheResult', 
+                    `✅ Cache working! First search: ${time1.toFixed(2)}ms, Cached search: ${time2.toFixed(2)}ms (${speedup}x faster)`, 
+                    'success');
+            } catch (error) {
+                logResult('cacheResult', `❌ Cache test failed: ${error.message}`, 'error');
+            }
+        }
+
+        // Test 5: Keyword Highlighting
+        function testHighlight() {
+            const text = document.getElementById('highlightText').value;
+            const term = document.getElementById('highlightTerm').value;
+            
+            if (!text || !term) {
+                logResult('highlightResult', '⚠️ Please enter both text and search term', 'error');
+                return;
+            }
+
+            const highlighted = window.SearchService.highlightMatch(text, term);
+            
+            logResult('highlightResult', 
+                `✅ Highlighted result: <div style="margin-top: 12px; padding: 12px; background: white; border-radius: 8px;">${highlighted}</div>`, 
+                'success');
+        }
+
+        // Test 6: Empty Query
+        async function testEmptyQuery() {
+            try {
+                logResult('emptyResult', '⏳ Testing empty query handling...', 'info');
+                
+                const results = await window.SearchService.searchProducts('');
+                
+                if (results.length === 0) {
+                    logResult('emptyResult', '✅ Empty query handled correctly (returned empty array)', 'success');
+                } else {
+                    logResult('emptyResult', '⚠️ Empty query returned results (should return empty array)', 'error');
+                }
+            } catch (error) {
+                logResult('emptyResult', `❌ Empty query test failed: ${error.message}`, 'error');
+            }
+        }
+
+        // Test 7: Recent Searches
+        function testRecentSearches() {
+            // Add some test searches
+            window.SearchService.trackSearch('milk');
+            window.SearchService.trackSearch('bread');
+            window.SearchService.trackSearch('eggs');
+            
+            const recent = window.SearchService.getRecentSearches(5);
+            
+            if (recent.length > 0) {
+                const list = recent.map(s => `<li>${s.query} - ${new Date(s.timestamp).toLocaleString()}</li>`).join('');
+                logResult('recentResult', 
+                    `✅ Recent searches (${recent.length}): <ul style="margin-top: 8px;">${list}</ul>`, 
+                    'success');
+            } else {
+                logResult('recentResult', '⚠️ No recent searches found', 'error');
+            }
+        }
+
+        function clearRecentSearches() {
+            window.SearchService.clearSearchHistory();
+            logResult('recentResult', '✅ Search history cleared successfully', 'success');
+        }
+
+        // Test 8: Sort Functionality
+        async function testSort(sortType) {
+            try {
+                logResult('sortResult', `⏳ Testing sort by ${sortType}...`, 'info');
+                
+                const results = await window.SearchService.searchProducts('milk');
+                
+                if (results.length === 0) {
+                    logResult('sortResult', '⚠️ No results to sort. Try searching for "milk" first.', 'error');
+                    return;
+                }
+                
+                const sorted = window.SearchService.sortResults(results, sortType);
+                
+                const preview = sorted.slice(0, 3).map(p => 
+                    `<li>${p.name} - ₹${p.price}</li>`
+                ).join('');
+                
+                logResult('sortResult', 
+                    `✅ Sorted by ${sortType}. Top 3 results: <ul style="margin-top: 8px;">${preview}</ul>`, 
+                    'success');
+            } catch (error) {
+                logResult('sortResult', `❌ Sort test failed: ${error.message}`, 'error');
+            }
+        }
+
+        // Auto-run basic tests on load
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                console.log('Search Feature Test Page Loaded');
+                console.log('Click test buttons to verify functionality');
+            }, 500);
+        });
+    </script>
+</body>
+</html>

@@ -3,6 +3,7 @@ const router = express.Router();
 const jwt = require('jsonwebtoken');
 const { body, validationResult } = require('express-validator');
 const User = require('../models/User');
+const OTP = require('../models/OTP');
 const { authenticateToken } = require('../middleware/auth');
 const { 
   generateToken, 
@@ -12,7 +13,7 @@ const {
   getTokenExpiry 
 } = require('../utils/tokenUtils');
 
-// In-memory OTP storage (use Redis in production)
+// In-memory OTP storage (fallback - prefer OTP model)
 const otpStore = new Map();
 
 // Register - उपयोगकर्ता रजिस्टर करना
@@ -70,6 +71,213 @@ router.post('/register', [
     res.status(500).json({ 
       success: false,
       error: 'Registration failed', 
+      message: error.message 
+    });
+  }
+});
+
+// Step 1: Send Registration OTP - Registration ke liye OTP bhejna
+router.post('/register/send-otp', [
+  body('email').optional().isEmail().withMessage('Valid email is required'),
+  body('phone').optional().matches(/^[6-9]\d{9}$/).withMessage('Valid 10-digit phone number is required')
+], async (req, res) => {
+  try {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ 
+        success: false,
+        error: 'Validation failed', 
+        details: errors.array() 
+      });
+    }
+
+    const { email, phone } = req.body;
+
+    if (!email && !phone) {
+      return res.status(400).json({ 
+        success: false,
+        error: 'Email or phone is required' 
+      });
+    }
+
+    // Check if user already exists - Pehle se user hai ya nahi check karo
+    const existingUser = await User.findOne({ 
+      $or: [
+        email ? { email: email.toLowerCase() } : {},
+        phone ? { phone } : {}
+      ].filter(obj => Object.keys(obj).length > 0)
+    });
+
+    if (existingUser) {
+      return res.status(409).json({ 
+        success: false,
+        error: existingUser.email === email ? 'Email already registered' : 'Phone number already registered',
+        field: existingUser.email === email ? 'email' : 'phone'
+      });
+    }
+
+    // Create OTP - OTP generate karo
+    const identifier = email || phone;
+    const type = email ? 'email' : 'phone';
+    const otpDoc = await OTP.createOTP(identifier, type, 'registration');
+
+    // TODO: Send OTP via Email/SMS (integrate with email service or SMS provider)
+    console.log(`Registration OTP for ${identifier}: ${otpDoc.otp}`);
+
+    res.json({ 
+      success: true,
+      message: `OTP sent successfully to your ${type}`,
+      data: {
+        identifier,
+        type,
+        expiresIn: 600, // 10 minutes in seconds
+        // Only for development - remove in production
+        otp: process.env.NODE_ENV === 'development' ? otpDoc.otp : undefined
+      }
+    });
+  } catch (error) {
+    console.error('Send OTP error:', error);
+    res.status(500).json({ 
+      success: false,
+      error: 'Failed to send OTP', 
+      message: error.message 
+    });
+  }
+});
+
+// Step 2: Verify OTP and Complete Registration - OTP verify karke registration complete karo
+router.post('/register/verify', [
+  body('name').trim().notEmpty().withMessage('Name is required'),
+  body('email').optional().isEmail().withMessage('Valid email is required'),
+  body('phone').optional().matches(/^[6-9]\d{9}$/).withMessage('Valid 10-digit phone number is required'),
+  body('password')
+    .isLength({ min: 8 }).withMessage('Password must be at least 8 characters')
+    .matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/).withMessage('Password must contain at least one uppercase letter, one lowercase letter, and one number'),
+  body('otp').isLength({ min: 6, max: 6 }).withMessage('Valid 6-digit OTP required')
+], async (req, res) => {
+  try {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ 
+        success: false,
+        error: 'Validation failed', 
+        details: errors.array() 
+      });
+    }
+
+    const { name, email, phone, password, otp, address } = req.body;
+
+    if (!email && !phone) {
+      return res.status(400).json({ 
+        success: false,
+        error: 'Email or phone is required' 
+      });
+    }
+
+    const identifier = email || phone;
+
+    // Verify OTP - OTP check karo
+    const otpVerification = await OTP.verifyOTP(identifier, otp, 'registration');
+    
+    if (!otpVerification.success) {
+      return res.status(400).json({ 
+        success: false,
+        error: otpVerification.message 
+      });
+    }
+
+    // Check again if user exists (race condition protection)
+    const existingUser = await User.findOne({ 
+      $or: [
+        email ? { email: email.toLowerCase() } : {},
+        phone ? { phone } : {}
+      ].filter(obj => Object.keys(obj).length > 0)
+    });
+
+    if (existingUser) {
+      return res.status(409).json({ 
+        success: false,
+        error: 'User already exists' 
+      });
+    }
+
+    // Create new user - Naya user banao
+    const user = new User({
+      name,
+      email: email ? email.toLowerCase() : undefined,
+      phone,
+      password,
+      address: address || {},
+      isVerified: true // Mark as verified since OTP is verified
+    });
+
+    await user.save();
+
+    // Generate JWT token - Login token banao
+    const token = generateToken(user._id);
+    const refreshToken = generateRefreshToken(user._id);
+
+    // Save refresh token
+    user.refreshToken = refreshToken;
+    user.lastLogin = new Date();
+    await user.save();
+
+    res.status(201).json({ 
+      success: true,
+      message: 'Registration successful! Welcome aboard.', 
+      data: {
+        user: user.getPublicProfile(),
+        token,
+        refreshToken
+      }
+    });
+  } catch (error) {
+    console.error('Registration verification error:', error);
+    res.status(500).json({ 
+      success: false,
+      error: 'Registration failed', 
+      message: error.message 
+    });
+  }
+});
+
+// Resend OTP - OTP dubara bhejna
+router.post('/register/resend-otp', [
+  body('email').optional().isEmail(),
+  body('phone').optional().matches(/^[6-9]\d{9}$/)
+], async (req, res) => {
+  try {
+    const { email, phone } = req.body;
+
+    if (!email && !phone) {
+      return res.status(400).json({ 
+        success: false,
+        error: 'Email or phone is required' 
+      });
+    }
+
+    const identifier = email || phone;
+    const type = email ? 'email' : 'phone';
+
+    // Create new OTP
+    const otpDoc = await OTP.createOTP(identifier, type, 'registration');
+
+    // TODO: Send OTP
+    console.log(`Resend OTP for ${identifier}: ${otpDoc.otp}`);
+
+    res.json({ 
+      success: true,
+      message: 'OTP resent successfully',
+      data: {
+        identifier,
+        expiresIn: 600,
+        otp: process.env.NODE_ENV === 'development' ? otpDoc.otp : undefined
+      }
+    });
+  } catch (error) {
+    res.status(500).json({ 
+      success: false,
+      error: 'Failed to resend OTP', 
       message: error.message 
     });
   }

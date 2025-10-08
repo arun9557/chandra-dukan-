@@ -6,6 +6,7 @@
     <title>Your Cart - Chandra Dukan</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="upgrades.css">
+    <link rel="stylesheet" href="search.css">
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#6366F1">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -796,6 +797,14 @@
         </div>
     </footer>
 
+    <!-- Load service scripts -->
+    <script src="services/SearchService.js"></script>
+    <script src="services/NotificationService.js"></script>
+    <script src="services/CartService.js"></script>
+    
+    <!-- Load search component -->
+    <script src="components/SearchComponent.js"></script>
+    
     <script>
         // Update cart count from local storage if available
         function updateCartCount() {

@@ -3,105 +3,239 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Register - Chandra Dukan</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <style>
-        body {
-            font-family: 'Inter', system-ui, -apple-system, sans-serif;
-            background-color: #f9fafb;
-        }
-    </style>
+    <title>Sign Up - Chandra Dukan</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="auth.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 </head>
-<body class="min-h-screen flex items-center justify-center p-4 bg-gray-50">
-    <div class="w-full max-w-md">
-        <!-- Logo -->
-        <div class="text-center mb-8">
-            <h1 class="text-3xl font-bold text-indigo-600">Chandra Dukan</h1>
-            <p class="text-gray-500 mt-2">Create your account</p>
+<body class="auth-page">
+    <!-- Auth Container -->
+    <div class="auth-container">
+        <!-- Left Side - Branding -->
+        <div class="auth-branding">
+            <div class="branding-content">
+                <div class="brand-logo">
+                    <span class="logo-icon">🏪</span>
+                    <h1 class="logo-text">Chandra Dukan</h1>
+                </div>
+                <h2 class="brand-title">Start Your Journey</h2>
+                <p class="brand-subtitle">Join thousands of happy customers getting fresh groceries delivered to their doorstep.</p>
+                
+                <div class="brand-features">
+                    <div class="feature-item">
+                        <span class="feature-icon">✓</span>
+                        <span>Fresh Products Daily</span>
+                    </div>
+                    <div class="feature-item">
+                        <span class="feature-icon">✓</span>
+                        <span>Fast Delivery</span>
+                    </div>
+                    <div class="feature-item">
+                        <span class="feature-icon">✓</span>
+                        <span>Best Prices</span>
+                    </div>
+                </div>
+            </div>
         </div>
-        
-        <!-- Register Form -->
-        <div class="bg-white rounded-2xl shadow-lg p-8">
-            <form id="registerForm" class="space-y-4">
-                <h2 class="text-2xl font-semibold text-center text-gray-800 mb-6">Sign Up</h2>
-                
-                <!-- Name -->
-                <div>
-                    <input 
-                        id="name"
-                        type="text"
-                        placeholder="Full Name"
-                        class="w-full px-4 py-2.5 border border-gray-300 rounded-full focus:ring-2 focus:ring-indigo-200 focus:border-indigo-500"
-                        required
-                    >
+
+        <!-- Right Side - Registration Form -->
+        <div class="auth-form-container">
+            <div class="auth-form-wrapper">
+                <!-- Step Indicators -->
+                <div class="step-indicators" id="stepIndicators">
+                    <div class="step-indicator active" data-step="1">
+                        <div class="step-number">1</div>
+                        <div class="step-label">Account Info</div>
+                    </div>
+                    <div class="step-connector"></div>
+                    <div class="step-indicator" data-step="2">
+                        <div class="step-number">2</div>
+                        <div class="step-label">Verify OTP</div>
+                    </div>
                 </div>
-                
-                <!-- Email -->
-                <div>
-                    <input 
-                        id="email"
-                        type="email"
-                        placeholder="Email Address"
-                        class="w-full px-4 py-2.5 border border-gray-300 rounded-full focus:ring-2 focus:ring-indigo-200 focus:border-indigo-500"
-                        required
-                    >
+
+                <!-- Step 1: Account Information -->
+                <div class="auth-step" id="step1" style="display: block;">
+                    <h2 class="auth-title">Create Account</h2>
+                    <p class="auth-subtitle">Fill in your details to get started</p>
+
+                    <form id="accountInfoForm" class="auth-form">
+                        <!-- Name -->
+                        <div class="form-group">
+                            <label class="form-label">Full Name</label>
+                            <input type="text" 
+                                   id="name" 
+                                   class="form-input" 
+                                   placeholder="Enter your full name"
+                                   required>
+                            <span class="form-error" id="nameError"></span>
+                        </div>
+
+                        <!-- Email or Phone -->
+                        <div class="form-group">
+                            <label class="form-label">Email Address</label>
+                            <input type="email" 
+                                   id="email" 
+                                   class="form-input" 
+                                   placeholder="your@email.com">
+                            <span class="form-error" id="emailError"></span>
+                        </div>
+
+                        <div class="form-divider">
+                            <span>OR</span>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Phone Number</label>
+                            <input type="tel" 
+                                   id="phone" 
+                                   class="form-input" 
+                                   placeholder="10-digit mobile number"
+                                   pattern="[6-9][0-9]{9}"
+                                   maxlength="10">
+                            <span class="form-error" id="phoneError"></span>
+                            <span class="form-hint">Provide either email or phone (or both)</span>
+                        </div>
+
+                        <!-- Password -->
+                        <div class="form-group">
+                            <label class="form-label">Password</label>
+                            <div class="password-input-wrapper">
+                                <input type="password" 
+                                       id="password" 
+                                       class="form-input" 
+                                       placeholder="Create a strong password"
+                                       required>
+                                <button type="button" class="password-toggle" onclick="togglePasswordVisibility('password')">
+                                    <span class="eye-icon">👁️</span>
+                                </button>
+                            </div>
+                            <span class="form-error" id="passwordError"></span>
+                            <!-- Password Strength Indicator -->
+                            <div class="password-strength" id="passwordStrength">
+                                <div class="strength-bar">
+                                    <div class="strength-fill" id="strengthFill"></div>
+                                </div>
+                                <span class="strength-text" id="strengthText"></span>
+                            </div>
+                            <ul class="password-requirements">
+                                <li id="req-length">At least 8 characters</li>
+                                <li id="req-uppercase">One uppercase letter</li>
+                                <li id="req-lowercase">One lowercase letter</li>
+                                <li id="req-number">One number</li>
+                            </ul>
+                        </div>
+
+                        <!-- Confirm Password -->
+                        <div class="form-group">
+                            <label class="form-label">Confirm Password</label>
+                            <div class="password-input-wrapper">
+                                <input type="password" 
+                                       id="confirmPassword" 
+                                       class="form-input" 
+                                       placeholder="Re-enter your password"
+                                       required>
+                                <button type="button" class="password-toggle" onclick="togglePasswordVisibility('confirmPassword')">
+                                    <span class="eye-icon">👁️</span>
+                                </button>
+                            </div>
+                            <span class="form-error" id="confirmPasswordError"></span>
+                        </div>
+
+                        <!-- Terms & Conditions -->
+                        <div class="form-checkbox">
+                            <input type="checkbox" id="terms" required>
+                            <label for="terms">
+                                I agree to the <a href="#" class="link-primary">Terms & Conditions</a> and <a href="#" class="link-primary">Privacy Policy</a>
+                            </label>
+                        </div>
+
+                        <!-- Submit Button -->
+                        <button type="submit" class="btn-primary" id="sendOtpBtn">
+                            <span class="btn-text">Send OTP</span>
+                            <span class="btn-loader" style="display: none;"></span>
+                        </button>
+
+                        <!-- Social Login (Optional) -->
+                        <div class="social-login">
+                            <div class="social-divider">
+                                <span>Or continue with</span>
+                            </div>
+                            <div class="social-buttons">
+                                <button type="button" class="btn-social" onclick="alert('Google sign-in coming soon!')">
+                                    <img src="https://www.google.com/favicon.ico" alt="Google" class="social-icon">
+                                    <span>Google</span>
+                                </button>
+                                <button type="button" class="btn-social" onclick="alert('Apple sign-in coming soon!')">
+                                    <span class="social-icon">🍎</span>
+                                    <span>Apple</span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Login Link -->
+                        <div class="auth-footer">
+                            Already have an account? <a href="login.html" class="link-primary">Login</a>
+                        </div>
+                    </form>
                 </div>
-                
-                <!-- Phone -->
-                <div>
-                    <input 
-                        id="phone"
-                        type="tel"
-                        placeholder="Phone Number (10 digits)"
-                        pattern="[6-9][0-9]{9}"
-                        class="w-full px-4 py-2.5 border border-gray-300 rounded-full focus:ring-2 focus:ring-indigo-200 focus:border-indigo-500"
-                        required
-                    >
+
+                <!-- Step 2: OTP Verification -->
+                <div class="auth-step" id="step2" style="display: none;">
+                    <h2 class="auth-title">Verify OTP</h2>
+                    <p class="auth-subtitle">Enter the 6-digit code sent to <strong id="sentTo"></strong></p>
+
+                    <form id="otpVerificationForm" class="auth-form">
+                        <!-- OTP Input -->
+                        <div class="otp-input-group">
+                            <input type="text" class="otp-input" id="otp1" maxlength="1" pattern="[0-9]">
+                            <input type="text" class="otp-input" id="otp2" maxlength="1" pattern="[0-9]">
+                            <input type="text" class="otp-input" id="otp3" maxlength="1" pattern="[0-9]">
+                            <input type="text" class="otp-input" id="otp4" maxlength="1" pattern="[0-9]">
+                            <input type="text" class="otp-input" id="otp5" maxlength="1" pattern="[0-9]">
+                            <input type="text" class="otp-input" id="otp6" maxlength="1" pattern="[0-9]">
+                        </div>
+                        <span class="form-error" id="otpError"></span>
+
+                        <!-- OTP Timer -->
+                        <div class="otp-timer">
+                            <span id="otpTimerText">OTP expires in <strong id="otpCountdown">10:00</strong></span>
+                        </div>
+
+                        <!-- Resend OTP -->
+                        <div class="resend-otp">
+                            <span>Didn't receive the code?</span>
+                            <button type="button" class="btn-link" id="resendOtpBtn" disabled>
+                                Resend OTP <span id="resendTimer">(60s)</span>
+                            </button>
+                        </div>
+
+                        <!-- Submit Button -->
+                        <button type="submit" class="btn-primary" id="verifyOtpBtn">
+                            <span class="btn-text">Verify & Register</span>
+                            <span class="btn-loader" style="display: none;"></span>
+                        </button>
+
+                        <!-- Back Button -->
+                        <button type="button" class="btn-secondary" onclick="goToStep(1)">
+                            ← Back to Account Info
+                        </button>
+                    </form>
                 </div>
-                
-                <!-- Password -->
-                <div>
-                    <input 
-                        id="password"
-                        type="password"
-                        placeholder="Password (min 6 characters)"
-                        minlength="6"
-                        class="w-full px-4 py-2.5 border border-gray-300 rounded-full focus:ring-2 focus:ring-indigo-200 focus:border-indigo-500"
-                        required
-                    >
-                </div>
-                
-                <!-- Confirm Password -->
-                <div>
-                    <input 
-                        id="confirmPassword"
-                        type="password"
-                        placeholder="Confirm Password"
-                        minlength="6"
-                        class="w-full px-4 py-2.5 border border-gray-300 rounded-full focus:ring-2 focus:ring-indigo-200 focus:border-indigo-500"
-                        required
-                    >
-                </div>
-                
-                <!-- Submit Button -->
-                <button 
-                    type="submit" 
-                    class="w-full py-2.5 px-4 bg-indigo-600 hover:bg-indigo-700 text-white font-medium rounded-full transition duration-200"
-                >
-                    Create Account
-                </button>
-                
-                <!-- Login Link -->
-                <div class="text-center mt-4">
-                    <p class="text-sm text-gray-600">
-                        Already have an account? 
-                        <a href="login.html" class="text-indigo-600 hover:underline font-medium">Login</a>
-                    </p>
-                </div>
-            </form>
+            </div>
         </div>
     </div>
-    
+
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay" style="display: none;">
+        <div class="loading-spinner"></div>
+        <p>Creating your account...</p>
+    </div>
+
+    <!-- Scripts -->
+    <script src="services/NotificationService.js"></script>
     <script src="register.js"></script>
 </body>
 </html>

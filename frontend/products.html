@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shop Products - Chandra Dukan</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="upgrades.css">
+    <link rel="stylesheet" href="search.css">
+    <link rel="stylesheet" href="filters.css">
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#6366F1">
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Top Announcement Bar -->
+    <div class="announcement-bar">
+        <div class="container">
+            <div class="announcement-content">
+                <span class="announcement-icon">🎉</span>
+                <span class="announcement-text">Shop with filters! Find exactly what you need.</span>
+                <button class="announcement-close" onclick="this.parentElement.parentElement.parentElement.style.display='none'">✕</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Header -->
+    <header class="modern-header" id="mainHeader">
+        <div class="container">
+            <div class="header-wrapper">
+                <!-- Logo -->
+                <div class="header-logo">
+                    <a href="index.html" class="logo-link">
+                        <span class="logo-icon">🏪</span>
+                        <div class="logo-text">
+                            <span class="logo-name">Chandra Dukan</span>
+                            <span class="logo-tagline">चंद्रा दुकान</span>
+                        </div>
+                    </a>
+                </div>
+
+                <!-- Search Bar -->
+                <div class="header-search">
+                    <input type="text" id="headerSearchInput" placeholder='Search for "milk", "bread", "eggs"...' class="search-input">
+                    <button class="search-btn">
+                        <span class="search-icon">🔍</span>
+                    </button>
+                </div>
+
+                <!-- Right Actions -->
+                <div class="header-actions">
+                    <!-- Cart -->
+                    <a href="cart.html" class="action-btn cart-btn" title="Shopping Cart">
+                        <span class="action-icon">🛒</span>
+                        <span class="cart-badge" id="cartBadge">0</span>
+                        <span class="action-label">Cart</span>
+                    </a>
+
+                    <!-- User Menu -->
+                    <div class="user-menu-container">
+                        <button class="action-btn user-btn" onclick="toggleUserMenu()" title="Account">
+                            <span class="action-icon">👤</span>
+                            <span class="action-label">Account</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Page Title -->
+    <section class="page-title-section">
+        <div class="container">
+            <h1 class="page-title">Shop All Products</h1>
+            <p class="page-subtitle">Browse our complete catalog with filters and sorting</p>
+        </div>
+    </section>
+
+    <!-- Products Page Layout -->
+    <div class="products-page-layout">
+        <!-- Filter Sidebar will be injected here by FilterComponent -->
+        
+        <!-- Main Content -->
+        <div class="products-main-content">
+            <!-- Sort Bar -->
+            <div class="sort-bar">
+                <div class="sort-info">
+                    Showing <strong id="productCount">0</strong> products
+                </div>
+                <div class="sort-controls">
+                    <label class="sort-label">Sort by:</label>
+                    <select class="sort-select" id="sortSelect">
+                        <option value="newest">Newest First</option>
+                        <option value="popularity">Most Popular</option>
+                        <option value="price-low">Price: Low to High</option>
+                        <option value="price-high">Price: High to Low</option>
+                        <option value="name">Name: A to Z</option>
+                        <option value="top-rated">Top Rated</option>
+                        <option value="discount">Highest Discount</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Loading Skeleton -->
+            <div class="products-skeleton" id="productsSkeleton">
+                <div class="skeleton-card"></div>
+                <div class="skeleton-card"></div>
+                <div class="skeleton-card"></div>
+                <div class="skeleton-card"></div>
+                <div class="skeleton-card"></div>
+                <div class="skeleton-card"></div>
+                <div class="skeleton-card"></div>
+                <div class="skeleton-card"></div>
+            </div>
+
+            <!-- Products Grid -->
+            <div class="products-grid" id="productsGrid" style="display: none;">
+                <!-- Products will be loaded here -->
+            </div>
+
+            <!-- No Products Found -->
+            <div class="no-products-found" id="noProductsFound" style="display: none;">
+                <div class="no-products-icon">📦</div>
+                <h3>No products found</h3>
+                <p>We couldn't find any products matching your filters. Try adjusting your filters or browse all products.</p>
+                <button class="clear-filters-cta" onclick="window.FilterComponent.clearAllFilters()">
+                    Clear All Filters
+                </button>
+            </div>
+
+            <!-- Load More Button -->
+            <div class="load-more-container" id="loadMoreContainer" style="display: none;">
+                <button class="btn-primary" id="loadMoreBtn">
+                    Load More Products
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer-enhanced">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-column">
+                    <div class="footer-logo">
+                        <span class="logo-icon">🏪</span>
+                        <span class="logo-name">Chandra Dukan</span>
+                    </div>
+                    <p class="footer-description">
+                        Your trusted local grocery store delivering fresh products to your doorstep.
+                    </p>
+                </div>
+                <div class="footer-column">
+                    <h4>Quick Links</h4>
+                    <ul class="footer-links">
+                        <li><a href="index.html">Home</a></li>
+                        <li><a href="products.html">All Products</a></li>
+                        <li><a href="cart.html">Cart</a></li>
+                        <li><a href="account.html">My Account</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h4>Contact Info</h4>
+                    <ul class="footer-contact">
+                        <li>📞 +91 7465073957</li>
+                        <li>📍 Nawalpur Beyora</li>
+                        <li>🕐 7 AM - 10 PM Daily</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 Chandra Dukan. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Back to Top Button -->
+    <button class="back-to-top" id="backToTop" onclick="scrollToTop()">
+        <span>↑</span>
+    </button>
+
+    <!-- Load service scripts -->
+    <script src="services/CartService.js"></script>
+    <script src="services/NotificationService.js"></script>
+    <script src="services/DataService.js"></script>
+    <script src="services/SearchService.js"></script>
+    <script src="services/FilterService.js"></script>
+    
+    <!-- Load component scripts -->
+    <script src="components/SearchComponent.js"></script>
+    <script src="components/FilterComponent.js"></script>
+    <script src="components/ProductCard.js"></script>
+    
+    <!-- Load main products page script -->
+    <script src="products.js"></script>
+</body>
+</html>

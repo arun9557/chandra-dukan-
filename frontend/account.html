@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>My Account - Chandra Dukan</title>
+    <link rel="stylesheet" href="search.css">
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         body {
@@ -48,9 +49,9 @@
                             <button onclick="showTab('profile')" class="tab-btn w-full text-left px-4 py-2 rounded-lg hover:bg-indigo-50 transition">
                                 👤 Profile Information
                             </button>
-                            <button onclick="showTab('orders')" class="tab-btn w-full text-left px-4 py-2 rounded-lg hover:bg-indigo-50 transition">
+                            <a href="order-history.html" class="tab-btn w-full text-left px-4 py-2 rounded-lg hover:bg-indigo-50 transition block">
                                 📦 My Orders
-                            </button>
+                            </a>
                             <button onclick="showTab('addresses')" class="tab-btn w-full text-left px-4 py-2 rounded-lg hover:bg-indigo-50 transition">
                                 📍 Saved Addresses
                             </button>
@@ -153,6 +154,10 @@
         </div>
     </div>
 
+    <!-- Load search services -->
+    <script src="services/SearchService.js"></script>
+    <script src="components/SearchComponent.js"></script>
+    
     <script src="account.js"></script>
 </body>
 </html>

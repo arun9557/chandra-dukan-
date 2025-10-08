@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search Results - Chandra Dukan</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="upgrades.css">
+    <link rel="stylesheet" href="search.css">
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#6366F1">
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Top Announcement Bar -->
+    <div class="announcement-bar">
+        <div class="container">
+            <div class="announcement-content">
+                <span class="announcement-icon">🎉</span>
+                <span class="announcement-text">Grand Opening Offer: Get 20% OFF on your first order! Use code: <strong>FIRST20</strong></span>
+                <button class="announcement-close" onclick="this.parentElement.parentElement.parentElement.style.display='none'">✕</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Simple Header with Search -->
+    <header class="modern-header" id="mainHeader">
+        <div class="container">
+            <div class="header-wrapper">
+                <!-- Logo -->
+                <div class="header-logo">
+                    <a href="index.html" class="logo-link">
+                        <span class="logo-icon">🏪</span>
+                        <div class="logo-text">
+                            <span class="logo-name">Chandra Dukan</span>
+                            <span class="logo-tagline">चंद्रा दुकान</span>
+                        </div>
+                    </a>
+                </div>
+
+                <!-- Search Bar -->
+                <div class="header-search">
+                    <input type="text" id="headerSearchInput" placeholder='Search for "milk", "bread", "eggs"...' class="search-input">
+                    <button class="search-btn">
+                        <span class="search-icon">🔍</span>
+                    </button>
+                </div>
+
+                <!-- Right Actions -->
+                <div class="header-actions">
+                    <!-- Cart -->
+                    <a href="cart.html" class="action-btn cart-btn" title="Shopping Cart">
+                        <span class="action-icon">🛒</span>
+                        <span class="cart-badge" id="cartBadge">0</span>
+                        <span class="action-label">Cart</span>
+                    </a>
+
+                    <!-- Back to Home -->
+                    <a href="index.html" class="action-btn">
+                        <span class="action-icon">🏠</span>
+                        <span class="action-label">Home</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Search Results Section -->
+    <section class="search-results-page">
+        <div class="container">
+            <!-- Search Header -->
+            <div class="search-page-header">
+                <div class="search-info">
+                    <h1>Search Results</h1>
+                    <p id="searchQueryDisplay">Searching for products...</p>
+                </div>
+                <div class="search-filters">
+                    <select class="form-control-modern" id="sortFilter">
+                        <option value="relevance">Sort by: Relevance</option>
+                        <option value="price-low">Price: Low to High</option>
+                        <option value="price-high">Price: High to Low</option>
+                        <option value="name">Name: A to Z</option>
+                        <option value="popular">Most Popular</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Results Count -->
+            <div class="results-summary" id="resultsSummary" style="display: none;">
+                <p><strong id="resultsCount">0</strong> products found</p>
+            </div>
+
+            <!-- Loading Skeleton -->
+            <div class="products-skeleton" id="productsSkeleton">
+                <div class="skeleton-card"></div>
+                <div class="skeleton-card"></div>
+                <div class="skeleton-card"></div>
+                <div class="skeleton-card"></div>
+            </div>
+
+            <!-- Search Results Grid -->
+            <div class="products-grid" id="searchResultsGrid" style="display: none;">
+                <!-- Products will be loaded here -->
+            </div>
+
+            <!-- No Results -->
+            <div class="no-results-container" id="noResultsContainer" style="display: none;">
+                <div class="no-results-content">
+                    <span class="no-results-icon">🔍</span>
+                    <h2>No products found</h2>
+                    <p id="noResultsMessage">We couldn't find any products matching your search.</p>
+                    <div class="no-results-actions">
+                        <button class="btn-primary" onclick="window.location.href='index.html'">
+                            Browse All Products
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer (simplified) -->
+    <footer class="footer-enhanced">
+        <div class="container">
+            <div class="footer-bottom">
+                <p>&copy; 2024 Chandra Dukan. All rights reserved.</p>
+                <div class="footer-bottom-links">
+                    <a href="index.html">Home</a>
+                    <span>•</span>
+                    <a href="cart.html">Cart</a>
+                    <span>•</span>
+                    <a href="account.html">Account</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Load service scripts -->
+    <script src="services/CartService.js"></script>
+    <script src="services/NotificationService.js"></script>
+    <script src="services/DataService.js"></script>
+    <script src="services/SearchService.js"></script>
+    
+    <!-- Load component scripts -->
+    <script src="components/SearchComponent.js"></script>
+    <script src="components/ProductCard.js"></script>
+    
+    <!-- Search Results Page Script -->
+    <script src="search-results.js"></script>
+</body>
+</html>

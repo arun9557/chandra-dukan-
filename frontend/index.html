@@ -6,6 +6,8 @@
     <title>Chandra Dukan - Premium Local Delivery | Groceries in 1 Day</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="upgrades.css">
+    <link rel="stylesheet" href="search.css">
+    <link rel="stylesheet" href="filters.css">
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#6366F1">
     <meta name="description" content="Chandra Dukan - Get fresh groceries delivered to your doorstep within a day. Best prices, reliable delivery in Nawalpur Beyora.">
@@ -69,17 +71,12 @@
                     </button>
                 </div>
 
-                <!-- Filters -->
+                <!-- Browse All Products Link -->
                 <div class="header-filters">
-                    <select class="form-control-modern category-filter" id="categoryFilter">
-                        <option value="">All Categories</option>
-                    </select>
-                    <select class="form-control-modern sort-filter" id="sortFilter">
-                        <option value="name">Name</option>
-                        <option value="price-low">Price: Low to High</option>
-                        <option value="price-high">Price: High to Low</option>
-                        <option value="stock">Stock Available</option>
-                    </select>
+                    <a href="products.html" class="browse-all-btn">
+                        <span class="btn-icon">🎯</span>
+                        <span>Browse with Filters</span>
+                    </a>
                 </div>
 
                 <!-- Right Actions -->
@@ -537,19 +534,21 @@
         <span>↑</span>
     </button>
 
+    <!-- Load service scripts first -->
+    <script src="services/CartService.js"></script>
+    <script src="services/NotificationService.js"></script>
+    <script src="services/DataService.js"></script>
+    <script src="services/SearchService.js"></script>
+    
     <!-- Load component scripts -->
     <script src="components/Header.js"></script>
     <script src="components/SearchBar.js"></script>
+    <script src="components/SearchComponent.js"></script>
     <script src="components/ProductCard.js"></script>
     <script src="components/CartModal.js"></script>
     <script src="components/CheckoutModal.js"></script>
     <script src="components/OrderConfirmModal.js"></script>
     <script src="components/Dashboard.js"></script>
-    
-    <!-- Load service scripts -->
-    <script src="services/CartService.js"></script>
-    <script src="services/NotificationService.js"></script>
-    <script src="services/DataService.js"></script>
     
     <!-- Load auth utilities -->
     <script src="auth-utils.js"></script>

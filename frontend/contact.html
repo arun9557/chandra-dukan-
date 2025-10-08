@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Us - Chandra Dukan</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="upgrades.css">
+    <link rel="stylesheet" href="pages.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Header -->
+    <header class="modern-header">
+        <div class="container">
+            <div class="header-wrapper">
+                <!-- Logo -->
+                <div class="header-logo">
+                    <a href="index.html" class="logo-link">
+                        <span class="logo-icon">🏪</span>
+                        <div class="logo-text">
+                            <span class="logo-name">Chandra Dukan</span>
+                            <span class="logo-tagline">चंद्रा दुकान</span>
+                        </div>
+                    </a>
+                </div>
+
+                <!-- Navigation -->
+                <nav class="header-nav">
+                    <a href="index.html">Home</a>
+                    <a href="products.html">Products</a>
+                    <a href="about.html">About</a>
+                    <a href="contact.html" class="active">Contact</a>
+                </nav>
+
+                <!-- Right Actions -->
+                <div class="header-actions">
+                    <a href="cart.html" class="action-btn cart-btn">
+                        <span class="action-icon">🛒</span>
+                        <span class="cart-badge" id="cartBadge">0</span>
+                        <span class="action-label">Cart</span>
+                    </a>
+                    <a href="account.html" class="action-btn">
+                        <span class="action-icon">👤</span>
+                        <span class="action-label">Account</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Contact Hero Section -->
+    <section class="page-hero contact-hero">
+        <div class="container">
+            <h1 class="hero-title">Contact Us</h1>
+            <p class="hero-subtitle">We'd love to hear from you! Get in touch with us.</p>
+        </div>
+    </section>
+
+    <!-- Contact Content Section -->
+    <section class="contact-section">
+        <div class="container">
+            <div class="contact-layout">
+                <!-- Contact Form -->
+                <div class="contact-form-container">
+                    <h2 class="form-title">Send us a Message</h2>
+                    <p class="form-subtitle">Have a question or feedback? Drop us a message and we'll get back to you soon.</p>
+                    
+                    <form id="contactForm" class="contact-form">
+                        <div class="form-group">
+                            <label class="form-label">Full Name <span class="required">*</span></label>
+                            <input type="text" 
+                                   id="name" 
+                                   class="form-input" 
+                                   placeholder="Enter your name"
+                                   required 
+                                   minlength="2"
+                                   maxlength="100">
+                            <span class="form-error" id="nameError"></span>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Phone Number <span class="required">*</span></label>
+                            <input type="tel" 
+                                   id="phone" 
+                                   class="form-input" 
+                                   placeholder="10-digit mobile number"
+                                   required 
+                                   pattern="[6-9][0-9]{9}"
+                                   maxlength="10">
+                            <span class="form-error" id="phoneError"></span>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Email Address <span class="optional">(Optional)</span></label>
+                            <input type="email" 
+                                   id="email" 
+                                   class="form-input" 
+                                   placeholder="your@email.com">
+                            <span class="form-error" id="emailError"></span>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Message <span class="required">*</span></label>
+                            <textarea id="message" 
+                                      class="form-textarea" 
+                                      placeholder="Write your message here..."
+                                      required 
+                                      minlength="10"
+                                      maxlength="1000"
+                                      rows="6"></textarea>
+                            <span class="form-error" id="messageError"></span>
+                            <span class="char-count"><span id="charCount">0</span>/1000</span>
+                        </div>
+
+                        <button type="submit" class="btn-submit" id="submitBtn">
+                            <span class="btn-text">Send Message</span>
+                            <span class="btn-loader" style="display: none;">
+                                <span class="loader-spinner"></span>
+                            </span>
+                        </button>
+                    </form>
+
+                    <!-- Thank You Message -->
+                    <div id="thankYouMessage" class="thank-you-message" style="display: none;">
+                        <div class="success-icon">✅</div>
+                        <h3>Thank You!</h3>
+                        <p>Your message has been sent successfully. We'll get back to you within 24 hours.</p>
+                        <p class="hindi-text">आपका संदेश सफलतापूर्वक भेजा गया है। हम 24 घंटे में आपसे संपर्क करेंगे।</p>
+                        <button class="btn-secondary" onclick="resetForm()">Send Another Message</button>
+                    </div>
+                </div>
+
+                <!-- Contact Info -->
+                <div class="contact-info-container">
+                    <h2 class="info-title">Get in Touch</h2>
+                    <p class="info-subtitle">Reach out to us through any of these channels</p>
+
+                    <div class="info-cards">
+                        <div class="info-card">
+                            <div class="info-icon">📞</div>
+                            <div class="info-content">
+                                <h4>Phone</h4>
+                                <a href="tel:+917465073957" class="info-link">+91 7465073957</a>
+                                <p class="info-note">Mon-Sun: 7 AM - 10 PM</p>
+                            </div>
+                        </div>
+
+                        <div class="info-card">
+                            <div class="info-icon">📧</div>
+                            <div class="info-content">
+                                <h4>Email</h4>
+                                <a href="mailto:info@chandradukan.com" class="info-link">info@chandradukan.com</a>
+                                <p class="info-note">We'll respond within 24 hours</p>
+                            </div>
+                        </div>
+
+                        <div class="info-card">
+                            <div class="info-icon">💬</div>
+                            <div class="info-content">
+                                <h4>WhatsApp</h4>
+                                <a href="https://wa.me/917465073957" target="_blank" class="info-link">Chat with us</a>
+                                <p class="info-note">Quick replies on WhatsApp</p>
+                            </div>
+                        </div>
+
+                        <div class="info-card">
+                            <div class="info-icon">📍</div>
+                            <div class="info-content">
+                                <h4>Address</h4>
+                                <p class="info-address">
+                                    Nawalpur Beyora<br>
+                                    District: Saran<br>
+                                    Bihar, India
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Social Links -->
+                    <div class="social-section">
+                        <h4>Follow Us</h4>
+                        <div class="social-links">
+                            <a href="#" class="social-link facebook" title="Facebook">
+                                <span>📘</span>
+                            </a>
+                            <a href="#" class="social-link instagram" title="Instagram">
+                                <span>📷</span>
+                            </a>
+                            <a href="https://wa.me/917465073957" class="social-link whatsapp" title="WhatsApp" target="_blank">
+                                <span>💬</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Map Section -->
+    <section class="map-section">
+        <div class="container">
+            <h2 class="section-title text-center">Find Us on Map</h2>
+            <p class="section-subtitle text-center">Visit our store at Nawalpur Beyora</p>
+            
+            <div class="map-container">
+                <!-- Google Maps Embed - Nawalpur Beyora approximate location -->
+                <iframe 
+                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d114563.77199999999!2d84.7!3d25.9!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x39f29937c52d2823%3A0x831a0e05f607b270!2sNawalpur%2C%20Bihar!5e0!3m2!1sen!2sin!4v1234567890123" 
+                    width="100%" 
+                    height="450" 
+                    style="border:0;" 
+                    allowfullscreen="" 
+                    loading="lazy" 
+                    referrerpolicy="no-referrer-when-downgrade">
+                </iframe>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ Section -->
+    <section class="faq-section">
+        <div class="container">
+            <h2 class="section-title text-center">Frequently Asked Questions</h2>
+            <div class="faq-grid">
+                <div class="faq-item">
+                    <h4>What are your delivery hours?</h4>
+                    <p>We deliver from 8 AM to 8 PM, seven days a week.</p>
+                </div>
+                <div class="faq-item">
+                    <h4>Do you offer same-day delivery?</h4>
+                    <p>Yes! Orders placed before 2 PM are delivered the same day.</p>
+                </div>
+                <div class="faq-item">
+                    <h4>What payment methods do you accept?</h4>
+                    <p>We accept Cash on Delivery, UPI, Credit/Debit Cards, and PhonePe.</p>
+                </div>
+                <div class="faq-item">
+                    <h4>Can I return a product?</h4>
+                    <p>Yes, we offer returns within 24 hours if you're not satisfied with the product quality.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer-enhanced">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-column">
+                    <div class="footer-logo">
+                        <span class="logo-icon">🏪</span>
+                        <span class="logo-name">Chandra Dukan</span>
+                    </div>
+                    <p class="footer-description">
+                        Your trusted local grocery store delivering fresh products to your doorstep.
+                    </p>
+                </div>
+                <div class="footer-column">
+                    <h4>Quick Links</h4>
+                    <ul class="footer-links">
+                        <li><a href="index.html">Home</a></li>
+                        <li><a href="products.html">Products</a></li>
+                        <li><a href="about.html">About Us</a></li>
+                        <li><a href="contact.html">Contact</a></li>
+                        <li><a href="order-history.html">My Orders</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h4>Contact Info</h4>
+                    <ul class="footer-contact">
+                        <li>📞 <a href="tel:+917465073957">+91 7465073957</a></li>
+                        <li>📧 <a href="mailto:info@chandradukan.com">info@chandradukan.com</a></li>
+                        <li>📍 Nawalpur Beyora, Saran, Bihar</li>
+                        <li>🕐 7 AM - 10 PM Daily</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 Chandra Dukan. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="services/NotificationService.js"></script>
+    <script src="services/CartService.js"></script>
+    <script src="contact.js"></script>
+</body>
+</html>

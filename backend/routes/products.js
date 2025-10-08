@@ -5,29 +5,75 @@ const { body, validationResult } = require('express-validator');
 const Product = require('../models/Product');
 const Category = require('../models/Category');
 
-// Get all products - सभी products get करना
+// Get all products with advanced filtering - सभी products get करना with filters
 router.get('/', async (req, res) => {
   try {
-    const { category, search, sort, limit = 50, offset = 0, active } = req.query;
+    const { 
+      category,           // Category filter - category se filter
+      search,             // Search term - search query
+      sort,               // Sort option - sort type
+      limit = 50,         // Results per page - page size
+      offset = 0,         // Pagination offset - skip count
+      active,             // Active products only - active filter
+      minPrice,           // Minimum price - lowest price
+      maxPrice,           // Maximum price - highest price
+      inStock,            // In stock only - stock available filter
+      hasDiscount,        // Has discount only - discount products
+      featured,           // Featured products - featured filter
+      tags                // Filter by tags - tags se filter
+    } = req.query;
     
     let query = {};
     
-    // Filter by category
+    // Filter by category - Category se filter karna
     if (category) {
-      query.category = category;
+      // Multiple categories support (comma separated)
+      const categories = category.split(',');
+      query.category = categories.length > 1 ? { $in: categories } : category;
     }
     
-    // Filter by active status
+    // Filter by active status - Active products only
     if (active === 'true') {
       query.isActive = true;
     }
     
-    // Search by name or description
+    // Search by name or description - Name ya description me search
     if (search) {
-      query.$text = { $search: search };
+      query.$or = [
+        { name: { $regex: search, $options: 'i' } },
+        { description: { $regex: search, $options: 'i' } }
+      ];
     }
     
-    // Build sort object
+    // Price range filter - Price range se filter karna
+    if (minPrice || maxPrice) {
+      query.price = {};
+      if (minPrice) query.price.$gte = parseFloat(minPrice);
+      if (maxPrice) query.price.$lte = parseFloat(maxPrice);
+    }
+    
+    // In stock filter - Stock available filter
+    if (inStock === 'true') {
+      query.stock = { $gt: 0 };
+    }
+    
+    // Has discount filter - Discount wale products
+    if (hasDiscount === 'true') {
+      query.discount = { $gt: 0 };
+    }
+    
+    // Featured products filter - Featured products
+    if (featured === 'true') {
+      query.isFeatured = true;
+    }
+    
+    // Filter by tags - Tags se filter karna
+    if (tags) {
+      const tagList = tags.split(',');
+      query.tags = { $in: tagList };
+    }
+    
+    // Build sort object - Sort order banana
     let sortObj = {};
     switch(sort) {
       case 'price-low':
@@ -39,13 +85,23 @@ router.get('/', async (req, res) => {
       case 'name':
         sortObj = { name: 1 };
         break;
-      case 'stock':
-        sortObj = { stock: -1 };
+      case 'popularity':
+        sortObj = { views: -1, sold: -1 };
+        break;
+      case 'newest':
+        sortObj = { createdAt: -1 };
+        break;
+      case 'top-rated':
+        sortObj = { 'ratings.average': -1, 'ratings.count': -1 };
+        break;
+      case 'discount':
+        sortObj = { discount: -1 };
         break;
       default:
         sortObj = { createdAt: -1 };
     }
     
+    // Execute query with pagination - Query execute karna
     const products = await Product.find(query)
       .populate('category', 'name hindiName icon')
       .sort(sortObj)
@@ -54,14 +110,28 @@ router.get('/', async (req, res) => {
     
     const total = await Product.countDocuments(query);
     
+    // Response with filter metadata - Response me filter info bhi bhejo
     res.json({
       success: true,
       data: products,
       total,
       limit: parseInt(limit),
-      offset: parseInt(offset)
+      offset: parseInt(offset),
+      filters: {
+        category: category || null,
+        priceRange: {
+          min: minPrice ? parseFloat(minPrice) : null,
+          max: maxPrice ? parseFloat(maxPrice) : null
+        },
+        inStock: inStock === 'true',
+        hasDiscount: hasDiscount === 'true',
+        featured: featured === 'true',
+        tags: tags ? tags.split(',') : []
+      },
+      sort: sort || 'newest'
     });
   } catch (error) {
+    console.error('Products fetch error:', error);
     res.status(500).json({
       success: false,
       error: 'Failed to fetch products',
@@ -263,6 +333,62 @@ router.get('/featured/all', async (req, res) => {
     res.status(500).json({
       success: false,
       error: 'Failed to fetch featured products',
+      message: error.message
+    });
+  }
+});
+
+// Search products - Products search करना (advanced search with multiple fields)
+router.get('/search/query', async (req, res) => {
+  try {
+    const { query, limit = 20 } = req.query;
+    
+    // Agar query nahi hai to empty array return karo
+    if (!query || query.trim() === '') {
+      return res.json({
+        success: true,
+        data: [],
+        total: 0,
+        query: ''
+      });
+    }
+    
+    const searchTerm = query.trim();
+    
+    // Multiple fields me search karo - name, description, tags
+    const searchQuery = {
+      $and: [
+        { isActive: true },
+        {
+          $or: [
+            { name: { $regex: searchTerm, $options: 'i' } },
+            { description: { $regex: searchTerm, $options: 'i' } },
+            { tags: { $in: [new RegExp(searchTerm, 'i')] } }
+          ]
+        }
+      ]
+    };
+    
+    // Search results with category details
+    const products = await Product.find(searchQuery)
+      .populate('category', 'name hindiName icon')
+      .sort({ views: -1, sold: -1 }) // Popular products pehle
+      .limit(parseInt(limit));
+    
+    const total = await Product.countDocuments(searchQuery);
+    
+    res.json({
+      success: true,
+      data: products,
+      total,
+      query: searchTerm,
+      limit: parseInt(limit)
+    });
+  } catch (error) {
+    console.error('Search error:', error);
+    res.status(500).json({
+      success: false,
+      error: 'Search failed',
       message: error.message
     });
   }
