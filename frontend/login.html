@@ -257,69 +257,7 @@
                 window.scrollTo(0, 0);
             });
 
-            // Login form submission
-            loginForm?.addEventListener('submit', function(e) {
-                e.preventDefault();
-                
-                // Reset errors
-                const errorMessages = loginForm.querySelectorAll('.error-message');
-                errorMessages.forEach(el => {
-                    el.style.display = 'none';
-                    el.textContent = '';
-                });
-                
-                const inputs = loginForm.querySelectorAll('input');
-                inputs.forEach(input => input.classList.remove('error', 'border-red-500'));
-                
-                // Get form values
-                const email = document.getElementById('email').value.trim();
-                const password = document.getElementById('password').value;
-                
-                let isValid = true;
-                
-                // Email validation
-                if (!email) {
-                    showError('email', 'email-error', 'Email is required');
-                    isValid = false;
-                } else if (!isValidEmail(email)) {
-                    showError('email', 'email-error', 'Please enter a valid email');
-                    isValid = false;
-                }
-                
-                // Password validation
-                if (!password) {
-                    showError('password', 'password-error', 'Password is required');
-                    isValid = false;
-                } else if (password.length < 6) {
-                    showError('password', 'password-error', 'Password must be at least 6 characters');
-                    isValid = false;
-                }
-                
-                if (isValid) {
-                    const submitBtn = loginForm.querySelector('button[type="submit"]');
-                    const buttonText = submitBtn.querySelector('.button-text');
-                    const spinner = submitBtn.querySelector('svg');
-                    
-                    // Show loading state
-                    buttonText.textContent = 'Logging in...';
-                    spinner.classList.remove('hidden');
-                    submitBtn.disabled = true;
-                    
-                    // Simulate API call
-                    setTimeout(() => {
-                        // Reset button state
-                        buttonText.textContent = 'Log in';
-                        spinner.classList.add('hidden');
-                        submitBtn.disabled = false;
-                        
-                        // Show success message
-                        showToast('Login successful! Redirecting...', 'success');
-                        
-                        // Redirect to dashboard (uncomment when ready)
-                        // window.location.href = '/dashboard';
-                    }, 1500);
-                }
-            });
+            // Login form submission - Handled by login.js external file
 
             // Signup form submission
             signupForm?.addEventListener('submit', function(e) {
@@ -458,5 +396,8 @@
             });
         });
     </script>
+    
+    <!-- Login functionality script -->
+    <script src="login.js"></script>
 </body>
 </html>

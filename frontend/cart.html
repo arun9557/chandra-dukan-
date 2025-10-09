@@ -13,11 +13,18 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
-        /* Cart specific styles */
+        /* Modern Cart Styles - Improved UI/UX */
+        :root {
+            --cart-primary: #6366F1;
+            --cart-secondary: #8B5CF6;
+            --cart-success: #10B981;
+            --cart-danger: #EF4444;
+        }
+        
         .cart-container {
-            background-color: #fff;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
-            padding: 2rem 1rem 4rem;
+            padding: 2rem 0;
         }
         .cart-layout {
             display: flex;
@@ -69,11 +76,17 @@
         }
         
         .cart-item {
-            display: grid;
-            grid-template-columns: 2fr 1fr 1fr;
-            align-items: center;
-            padding: 1rem 0;
-            border-bottom: 1px solid #e5e7eb;
+            background: #F9FAFB;
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+        
+        .cart-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 16px rgba(0,0,0,0.12);
         }
         
         .item-details {

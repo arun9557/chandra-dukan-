@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Cart - Chandra Dukan</title>
+    
+    <!-- Styles -->
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="upgrades.css">
+    <link rel="stylesheet" href="cart-modern.css">
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- PWA -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#6366F1">
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+</head>
+<body>
+    <!-- Modern Cart Container -->
+    <div class="modern-cart-container">
+        <div class="cart-wrapper">
+            
+            <!-- Cart Header -->
+            <div class="cart-header">
+                <div class="cart-header-content">
+                    <div class="cart-title">
+                        <span class="cart-title-icon">🛒</span>
+                        <span>My Cart</span>
+                        <span class="cart-count-badge" id="cartItemCount">0 items</span>
+                    </div>
+                    <a href="index.html" class="continue-shopping">
+                        <span>←</span>
+                        <span>Continue Shopping</span>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Cart Layout -->
+            <div class="cart-layout">
+                
+                <!-- Cart Items Section -->
+                <div class="cart-items-section">
+                    <h2 class="section-title">
+                        Cart Items
+                    </h2>
+                    
+                    <!-- Cart Items Container -->
+                    <div id="cartItemsContainer">
+                        <!-- Items will be loaded here dynamically -->
+                    </div>
+                    
+                    <!-- Empty Cart State -->
+                    <div id="emptyCartState" class="empty-cart" style="display: none;">
+                        <div class="empty-cart-icon">🛒</div>
+                        <h3 class="empty-cart-title">Your cart is empty</h3>
+                        <p class="empty-cart-text">Add items to your cart to see them here</p>
+                        <a href="index.html" class="empty-cart-btn">Start Shopping</a>
+                    </div>
+                </div>
+
+                <!-- Cart Summary Sidebar -->
+                <div class="cart-summary" id="cartSummary">
+                    <h3 class="summary-title">Order Summary</h3>
+                    
+                    <!-- Free Delivery Progress -->
+                    <div class="free-delivery-banner">
+                        <div class="free-delivery-text" id="deliveryMessage">
+                            Add ₹<span id="remainingAmount">100</span> more for FREE delivery! 🚚
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="deliveryProgress" style="width: 0%"></div>
+                        </div>
+                    </div>
+
+                    <!-- Coupon Section -->
+                    <div class="coupon-section">
+                        <div class="coupon-header">
+                            <span>🎟️</span>
+                            <span>Have a coupon code?</span>
+                        </div>
+                        <div class="coupon-input-group">
+                            <input 
+                                type="text" 
+                                class="coupon-input" 
+                                id="couponInput" 
+                                placeholder="Enter coupon code"
+                            >
+                            <button class="apply-coupon-btn" onclick="applyCoupon()">Apply</button>
+                        </div>
+                    </div>
+
+                    <!-- Price Breakdown -->
+                    <div class="price-breakdown">
+                        <div class="price-row">
+                            <span class="price-label">Subtotal (<span id="summaryItemCount">0</span> items)</span>
+                            <span class="price-value" id="subtotalAmount">₹0.00</span>
+                        </div>
+                        <div class="price-row">
+                            <span class="price-label">Delivery Charges</span>
+                            <span class="price-value delivery-free" id="deliveryCharges">FREE</span>
+                        </div>
+                        <div class="price-row" id="discountRow" style="display: none;">
+                            <span class="price-label">Discount</span>
+                            <span class="price-value discount" id="discountAmount">-₹0.00</span>
+                        </div>
+                        <div class="price-row">
+                            <span class="price-label">GST (included)</span>
+                            <span class="price-value" id="gstAmount">₹0.00</span>
+                        </div>
+                    </div>
+
+                    <!-- Total -->
+                    <div class="total-row">
+                        <span>Total Amount</span>
+                        <span class="total-amount" id="totalAmount">₹0.00</span>
+                    </div>
+
+                    <!-- Checkout Button -->
+                    <button class="checkout-btn" onclick="proceedToCheckout()">
+                        <span>Proceed to Checkout</span>
+                        <span>→</span>
+                    </button>
+
+                    <!-- Trust Badges -->
+                    <div style="display: flex; justify-content: space-around; margin-top: 1.5rem; padding-top: 1.5rem; border-top: 2px solid #E5E7EB; font-size: 0.875rem; color: #6B7280; text-align: center;">
+                        <div>
+                            <div>🔒</div>
+                            <div>Secure Payment</div>
+                        </div>
+                        <div>
+                            <div>📦</div>
+                            <div>Fast Delivery</div>
+                        </div>
+                        <div>
+                            <div>↩️</div>
+                            <div>Easy Returns</div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading Indicator -->
+    <div id="loadingIndicator" style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; padding: 2rem; border-radius: 16px; box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2); z-index: 1000;">
+        <div style="text-align: center;">
+            <div style="width: 50px; height: 50px; border: 4px solid #E5E7EB; border-top-color: #6366F1; border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 1rem;"></div>
+            <div style="color: #6B7280; font-weight: 600;">Loading...</div>
+        </div>
+    </div>
+
+    <style>
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+
+    <!-- Scripts -->
+    <script src="services/CartService.js"></script>
+    <script src="cart-upgraded.js"></script>
+</body>
+</html>

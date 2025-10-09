@@ -167,16 +167,21 @@ const seedDatabase = async () => {
     await Order.deleteMany({});
     console.log('✅ Existing data cleared\n');
 
-    // Seed Users
+    // Create users one by one (so pre-save hook runs)
     console.log('👥 Seeding users...');
-    const createdUsers = await User.insertMany(users);
+    const createdUsers = [];
+    for (const userData of users) {
+      const user = new User(userData);
+      await user.save(); // This triggers pre-save hook
+      createdUsers.push(user);
+    }
     console.log(`✅ Created ${createdUsers.length} users\n`);
-
+    
     // Seed Categories
     console.log('📂 Seeding categories...');
     const createdCategories = await Category.insertMany(categories);
     console.log(`✅ Created ${createdCategories.length} categories\n`);
-
+    
     // Seed Products
     console.log('📦 Seeding products...');
     let allProducts = [];

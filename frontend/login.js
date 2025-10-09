@@ -52,7 +52,11 @@ async function processLogin(email, password) {
     
     try {
         // Backend API call
-        const response = await fetch('http://localhost:3000/api/auth/login', {
+        const API_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+            ? 'http://localhost:3000/api'
+            : '/api';
+        
+        const response = await fetch(`${API_URL}/auth/login`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -72,11 +76,15 @@ async function processLogin(email, password) {
             localStorage.setItem('authToken', data.data.token);
             localStorage.setItem('userData', JSON.stringify(data.data.user));
             
-            // Direct redirect without any message
+            // Log success for debugging
+            console.log('Login successful:', data.data.user);
+            console.log('Redirecting to:', data.data.user.role === 'admin' ? 'account.html' : 'index.html');
+            
+            // Immediate redirect without popup
             if (data.data.user.role === 'admin') {
-                window.location.replace('http://localhost:8002/dashboard.html');
+                window.location.href = 'account.html';
             } else {
-                window.location.replace('index.html');
+                window.location.href = 'index.html';
             }
         } else {
             showError(data.error || 'Login failed. Please check your credentials.');
