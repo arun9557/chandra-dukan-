@@ -3,36 +3,37 @@
 
 const express = require('express');
 const cors = require('cors');
-const helmet = require('helmet');
+const mongoose = require('mongoose');
 const morgan = require('morgan');
-const compression = require('compression');
-const rateLimit = require('express-rate-limit');
 require('dotenv').config();
+
+// Security middleware import - Security features ke liye
+const { 
+  helmetConfig, 
+  sanitizeInput, 
+  mongoSanitize, 
+  xss,
+  apiLimiter
+} = require('./middleware/security');
 
 // Import database connection
 const { connectDB } = require('./config/database');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
-
 // Connect to MongoDB
 connectDB();
 
-// Middleware setup - Middleware setup करना
-app.use(helmet());
-app.use(compression());
+// Security Middleware - Security middleware setup करना
+app.use(helmetConfig); // Secure HTTP headers
 app.use(cors({
-  origin: process.env.FRONTEND_URL || 'http://localhost:3000',
+  origin: process.env.FRONTEND_URL || 'http://localhost:8000',
   credentials: true
 }));
-
-// Rate limiting - Rate limiting setup करना
-const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 100, // limit each IP to 100 requests per windowMs
-  message: 'Too many requests from this IP, please try again later.'
-});
-app.use('/api/', limiter);
+app.use(mongoSanitize()); // Prevent NoSQL injection
+app.use(xss()); // Prevent XSS attacks
+app.use(sanitizeInput); // Custom input sanitization
+app.use('/api/', apiLimiter); // Rate limiting for all APIs
 
 // Logging - Logging setup करना
 app.use(morgan('combined'));
@@ -59,6 +60,10 @@ app.use('/api/upload', require('./routes/upload'));
 app.use('/api/janseva', require('./routes/janseva'));
 app.use('/api/contact', require('./routes/contact'));
 app.use('/api/faq', require('./routes/faq'));
+app.use('/api/users', require('./routes/users'));
+app.use('/api/reviews', require('./routes/reviews'));
+app.use('/api/notifications', require('./routes/notifications-email-sms'));
+app.use('/api/returns', require('./routes/returns'));
 
 // Health check - Health check endpoint
 app.get('/api/health', (req, res) => {

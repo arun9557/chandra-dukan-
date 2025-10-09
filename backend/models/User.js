@@ -71,6 +71,39 @@ const userSchema = new mongoose.Schema({
   refreshToken: {
     type: String,
     default: null
+  },
+  // Notification preferences - User ke notification settings
+  notificationPreferences: {
+    email: {
+      type: Boolean,
+      default: true
+    },
+    sms: {
+      type: Boolean,
+      default: true
+    },
+    orderUpdates: {
+      type: Boolean,
+      default: true
+    },
+    promotions: {
+      type: Boolean,
+      default: false
+    },
+    newsletter: {
+      type: Boolean,
+      default: false
+    }
+  },
+  // Two-Factor Authentication - 2FA settings
+  twoFactorEnabled: {
+    type: Boolean,
+    default: false
+  },
+  twoFactorMethod: {
+    type: String,
+    enum: ['email', 'sms', null],
+    default: null
   }
 }, {
   timestamps: true // Automatically adds createdAt and updatedAt
