@@ -1,9 +1,20 @@
 const express = require('express');
 const router = express.Router();
 const multer = require('multer');
-const sharp = require('sharp');
 const path = require('path');
 const fs = require('fs');
+
+// Skip Sharp on Vercel - Vercel serverless environment me Sharp nahi chalta
+const USE_SHARP = !Boolean(process.env.VERCEL);
+
+let sharp;
+if (USE_SHARP) {
+  try {
+    sharp = require('sharp');
+  } catch (error) {
+    console.warn('Sharp not available, skipping image processing');
+  }
+}
 
 const targetDir = path.join(process.cwd(), 'assets', 'products');
 if (!fs.existsSync(targetDir)) fs.mkdirSync(targetDir, { recursive: true });
@@ -26,12 +37,17 @@ router.post('/', upload.single('image'), async (req, res) => {
     const filename = `p_${Date.now()}_${Math.round(Math.random() * 1e6)}${ext}`;
     const outPath = path.join(targetDir, filename);
 
-    // Compress and resize to max 800px
-    const pipeline = sharp(req.file.buffer).resize({ width: 800, withoutEnlargement: true });
-    if (ext === '.jpg') {
-      await pipeline.jpeg({ quality: 80 }).toFile(outPath);
+    if (USE_SHARP && sharp) {
+      // Compress and resize to max 800px
+      const pipeline = sharp(req.file.buffer).resize({ width: 800, withoutEnlargement: true });
+      if (ext === '.jpg') {
+        await pipeline.jpeg({ quality: 80 }).toFile(outPath);
+      } else {
+        await pipeline.png({ compressionLevel: 8 }).toFile(outPath);
+      }
     } else {
-      await pipeline.png({ compressionLevel: 8 }).toFile(outPath);
+      // Simple save without compression (Vercel fallback)
+      fs.writeFileSync(outPath, req.file.buffer);
     }
 
     const publicUrl = `/assets/products/${filename}`;
