@@ -13,29 +13,31 @@ class ProductCard {
     
     return `
       <div class="product-card fade-in" data-product-id="${this.product.id}">
-        <div class="product-image-container">
-          <div class="product-badge-container">
-            <div class="delivery-badge">1 DAY</div>
-            ${this.product.stock <= 5 && this.product.stock > 0 ? 
-              '<div class="stock-badge stock-low-badge">Low Stock</div>' : ''}
-            ${this.product.stock === 0 ? 
-              '<div class="stock-badge stock-out-badge">Out of Stock</div>' : ''}
+        <a href="product-detail.html?id=${this.product._id || this.product.id}" style="text-decoration: none; color: inherit;">
+          <div class="product-image-container">
+            <div class="product-badge-container">
+              <div class="delivery-badge">1 DAY</div>
+              ${this.product.stock <= 5 && this.product.stock > 0 ? 
+                '<div class="stock-badge stock-low-badge">Low Stock</div>' : ''}
+              ${this.product.stock === 0 ? 
+                '<div class="stock-badge stock-out-badge">Out of Stock</div>' : ''}
+            </div>
+            <div class="product-image" aria-label="${this.product.name}">
+              📦
+            </div>
           </div>
-          <div class="product-image" aria-label="${this.product.name}">
-            📦
+          <div class="product-info">
+            <div class="product-header">
+              <h3 class="product-name">${this.product.name}</h3>
+              <div class="product-price">₹${this.product.price}</div>
+            </div>
+            <div class="product-stock ${stockClass}">
+              ${stockStatus}
+            </div>
           </div>
-        </div>
-        <div class="product-info">
-          <div class="product-header">
-            <h3 class="product-name">${this.product.name}</h3>
-            <div class="product-price">₹${this.product.price}</div>
-          </div>
-          <div class="product-stock ${stockClass}">
-            ${stockStatus}
-          </div>
-          <div class="product-actions">
-            ${this.product.stock > 0 ? this.renderCartControls() : this.renderOutOfStock()}
-          </div>
+        </a>
+        <div class="product-actions" onclick="event.stopPropagation()">
+          ${this.product.stock > 0 ? this.renderCartControls() : this.renderOutOfStock()}
         </div>
       </div>
     `;

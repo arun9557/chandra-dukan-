@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FAQ & Help - Chandra Dukan</title>
+    
+    <!-- Styles -->
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="upgrades.css">
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- PWA -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#6366F1">
+    
+    <style>
+        /* FAQ Page Styles - FAQ page ka styling */
+        .faq-container {
+            min-height: 100vh;
+            background: #F9FAFB;
+            padding: 2rem 0;
+        }
+        
+        .faq-wrapper {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+        
+        /* Hero Section */
+        .faq-hero {
+            text-align: center;
+            padding: 3rem 0;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 16px;
+            margin-bottom: 2rem;
+            color: white;
+        }
+        
+        .faq-hero h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+        
+        .faq-hero p {
+            font-size: 1.125rem;
+            opacity: 0.9;
+        }
+        
+        /* Search Bar */
+        .faq-search-section {
+            background: white;
+            border-radius: 16px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+        
+        .search-box {
+            position: relative;
+            width: 100%;
+        }
+        
+        .search-input {
+            width: 100%;
+            padding: 1rem 1rem 1rem 3rem;
+            border: 2px solid #E5E7EB;
+            border-radius: 12px;
+            font-size: 1rem;
+            transition: all 0.2s;
+        }
+        
+        .search-input:focus {
+            outline: none;
+            border-color: #6366F1;
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+        }
+        
+        .search-icon {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 1.25rem;
+        }
+        
+        /* Category Tabs */
+        .category-tabs {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            margin-bottom: 2rem;
+        }
+        
+        .category-tab {
+            padding: 0.75rem 1.5rem;
+            border: 2px solid #E5E7EB;
+            border-radius: 8px;
+            background: white;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+        
+        .category-tab:hover {
+            border-color: #6366F1;
+            color: #6366F1;
+        }
+        
+        .category-tab.active {
+            background: #6366F1;
+            color: white;
+            border-color: #6366F1;
+        }
+        
+        /* FAQ Section */
+        .faq-section {
+            background: white;
+            border-radius: 16px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+        
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #1F2937;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        
+        /* FAQ Item - Accordion style */
+        .faq-item {
+            border: 1px solid #E5E7EB;
+            border-radius: 12px;
+            margin-bottom: 1rem;
+            overflow: hidden;
+            transition: all 0.3s;
+        }
+        
+        .faq-item:hover {
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        }
+        
+        .faq-question {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.25rem 1.5rem;
+            cursor: pointer;
+            background: white;
+            transition: all 0.2s;
+            user-select: none;
+        }
+        
+        .faq-question:hover {
+            background: #F9FAFB;
+        }
+        
+        .faq-question-text {
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: #1F2937;
+            flex: 1;
+        }
+        
+        .faq-icon {
+            font-size: 1.5rem;
+            transition: transform 0.3s;
+            color: #6366F1;
+        }
+        
+        .faq-item.open .faq-icon {
+            transform: rotate(180deg);
+        }
+        
+        .faq-answer {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+        }
+        
+        .faq-item.open .faq-answer {
+            max-height: 500px;
+        }
+        
+        .faq-answer-content {
+            padding: 1.5rem;
+            background: #F9FAFB;
+            color: #4B5563;
+            line-height: 1.6;
+        }
+        
+        /* No Results */
+        .no-results {
+            text-align: center;
+            padding: 3rem 2rem;
+        }
+        
+        .no-results-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+        }
+        
+        .no-results-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #1F2937;
+            margin-bottom: 0.5rem;
+        }
+        
+        .no-results-text {
+            color: #6B7280;
+            margin-bottom: 1.5rem;
+        }
+        
+        .contact-link {
+            display: inline-block;
+            background: #6366F1;
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+        
+        .contact-link:hover {
+            background: #4F46E5;
+            transform: translateY(-2px);
+        }
+        
+        /* Help Section */
+        .help-section {
+            background: linear-gradient(135deg, #6366F1 0%, #8B5CF6 100%);
+            border-radius: 16px;
+            padding: 2rem;
+            text-align: center;
+            color: white;
+        }
+        
+        .help-section h3 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+        
+        .help-section p {
+            opacity: 0.9;
+            margin-bottom: 1.5rem;
+        }
+        
+        .help-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        
+        .help-btn {
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+        
+        .help-btn-primary {
+            background: white;
+            color: #6366F1;
+        }
+        
+        .help-btn-secondary {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 2px solid white;
+        }
+        
+        .help-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+        
+        /* Loading State */
+        .loading {
+            text-align: center;
+            padding: 3rem;
+        }
+        
+        .loader {
+            width: 50px;
+            height: 50px;
+            border: 4px solid #E5E7EB;
+            border-top-color: #6366F1;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1rem;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            .faq-hero h1 {
+                font-size: 1.75rem;
+            }
+            
+            .category-tabs {
+                overflow-x: auto;
+                flex-wrap: nowrap;
+                padding-bottom: 0.5rem;
+            }
+            
+            .category-tab {
+                white-space: nowrap;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="modern-header">
+        <div class="container">
+            <div class="header-wrapper">
+                <div class="header-logo">
+                    <a href="index.html" class="logo-link">
+                        <span class="logo-icon">🏪</span>
+                        <div class="logo-text">
+                            <span class="logo-name">Chandra Dukan</span>
+                            <span class="logo-tagline">चंद्रा दुकान</span>
+                        </div>
+                    </a>
+                </div>
+                
+                <div class="header-actions">
+                    <a href="index.html" class="action-btn">
+                        <span class="action-icon">🏠</span>
+                        <span class="action-label">Home</span>
+                    </a>
+                    <a href="cart.html" class="action-btn cart-btn">
+                        <span class="action-icon">🛒</span>
+                        <span class="cart-badge" id="cartBadge">0</span>
+                        <span class="action-label">Cart</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- FAQ Container -->
+    <div class="faq-container">
+        <div class="faq-wrapper">
+            
+            <!-- Hero Section -->
+            <div class="faq-hero">
+                <h1>❓ Frequently Asked Questions</h1>
+                <p>आपके सभी सवालों के जवाब - Find answers to common questions</p>
+            </div>
+
+            <!-- Search Section -->
+            <div class="faq-search-section">
+                <div class="search-box">
+                    <span class="search-icon">🔍</span>
+                    <input 
+                        type="text" 
+                        class="search-input" 
+                        id="faqSearch" 
+                        placeholder="Search for answers... (e.g., delivery, payment, return)"
+                        onkeyup="searchFAQ()"
+                    >
+                </div>
+            </div>
+
+            <!-- Category Tabs -->
+            <div class="category-tabs" id="categoryTabs">
+                <button class="category-tab active" onclick="filterCategory('all')">All</button>
+                <button class="category-tab" onclick="filterCategory('orders')">📦 Orders</button>
+                <button class="category-tab" onclick="filterCategory('payment')">💳 Payment</button>
+                <button class="category-tab" onclick="filterCategory('delivery')">🚚 Delivery</button>
+                <button class="category-tab" onclick="filterCategory('returns')">↩️ Returns</button>
+                <button class="category-tab" onclick="filterCategory('account')">👤 Account</button>
+                <button class="category-tab" onclick="filterCategory('jan-seva')">📋 Jan Seva</button>
+            </div>
+
+            <!-- Loading State -->
+            <div id="loadingState" class="loading" style="display: none;">
+                <div class="loader"></div>
+                <p style="color: #6B7280;">Loading FAQs...</p>
+            </div>
+
+            <!-- FAQ Content -->
+            <div id="faqContent">
+                <!-- FAQs will be loaded here -->
+            </div>
+
+            <!-- No Results -->
+            <div id="noResults" class="no-results" style="display: none;">
+                <div class="no-results-icon">🤔</div>
+                <h3 class="no-results-title">No Results Found</h3>
+                <p class="no-results-text">We couldn't find any FAQs matching your search.</p>
+                <a href="contact.html" class="contact-link">Contact Us</a>
+            </div>
+
+            <!-- Help Section -->
+            <div class="help-section">
+                <h3>Still need help?</h3>
+                <p>Can't find what you're looking for? We're here to help!</p>
+                <div class="help-buttons">
+                    <a href="contact.html" class="help-btn help-btn-primary">Contact Us</a>
+                    <a href="https://wa.me/917465073957" target="_blank" class="help-btn help-btn-secondary">WhatsApp</a>
+                    <a href="tel:+917465073957" class="help-btn help-btn-secondary">Call Now</a>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer-enhanced">
+        <div class="container">
+            <div class="footer-bottom">
+                <p>&copy; 2024 Chandra Dukan. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="services/CartService.js"></script>
+    <script src="faq.js"></script>
+</body>
+</html>
