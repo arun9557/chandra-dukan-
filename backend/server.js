@@ -98,12 +98,17 @@ app.use('*', (req, res) => {
   });
 });
 
-// Start server - Server start करना (bind to 0.0.0.0 to ensure IPv4 accessibility)
-const HOST = process.env.HOST || '0.0.0.0';
-app.listen(PORT, HOST, () => {
-  console.log(`🚀 Chandra Dukan Backend running on ${HOST}:${PORT}`);
-  console.log(`📱 Environment: ${process.env.NODE_ENV || 'development'}`);
-  console.log(`🌐 CORS enabled for: ${process.env.FRONTEND_URL || 'http://localhost:3000'}`);
-});
+// Vercel detection - Vercel environment me listener manually start nahi karna
+const IS_VERCEL = Boolean(process.env.VERCEL);
+
+if (!IS_VERCEL) {
+  // Start server - Local/standalone mode me server start karna
+  const HOST = process.env.HOST || '0.0.0.0';
+  app.listen(PORT, HOST, () => {
+    console.log(`🚀 Chandra Dukan Backend running on ${HOST}:${PORT}`);
+    console.log(`📱 Environment: ${process.env.NODE_ENV || 'development'}`);
+    console.log(`🌐 CORS enabled for: ${process.env.FRONTEND_URL || 'http://localhost:3000'}`);
+  });
+}
 
 module.exports = app;
