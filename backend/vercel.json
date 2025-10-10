@@ -3,24 +3,19 @@
   "name": "chandra-dukan-backend",
   "builds": [
     {
-      "src": "package.json",
+      "src": "server.js",
       "use": "@vercel/node"
     }
   ],
   "routes": [
     {
-      "src": "/api/(.*)",
-      "dest": "server.js",
+      "src": "/(.*)",
+      "dest": "/server.js",
       "methods": ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"]
     }
   ],
-  "build": {
-    "env": {
-      "NODE_ENV": "production"
-    }
-  },
-  "regions": ["bom1"],
   "env": {
     "NODE_ENV": "production"
-  }
+  },
+  "regions": ["bom1"]
 }
