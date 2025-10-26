@@ -264,14 +264,69 @@ router.post('/services', (req, res) => {
         res.status(500).json({
             success: false,
             message: 'Error adding service',
-        } = req.body;
+            error: error.message
+        });
+    }
+});
+
+// POST /api/janseva/applications - Submit new application
+router.post('/applications', upload.array('documents', 5), async (req, res) => {
+    try {
+        const { serviceId, fullName, mobile, aadhaarNumber } = req.body;
 
         // Validate required fields
         if (!serviceId || !fullName || !mobile || !aadhaarNumber) {
+            return res.status(400).json({
+                success: false,
+                message: 'Missing required fields: serviceId, fullName, mobile, and aadhaarNumber are required'
+            });
+        }
+
+        // Process file uploads if any
+        let documents = [];
+        if (req.files && req.files.length > 0) {
+            // Upload files to Cloudinary
+            const uploadPromises = req.files.map(file => 
+                uploadToCloudinary(file.buffer, 'janseva/documents')
+            );
+            documents = await Promise.all(uploadPromises);
+        }
+
+        // Create new application
+        const newApplication = {
+            id: 'APP' + Date.now(),
+            serviceId,
+            fullName,
+            mobile,
+            aadhaarNumber,
+            documents,
+            status: 'pending',
+            createdAt: new Date(),
+            updatedAt: new Date()
+        };
+
+        applications.push(newApplication);
+
+        res.status(201).json({
+            success: true,
+            message: 'Application submitted successfully',
+            data: newApplication
+        });
+    } catch (error) {
+        console.error('Error submitting application:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Error submitting application',
+            error: error.message
+        });
+    }
+});
+
+// PATCH /api/janseva/applications/:appNumber/status - Update application status
 router.patch('/applications/:appNumber/status', (req, res) => {
     try {
         const { status, remarks } = req.body;
-        const application = applications.find(app => app.applicationNumber === req.params.appNumber);
+        const application = applications.find(app => app.id === req.params.appNumber);
         
         if (!application) {
             return res.status(404).json({
