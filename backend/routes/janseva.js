@@ -6,20 +6,8 @@ const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
 
-// Configure multer for file uploads
-const storage = multer.diskStorage({
-    destination: (req, file, cb) => {
-        const uploadDir = './uploads/janseva';
-        if (!fs.existsSync(uploadDir)) {
-            fs.mkdirSync(uploadDir, { recursive: true });
-        }
-        cb(null, uploadDir);
-    },
-    filename: (req, file, cb) => {
-        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-        cb(null, 'doc-' + uniqueSuffix + path.extname(file.originalname));
-    }
-});
+// Configure multer for memory storage (for serverless compatibility)
+const storage = multer.memoryStorage();
 
 const upload = multer({
     storage: storage,
@@ -38,6 +26,44 @@ const upload = multer({
         }
     }
 });
+
+// Configure Cloudinary
+const cloudinary = require('cloudinary').v2;
+if (process.env.CLOUDINARY_CLOUD_NAME && 
+    process.env.CLOUDINARY_API_KEY && 
+    process.env.CLOUDINARY_API_SECRET) {
+  cloudinary.config({
+    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+    api_key: process.env.CLOUDINARY_API_KEY,
+    api_secret: process.env.CLOUDINARY_API_SECRET
+  });
+}
+
+// Helper function to upload files to Cloudinary
+const uploadToCloudinary = (buffer, folder = 'janseva') => {
+  return new Promise((resolve, reject) => {
+    const uploadStream = cloudinary.uploader.upload_stream(
+      { 
+        folder: folder,
+        resource_type: 'auto',
+        transformation: [
+          { quality: 'auto' },
+          { fetch_format: 'auto' }
+        ]
+      },
+      (error, result) => {
+        if (error) return reject(error);
+        resolve({
+          url: result.secure_url,
+          public_id: result.public_id,
+          format: result.format,
+          bytes: result.bytes
+        });
+      }
+    );
+    uploadStream.end(buffer);
+  });
+};
 
 // In-memory storage (replace with database in production)
 let services = [
@@ -238,178 +264,10 @@ router.post('/services', (req, res) => {
         res.status(500).json({
             success: false,
             message: 'Error adding service',
-            error: error.message
-        });
-    }
-});
-
-// POST /api/janseva/applications - Submit application
-router.post('/applications', upload.array('documents', 10), async (req, res) => {
-    try {
-        const {
-            serviceId,
-            serviceName,
-            serviceCharge,
-            fullName,
-            fatherName,
-            motherName,
-            dob,
-            gender,
-            mobile,
-            email,
-            address,
-            district,
-            pincode,
-            remarks,
-            paymentMethod,
-            upiTransactionId
         } = req.body;
-        
-        // Generate application number
-        const year = new Date().getFullYear();
-        const random = Math.floor(Math.random() * 90000) + 10000;
-        const applicationNumber = `JSK-${year}-${random}`;
-        
-        // Process uploaded files
-        const documents = req.files ? req.files.map(file => ({
-            originalName: file.originalname,
-            filename: file.filename,
-            path: file.path,
-            size: file.size,
-            uploadedAt: new Date()
-        })) : [];
-        
-        // Create application object
-        const application = {
-            applicationNumber,
-            serviceId,
-            serviceName,
-            serviceCharge: parseFloat(serviceCharge) || 0,
-            applicant: {
-                fullName,
-                fatherName,
-                motherName,
-                dob,
-                gender,
-                mobile,
-                email,
-                address,
-                district,
-                pincode
-            },
-            documents,
-            payment: {
-                method: paymentMethod,
-                amount: parseFloat(serviceCharge) || 0,
-                transactionId: upiTransactionId || null,
-                status: paymentMethod === 'cash' ? 'pending' : 'completed'
-            },
-            remarks,
-            status: 'pending',
-            createdAt: new Date(),
-            updatedAt: new Date()
-        };
-        
-        // Save application
-        applications.push(application);
-        
-        // In production, save to database
-        // await Application.create(application);
-        
-        res.status(201).json({
-            success: true,
-            message: 'Application submitted successfully',
-            data: {
-                applicationNumber,
-                status: 'pending',
-                estimatedProcessingTime: services.find(s => s.id === serviceId)?.processingTime || '5-7 days'
-            }
-        });
-    } catch (error) {
-        console.error('Application submission error:', error);
-        res.status(500).json({
-            success: false,
-            message: 'Error submitting application',
-            error: error.message
-        });
-    }
-});
 
-// GET /api/janseva/applications - Get all applications (Admin)
-router.get('/applications', (req, res) => {
-    try {
-        const { status, serviceId, mobile, startDate, endDate } = req.query;
-        
-        let filteredApplications = [...applications];
-        
-        // Filter by status
-        if (status) {
-            filteredApplications = filteredApplications.filter(app => app.status === status);
-        }
-        
-        // Filter by service
-        if (serviceId) {
-            filteredApplications = filteredApplications.filter(app => app.serviceId === serviceId);
-        }
-        
-        // Filter by mobile
-        if (mobile) {
-            filteredApplications = filteredApplications.filter(app => app.applicant.mobile === mobile);
-        }
-        
-        // Filter by date range
-        if (startDate && endDate) {
-            const start = new Date(startDate);
-            const end = new Date(endDate);
-            filteredApplications = filteredApplications.filter(app => {
-                const appDate = new Date(app.createdAt);
-                return appDate >= start && appDate <= end;
-            });
-        }
-        
-        // Sort by creation date (newest first)
-        filteredApplications.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-        
-        res.json({
-            success: true,
-            data: filteredApplications,
-            count: filteredApplications.length
-        });
-    } catch (error) {
-        res.status(500).json({
-            success: false,
-            message: 'Error fetching applications',
-            error: error.message
-        });
-    }
-});
-
-// GET /api/janseva/applications/:appNumber - Get application by number
-router.get('/applications/:appNumber', (req, res) => {
-    try {
-        const application = applications.find(app => app.applicationNumber === req.params.appNumber);
-        
-        if (!application) {
-            return res.status(404).json({
-                success: false,
-                message: 'Application not found'
-            });
-        }
-        
-        res.json({
-            success: true,
-            data: application
-        });
-    } catch (error) {
-        res.status(500).json({
-            success: false,
-            message: 'Error fetching application',
-            error: error.message
-        });
-    }
-});
-
-// PATCH /api/janseva/applications/:appNumber/status - Update application status
+        // Validate required fields
+        if (!serviceId || !fullName || !mobile || !aadhaarNumber) {
 router.patch('/applications/:appNumber/status', (req, res) => {
     try {
         const { status, remarks } = req.body;
