@@ -10,7 +10,8 @@ const categorySchema = new mongoose.Schema({
     unique: true,
     trim: true,
     minlength: [2, 'Category name must be at least 2 characters'],
-    maxlength: [100, 'Category name cannot exceed 100 characters']
+    maxlength: [100, 'Category name cannot exceed 100 characters'],
+    index: true
   },
   hindiName: {
     type: String,
@@ -35,15 +36,18 @@ const categorySchema = new mongoose.Schema({
     type: String,
     unique: true,
     lowercase: true,
-    trim: true
+    trim: true,
+    index: true
   },
   isActive: {
     type: Boolean,
-    default: true
+    default: true,
+    index: true
   },
   displayOrder: {
     type: Number,
-    default: 0
+    default: 0,
+    index: true
   },
   parent: {
     type: mongoose.Schema.Types.ObjectId,
@@ -59,11 +63,8 @@ const categorySchema = new mongoose.Schema({
   timestamps: true
 });
 
-// Indexes
-categorySchema.index({ name: 1 });
-categorySchema.index({ slug: 1 });
-categorySchema.index({ isActive: 1 });
-categorySchema.index({ displayOrder: 1 });
+// Compound index for better query performance
+categorySchema.index({ isActive: 1, displayOrder: 1 });
 
 // Generate slug from name before saving
 categorySchema.pre('save', function(next) {

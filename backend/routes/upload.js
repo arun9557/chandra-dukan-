@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const multer = require('multer');
 // Use the CommonJS compatible version of UUID
-const { v4: uuidv4 } = require('uuid/dist/v4');
+const { v4: uuidv4 } = require('uuid');
 const cloudinary = require('cloudinary').v2;
 
 // Check if running in Vercel serverless environment
