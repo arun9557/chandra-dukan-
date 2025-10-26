@@ -5,6 +5,53 @@ const router = express.Router();
 const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
+const { v4: uuidv4 } = require('uuid');
+const { body, validationResult } = require('express-validator');
+const rateLimit = require('express-rate-limit');
+const cors = require('cors');
+const helmet = require('helmet');
+
+// Security middleware
+router.use(helmet());
+
+// CORS configuration
+const corsOptions = {
+    origin: process.env.ALLOWED_ORIGINS ? process.env.ALLOWED_ORIGINS.split(',') : '*',
+    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+    credentials: true
+};
+router.use(cors(corsOptions));
+
+// Rate limiting
+const apiLimiter = rateLimit({
+    windowMs: 15 * 60 * 1000, // 15 minutes
+    max: 100, // limit each IP to 100 requests per windowMs
+    message: {
+        success: false,
+        message: 'Too many requests from this IP, please try again after 15 minutes'
+    }
+});
+router.use(apiLimiter);
+
+// Request logging
+router.use((req, res, next) => {
+    console.log(`${new Date().toISOString()} - ${req.method} ${req.originalUrl}`);
+    next();
+});
+
+// Validate request content type
+router.use((req, res, next) => {
+    if (['POST', 'PUT', 'PATCH'].includes(req.method) && 
+        !req.is('application/json') && 
+        req.get('content-type') !== 'multipart/form-data') {
+        return res.status(415).json({
+            success: false,
+            message: 'Content-Type must be application/json or multipart/form-data'
+        });
+    }
+    next();
+});
 
 // Configure multer for memory storage (for serverless compatibility)
 const storage = multer.memoryStorage();
@@ -64,6 +111,19 @@ const uploadToCloudinary = (buffer, folder = 'janseva') => {
     uploadStream.end(buffer);
   });
 };
+
+// Check required environment variables
+const requiredEnvVars = [
+    'CLOUDINARY_CLOUD_NAME',
+    'CLOUDINARY_API_KEY',
+    'CLOUDINARY_API_SECRET'
+];
+
+const missingVars = requiredEnvVars.filter(varName => !process.env[varName]);
+if (missingVars.length > 0) {
+    console.error('Missing required environment variables:', missingVars.join(', '));
+    process.exit(1);
+}
 
 // In-memory storage (replace with database in production)
 let services = [
@@ -269,58 +329,104 @@ router.post('/services', (req, res) => {
     }
 });
 
-// POST /api/janseva/applications - Submit new application
-router.post('/applications', upload.array('documents', 5), async (req, res) => {
-    try {
-        const { serviceId, fullName, mobile, aadhaarNumber } = req.body;
-
-        // Validate required fields
-        if (!serviceId || !fullName || !mobile || !aadhaarNumber) {
+// POST /api/janseva/applications - Create new application with validation
+router.post('/applications', 
+    upload.array('documents', 5),
+    [
+        body('serviceId').notEmpty().withMessage('Service ID is required'),
+        body('fullName').trim().notEmpty().withMessage('Full name is required'),
+        body('mobile')
+            .trim()
+            .isMobilePhone('any', { strictMode: false })
+            .withMessage('Please provide a valid mobile number'),
+        body('aadhaarNumber')
+            .trim()
+            .matches(/^\d{12}$/)
+            .withMessage('Aadhaar number must be 12 digits')
+    ],
+    async (req, res) => {
+        // Check for validation errors
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
             return res.status(400).json({
                 success: false,
-                message: 'Missing required fields: serviceId, fullName, mobile, and aadhaarNumber are required'
+                errors: errors.array().map(err => ({
+                    field: err.param,
+                    message: err.msg
+                }))
             });
         }
+        
+        try {
+            const { serviceId, fullName, mobile, aadhaarNumber } = req.body;
 
-        // Process file uploads if any
-        let documents = [];
-        if (req.files && req.files.length > 0) {
-            // Upload files to Cloudinary
-            const uploadPromises = req.files.map(file => 
-                uploadToCloudinary(file.buffer, 'janseva/documents')
-            );
-            documents = await Promise.all(uploadPromises);
+            // Validate required fields
+            if (!serviceId || !fullName || !mobile || !aadhaarNumber) {
+                return res.status(400).json({
+                    success: false,
+                    message: 'Missing required fields: serviceId, fullName, mobile, and aadhaarNumber are required'
+                });
+            }
+
+            // Process file uploads if any
+            let documents = [];
+            if (req.files && req.files.length > 0) {
+                // Upload files to Cloudinary
+                const uploadPromises = req.files.map(file => 
+                    uploadToCloudinary(file.buffer, 'janseva/documents')
+                );
+                documents = await Promise.all(uploadPromises);
+            }
+
+            // Create new application with UUID
+            const newApplication = {
+                id: `APP-${uuidv4()}`,
+                applicationNumber: `APP-${Date.now()}-${Math.floor(1000 + Math.random() * 9000)}`,
+                serviceId,
+                fullName,
+                mobile,
+                aadhaarNumber,
+                documents,
+                status: 'pending',
+                createdAt: new Date(),
+                updatedAt: new Date()
+            };
+
+            applications.push(newApplication);
+
+            res.status(201).json({
+                success: true,
+                message: 'Application submitted successfully',
+                data: newApplication
+            });
+        } catch (error) {
+            console.error('Error creating application:', error);
+            
+            // Handle file upload errors
+            if (error.code === 'LIMIT_FILE_SIZE') {
+                return res.status(413).json({
+                    success: false,
+                    message: 'File size too large. Maximum size is 2MB'
+                });
+            }
+
+            // Handle file type errors
+            if (error.message === 'Only PDF, JPG, and PNG files are allowed') {
+                return res.status(400).json({
+                    success: false,
+                    message: error.message
+                });
+            }
+
+            // Default error handler
+            res.status(500).json({
+                success: false,
+                message: 'Failed to create application',
+                error: process.env.NODE_ENV === 'development' ? error.message : undefined
+            });
         }
-
-        // Create new application
-        const newApplication = {
-            id: 'APP' + Date.now(),
-            serviceId,
-            fullName,
-            mobile,
-            aadhaarNumber,
-            documents,
-            status: 'pending',
-            createdAt: new Date(),
-            updatedAt: new Date()
-        };
-
-        applications.push(newApplication);
-
-        res.status(201).json({
-            success: true,
-            message: 'Application submitted successfully',
-            data: newApplication
-        });
-    } catch (error) {
-        console.error('Error submitting application:', error);
-        res.status(500).json({
-            success: false,
-            message: 'Error submitting application',
-            error: error.message
-        });
     }
-});
+);
 
 // PATCH /api/janseva/applications/:appNumber/status - Update application status
 router.patch('/applications/:appNumber/status', (req, res) => {
@@ -399,5 +505,41 @@ router.get('/stats', (req, res) => {
         });
     }
 });
+
+// Error handling middleware (should be the last middleware)
+router.use((err, req, res, next) => {
+    console.error('Unhandled error:', err);
+    
+    res.status(500).json({
+        success: false,
+        message: 'Internal server error',
+        ...(process.env.NODE_ENV === 'development' && { error: err.message })
+    });
+});
+
+/**
+ * @swagger
+ * components:
+ *   schemas:
+ *     Application:
+ *       type: object
+ *       properties:
+ *         id:
+ *           type: string
+ *           description: Unique application ID
+ *         applicationNumber:
+ *           type: string
+ *           description: Human-readable application number
+ *         serviceId:
+ *           type: string
+ *           description: ID of the service
+ *         fullName:
+ *           type: string
+ *           description: Full name of the applicant
+ *         status:
+ *           type: string
+ *           enum: [pending, approved, rejected]
+ *           default: pending
+ */
 
 module.exports = router;
