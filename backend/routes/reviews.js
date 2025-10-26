@@ -12,22 +12,8 @@ const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
 
-// Setup multer for review images - Review images upload ke liye multer setup
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    const uploadDir = 'uploads/reviews';
-    
-    if (!fs.existsSync(uploadDir)) {
-      fs.mkdirSync(uploadDir, { recursive: true });
-    }
-    
-    cb(null, uploadDir);
-  },
-  filename: function (req, file, cb) {
-    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-    cb(null, 'review-' + uniqueSuffix + path.extname(file.originalname));
-  }
-});
+// Configure multer for memory storage (for serverless compatibility)
+const storage = multer.memoryStorage();
 
 const upload = multer({
   storage: storage,
@@ -42,6 +28,27 @@ const upload = multer({
     cb(null, true);
   }
 });
+
+// Helper function to upload files to Cloudinary
+const uploadToCloudinary = (buffer) => {
+  return new Promise((resolve, reject) => {
+    const uploadStream = cloudinary.uploader.upload_stream(
+      { 
+        folder: 'reviews',
+        resource_type: 'auto',
+        transformation: [
+          { width: 800, crop: 'limit', quality: 'auto' },
+          { fetch_format: 'auto' }
+        ]
+      },
+      (error, result) => {
+        if (error) return reject(error);
+        resolve(result);
+      }
+    );
+    uploadStream.end(buffer);
+  });
+};
 
 // Get all reviews for a product - Product ke sab reviews get karna
 router.get('/product/:productId', async (req, res) => {
@@ -103,9 +110,22 @@ router.post('/product/:productId', authenticateToken, upload.array('images', 3),
   try {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-      // Delete uploaded files if validation fails
-      if (req.files) {
-        req.files.forEach(file => fs.unlinkSync(file.path));
+      // Handle file uploads if any
+      let imageUrls = [];
+      if (req.files && req.files.length > 0) {
+        // Upload all files to Cloudinary in parallel
+        const uploadPromises = req.files.map(file => 
+          uploadToCloudinary(file.buffer)
+            .then(result => result.secure_url)
+            .catch(err => {
+              console.error('Error uploading file to Cloudinary:', err);
+              return null;
+            })
+        );
+        
+        // Wait for all uploads to complete
+        const results = await Promise.all(uploadPromises);
+        imageUrls = results.filter(url => url !== null);
       }
       
       return res.status(400).json({
@@ -122,9 +142,6 @@ router.post('/product/:productId', authenticateToken, upload.array('images', 3),
     // Check if product exists
     const product = await Product.findById(productId);
     if (!product) {
-      if (req.files) {
-        req.files.forEach(file => fs.unlinkSync(file.path));
-      }
       return res.status(404).json({
         success: false,
         error: 'Product not found'
@@ -138,9 +155,6 @@ router.post('/product/:productId', authenticateToken, upload.array('images', 3),
     });
     
     if (existingReview) {
-      if (req.files) {
-        req.files.forEach(file => fs.unlinkSync(file.path));
-      }
       return res.status(409).json({
         success: false,
         error: 'You have already reviewed this product'
@@ -159,9 +173,6 @@ router.post('/product/:productId', authenticateToken, upload.array('images', 3),
       isVerifiedPurchase = !!order;
     }
     
-    // Get uploaded image URLs
-    const images = req.files ? req.files.map(file => `/uploads/reviews/${file.filename}`) : [];
-    
     // Create review
     const review = new Review({
       product: productId,
@@ -169,7 +180,7 @@ router.post('/product/:productId', authenticateToken, upload.array('images', 3),
       order: orderId || null,
       rating: parseInt(rating),
       comment,
-      images,
+      images: imageUrls,
       isVerifiedPurchase
     });
     
@@ -186,14 +197,7 @@ router.post('/product/:productId', authenticateToken, upload.array('images', 3),
   } catch (error) {
     console.error('Add review error:', error);
     
-    // Delete uploaded files if error occurs
-    if (req.files) {
-      req.files.forEach(file => {
-        if (fs.existsSync(file.path)) {
-          fs.unlinkSync(file.path);
-        }
-      });
-    }
+    // Note: No need to delete files from Cloudinary here as they haven't been saved to the database yet
     
     res.status(500).json({
       success: false,
@@ -267,15 +271,9 @@ router.delete('/:reviewId', authenticateToken, async (req, res) => {
       });
     }
     
-    // Delete review images
-    if (review.images && review.images.length > 0) {
-      review.images.forEach(imageUrl => {
-        const imagePath = path.join(__dirname, '..', imageUrl);
-        if (fs.existsSync(imagePath)) {
-          fs.unlinkSync(imagePath);
-        }
-      });
-    }
+    // Note: In a production environment, you might want to delete old images from Cloudinary
+    // This would require storing the Cloudinary public_id in your database
+    // and using cloudinary.uploader.destroy(public_id) to remove them
     
     await review.remove();
     

@@ -9,40 +9,48 @@ const User = require('../models/User');
 const Order = require('../models/Order');
 const { authenticateToken } = require('../middleware/auth');
 const multer = require('multer');
-const path = require('path');
-const fs = require('fs');
+const cloudinary = require('cloudinary');
 
-// Setup multer for avatar upload - Avatar upload ke liye multer setup
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    const uploadDir = 'uploads/avatars';
-    
-    // Create directory if it doesn't exist
-    if (!fs.existsSync(uploadDir)) {
-      fs.mkdirSync(uploadDir, { recursive: true });
-    }
-    
-    cb(null, uploadDir);
-  },
-  filename: function (req, file, cb) {
-    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-    cb(null, 'avatar-' + uniqueSuffix + path.extname(file.originalname));
+// Setup multer for avatar upload - Using memory storage for serverless compatibility
+const storage = multer.memoryStorage();
+
+// File filter for avatar uploads
+const fileFilter = function (req, file, cb) {
+  // Accept images only
+  if (!file.mimetype.match(/^image/)) {
+    req.fileValidationError = 'Only image files are allowed!';
+    return cb(new Error('Only image files are allowed!'), false);
   }
+  cb(null, true);
+};
+
+// Configure multer with memory storage
+const upload = multer({ 
+  storage,
+  limits: { fileSize: 2 * 1024 * 1024 }, // 2MB limit
+  fileFilter 
 });
 
-const upload = multer({
-  storage: storage,
-  limits: {
-    fileSize: 5 * 1024 * 1024 // 5MB limit
-  },
-  fileFilter: function (req, file, cb) {
-    // Accept images only
-    if (!file.mimetype.startsWith('image/')) {
-      return cb(new Error('Only image files are allowed!'), false);
-    }
-    cb(null, true);
-  }
-});
+// Helper function to upload to Cloudinary
+const uploadToCloudinary = (buffer) => {
+  return new Promise((resolve, reject) => {
+    const uploadStream = cloudinary.uploader.upload_stream(
+      { 
+        folder: 'avatars',
+        resource_type: 'auto',
+        transformation: [
+          { width: 200, height: 200, crop: 'thumb', gravity: 'face' },
+          { fetch_format: 'auto', quality: 'auto' }
+        ]
+      },
+      (error, result) => {
+        if (error) return reject(error);
+        resolve(result);
+      }
+    );
+    uploadStream.end(buffer);
+  });
+};
 
 // Get user profile - User ka profile get karna
 router.get('/profile', authenticateToken, async (req, res) => {
@@ -200,87 +208,95 @@ router.put('/avatar', authenticateToken, upload.single('avatar'), async (req, re
         error: 'No file uploaded'
       });
     }
-    
-    // Get user
+
+    // Check for validation errors
+    if (req.fileValidationError) {
+      return res.status(400).json({
+        success: false,
+        error: req.fileValidationError
+      });
+    }
+
     const user = await User.findById(req.user.userId);
-    
     if (!user) {
       return res.status(404).json({
         success: false,
         error: 'User not found'
       });
     }
-    
-    // Delete old avatar if exists
-    if (user.avatar) {
-      const oldAvatarPath = path.join(__dirname, '..', user.avatar);
-      if (fs.existsSync(oldAvatarPath)) {
-        fs.unlinkSync(oldAvatarPath);
+
+    // Upload new avatar to Cloudinary
+    const result = await uploadToCloudinary(req.file.buffer);
+
+    // Delete old avatar from Cloudinary if exists
+    if (user.avatarPublicId) {
+      try {
+        await cloudinary.uploader.destroy(user.avatarPublicId);
+      } catch (err) {
+        console.error('Error deleting old avatar:', err);
+        // Continue even if deletion fails
       }
     }
-    
-    // Update user avatar
-    const avatarUrl = `/uploads/avatars/${req.file.filename}`;
-    user.avatar = avatarUrl;
+
+    // Update user with new avatar URL and public ID
+    user.avatar = result.secure_url;
+    user.avatarPublicId = result.public_id;
     await user.save();
-    
+
     res.json({
       success: true,
-      message: 'Avatar uploaded successfully',
       data: {
-        avatar: avatarUrl
+        avatar: user.avatar
       }
     });
-  } catch (error) {
-    console.error('Upload avatar error:', error);
-    
-    // Delete uploaded file if error occurs
-    if (req.file) {
-      fs.unlinkSync(req.file.path);
-    }
-    
+  } catch (err) {
+    console.error('Avatar upload error:', err);
     res.status(500).json({
       success: false,
-      error: 'Failed to upload avatar',
-      message: error.message
+      error: 'Failed to update avatar',
+      message: process.env.NODE_ENV === 'production' 
+        ? 'Avatar update failed' 
+        : err.message
     });
   }
 });
 
-// Delete/Deactivate account - Account delete ya deactivate karna
+// Delete user account - User ka account delete karna
 router.delete('/account', authenticateToken, async (req, res) => {
   try {
     const user = await User.findById(req.user.userId);
-    
     if (!user) {
       return res.status(404).json({
         success: false,
         error: 'User not found'
       });
     }
-    
-    // Deactivate account instead of deleting - Delete karne ki jagah deactivate karna
-    user.isActive = false;
-    await user.save();
-    
-    // Optional: Delete user avatar
-    if (user.avatar) {
-      const avatarPath = path.join(__dirname, '..', user.avatar);
-      if (fs.existsSync(avatarPath)) {
-        fs.unlinkSync(avatarPath);
+
+    // Delete user's avatar from Cloudinary if exists
+    if (user.avatarPublicId) {
+      try {
+        await cloudinary.uploader.destroy(user.avatarPublicId);
+      } catch (err) {
+        console.error('Error deleting avatar from Cloudinary:', err);
+        // Continue even if deletion fails
       }
     }
-    
+
+    // Delete user
+    await User.findByIdAndDelete(req.user.userId);
+
     res.json({
       success: true,
-      message: 'Account deactivated successfully'
+      message: 'User account deleted successfully'
     });
-  } catch (error) {
-    console.error('Delete account error:', error);
+  } catch (err) {
+    console.error('Account deletion error:', err);
     res.status(500).json({
       success: false,
       error: 'Failed to delete account',
-      message: error.message
+      message: process.env.NODE_ENV === 'production'
+        ? 'Account deletion failed'
+        : err.message
     });
   }
 });

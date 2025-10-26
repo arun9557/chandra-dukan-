@@ -13,20 +13,8 @@ const fs = require('fs');
 const emailService = require('../services/emailService');
 const smsService = require('../services/smsService');
 
-// Setup multer for proof images - Return proof images ke liye
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    const uploadDir = 'uploads/returns';
-    if (!fs.existsSync(uploadDir)) {
-      fs.mkdirSync(uploadDir, { recursive: true });
-    }
-    cb(null, uploadDir);
-  },
-  filename: function (req, file, cb) {
-    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-    cb(null, 'return-' + uniqueSuffix + path.extname(file.originalname));
-  }
-});
+// Configure multer for memory storage (for serverless compatibility)
+const storage = multer.memoryStorage();
 
 const upload = multer({
   storage: storage,
@@ -39,6 +27,39 @@ const upload = multer({
   }
 });
 
+// Configure Cloudinary
+const cloudinary = require('cloudinary').v2;
+if (process.env.CLOUDINARY_CLOUD_NAME && 
+    process.env.CLOUDINARY_API_KEY && 
+    process.env.CLOUDINARY_API_SECRET) {
+  cloudinary.config({
+    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+    api_key: process.env.CLOUDINARY_API_KEY,
+    api_secret: process.env.CLOUDINARY_API_SECRET
+  });
+}
+
+// Helper function to upload files to Cloudinary
+const uploadToCloudinary = (buffer) => {
+  return new Promise((resolve, reject) => {
+    const uploadStream = cloudinary.uploader.upload_stream(
+      { 
+        folder: 'returns',
+        resource_type: 'auto',
+        transformation: [
+          { width: 1200, crop: 'limit', quality: 'auto' },
+          { fetch_format: 'auto' }
+        ]
+      },
+      (error, result) => {
+        if (error) return reject(error);
+        resolve(result);
+      }
+    );
+    uploadStream.end(buffer);
+  });
+};
+
 // Create return request - Return request create karna (Auth required)
 router.post('/orders/:orderId/returns', authenticateToken, upload.array('images', 5), [
   body('reason').notEmpty().withMessage('Reason is required'),
@@ -48,10 +69,7 @@ router.post('/orders/:orderId/returns', authenticateToken, upload.array('images'
   try {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-      // Delete uploaded files if validation fails
-      if (req.files) {
-        req.files.forEach(file => fs.unlinkSync(file.path));
-      }
+      // No need to delete files as they're in memory and not saved yet
       return res.status(400).json({
         success: false,
         error: 'Validation failed',
@@ -67,9 +85,6 @@ router.post('/orders/:orderId/returns', authenticateToken, upload.array('images'
     const order = await Order.findById(orderId).populate('user');
     
     if (!order) {
-      if (req.files) {
-        req.files.forEach(file => fs.unlinkSync(file.path));
-      }
       return res.status(404).json({
         success: false,
         error: 'Order not found'
@@ -77,9 +92,6 @@ router.post('/orders/:orderId/returns', authenticateToken, upload.array('images'
     }
 
     if (order.user._id.toString() !== userId) {
-      if (req.files) {
-        req.files.forEach(file => fs.unlinkSync(file.path));
-      }
       return res.status(403).json({
         success: false,
         error: 'Access denied'
@@ -88,9 +100,6 @@ router.post('/orders/:orderId/returns', authenticateToken, upload.array('images'
 
     // Check if order is eligible for return - Delivered orders only
     if (order.status !== 'delivered') {
-      if (req.files) {
-        req.files.forEach(file => fs.unlinkSync(file.path));
-      }
       return res.status(400).json({
         success: false,
         error: 'Only delivered orders can be returned'
@@ -98,23 +107,35 @@ router.post('/orders/:orderId/returns', authenticateToken, upload.array('images'
     }
 
     // Check if already returned - Pehle se return request hai?
-    const existingReturn = await Return.findOne({ 
-      order: orderId, 
-      status: { $nin: ['rejected', 'completed'] }
-    });
+    const existingReturn = await Return.findOne({ order: orderId, user: userId });
 
     if (existingReturn) {
-      if (req.files) {
-        req.files.forEach(file => fs.unlinkSync(file.path));
-      }
       return res.status(409).json({
         success: false,
-        error: 'A return request already exists for this order'
+        error: 'Return request already exists for this order'
       });
     }
 
-    // Get uploaded image URLs
-    const images = req.files ? req.files.map(file => `/uploads/returns/${file.filename}`) : [];
+    // Handle file uploads if any
+    let proofImages = [];
+    if (req.files && req.files.length > 0) {
+      // Upload all files to Cloudinary in parallel
+      const uploadPromises = req.files.map(file => 
+        uploadToCloudinary(file.buffer)
+          .then(result => ({
+            url: result.secure_url,
+            public_id: result.public_id
+          }))
+          .catch(err => {
+            console.error('Error uploading file to Cloudinary:', err);
+            return null;
+          })
+      );
+      
+      // Wait for all uploads to complete
+      const results = await Promise.all(uploadPromises);
+      proofImages = results.filter(img => img !== null);
+    }
 
     // Create return request
     const returnRequest = new Return({
@@ -168,14 +189,7 @@ router.post('/orders/:orderId/returns', authenticateToken, upload.array('images'
   } catch (error) {
     console.error('Create return error:', error);
     
-    // Delete uploaded files on error
-    if (req.files) {
-      req.files.forEach(file => {
-        if (fs.existsSync(file.path)) {
-          fs.unlinkSync(file.path);
-        }
-      });
-    }
+    // Note: No need to delete files as they were never saved to disk
     
     res.status(500).json({
       success: false,
