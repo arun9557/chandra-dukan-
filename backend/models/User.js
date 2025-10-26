@@ -18,13 +18,15 @@ const userSchema = new mongoose.Schema({
     unique: true,
     lowercase: true,
     trim: true,
-    match: [/^\S+@\S+\.\S+$/, 'Please provide a valid email']
+    match: [/^\S+@\S+\.\S+$/, 'Please provide a valid email'],
+    index: true
   },
   phone: {
     type: String,
     required: [true, 'Phone number is required'],
     unique: true,
-    match: [/^[6-9]\d{9}$/, 'Please provide a valid 10-digit Indian phone number']
+    match: [/^[6-9]\d{9}$/, 'Please provide a valid 10-digit Indian phone number'],
+    index: true
   },
   password: {
     type: String,
@@ -109,9 +111,7 @@ const userSchema = new mongoose.Schema({
   timestamps: true // Automatically adds createdAt and updatedAt
 });
 
-// Index for faster queries
-userSchema.index({ email: 1 });
-userSchema.index({ phone: 1 });
+// Index for role field
 userSchema.index({ role: 1 });
 
 // Hash password before saving

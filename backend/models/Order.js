@@ -38,12 +38,14 @@ const orderSchema = new mongoose.Schema({
   orderNumber: {
     type: String,
     unique: true,
-    required: true
+    required: true,
+    index: true
   },
   user: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
-    required: true
+    required: true,
+    index: true
   },
   items: [orderItemSchema],
   customerDetails: {
@@ -105,7 +107,8 @@ const orderSchema = new mongoose.Schema({
   paymentStatus: {
     type: String,
     enum: ['pending', 'paid', 'failed', 'refunded'],
-    default: 'pending'
+    default: 'pending',
+    index: true
   },
   paymentDetails: {
     transactionId: { type: String, default: '' },
@@ -114,7 +117,8 @@ const orderSchema = new mongoose.Schema({
   status: {
     type: String,
     enum: ['pending', 'confirmed', 'processing', 'packed', 'shipped', 'out_for_delivery', 'delivered', 'cancelled', 'returned'],
-    default: 'pending'
+    default: 'pending',
+    index: true
   },
   statusHistory: [{
     status: String,
@@ -147,13 +151,11 @@ const orderSchema = new mongoose.Schema({
   timestamps: true
 });
 
-// Indexes
-orderSchema.index({ orderNumber: 1 });
-orderSchema.index({ user: 1 });
-orderSchema.index({ status: 1 });
-orderSchema.index({ paymentStatus: 1 });
-orderSchema.index({ createdAt: -1 });
-orderSchema.index({ 'customerDetails.phone': 1 });
+// Compound indexes for better query performance
+orderSchema.index({ user: 1, status: 1 });
+orderSchema.index({ status: 1, paymentStatus: 1 });
+orderSchema.index({ 'customerDetails.phone': 1, createdAt: -1 });
+orderSchema.index({ createdAt: -1, status: 1 });
 
 // Generate order number before saving
 orderSchema.pre('save', async function(next) {

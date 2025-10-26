@@ -5,10 +5,11 @@ const mongoose = require('mongoose');
 
 // MongoDB connection options
 const options = {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
   serverSelectionTimeoutMS: 5000,
   socketTimeoutMS: 45000,
+  maxPoolSize: 10, // Maximum number of connections in the connection pool
+  retryWrites: true,
+  w: 'majority'
 };
 
 // Connect to MongoDB

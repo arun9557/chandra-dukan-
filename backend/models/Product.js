@@ -9,7 +9,8 @@ const productSchema = new mongoose.Schema({
     required: [true, 'Product name is required'],
     trim: true,
     minlength: [2, 'Product name must be at least 2 characters'],
-    maxlength: [200, 'Product name cannot exceed 200 characters']
+    maxlength: [200, 'Product name cannot exceed 200 characters'],
+    index: true
   },
   description: {
     type: String,
@@ -42,7 +43,8 @@ const productSchema = new mongoose.Schema({
   category: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Category',
-    required: [true, 'Category is required']
+    required: [true, 'Category is required'],
+    index: true
   },
   stock: {
     type: Number,
@@ -68,7 +70,8 @@ const productSchema = new mongoose.Schema({
   },
   isFeatured: {
     type: Boolean,
-    default: false
+    default: false,
+    index: true
   },
   tags: [{
     type: String,
@@ -101,14 +104,17 @@ const productSchema = new mongoose.Schema({
   timestamps: true
 });
 
-// Indexes for better performance
-productSchema.index({ name: 'text', description: 'text' }); // Text search
-productSchema.index({ category: 1 });
-productSchema.index({ price: 1 });
-productSchema.index({ stock: 1 });
-productSchema.index({ isActive: 1 });
-productSchema.index({ isFeatured: 1 });
-productSchema.index({ createdAt: -1 });
+// Compound indexes for better query performance
+productSchema.index({ isActive: 1, isFeatured: 1 });
+productSchema.index({ category: 1, isActive: 1 });
+productSchema.index({ price: 1, isActive: 1 });
+productSchema.index({ stock: 1, isActive: 1 });
+
+// Text index for search (only one text index per collection is allowed)
+productSchema.index(
+  { name: 'text', description: 'text' },
+  { weights: { name: 3, description: 1 } } // Give more weight to name
+);
 
 // Virtual for checking if product is in stock
 productSchema.virtual('inStock').get(function() {
